@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: verita
+          POSTGRES_PASSWORD: verita
+          POSTGRES_DB: verita_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U verita -d verita_test"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      VERITA_TEST_DATABASE_URL: postgresql+psycopg://verita:verita@localhost:5432/verita_test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.11.28"
+          enable-cache: true
+      - run: uv python install 3.11
+      - run: uv sync --frozen --extra dev
+      - name: Lint, format, types, tests (coverage gate 90%)
+        run: uv run poe check
+      - name: Security (bandit + pip-audit)
+        run: uv run poe security
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Lint, styles, format, types, tests
+        run: npm run check
+      - name: Coverage gate
+        run: npx vitest run --coverage
+      - name: Build
+        run: npm run build
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  images:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image
+        run: docker build -t verita-api:ci backend
+      - name: Build web image
+        run: docker build -t verita-web:ci frontend
+      - name: Smoke-test the API image
+        run: |
+          docker run -d --name api -e VERITA_ENV=dev -e VERITA_DATABASE_URL=sqlite+pysqlite:////tmp/ci.sqlite -p 8000:8000 verita-api:ci
+          for i in $(seq 1 30); do curl -fsS http://localhost:8000/api/v1/health/live && exit 0; sleep 1; done
+          docker logs api; exit 1

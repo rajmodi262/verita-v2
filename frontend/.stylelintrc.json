@@ -1,0 +1,18 @@
+{
+  "extends": ["stylelint-config-standard"],
+  "rules": {
+    "color-no-hex": true,
+    "color-named": "never",
+    "declaration-property-value-allowed-list": {
+      "font-size": ["/^var\\(--fs-[a-z0-9-]+\\)$/", "inherit", "100%"],
+      "font-family": ["/^var\\(--font-[a-z]+\\)$/", "inherit"]
+    },
+    "selector-class-pattern": "^[a-z][a-zA-Z0-9]*$"
+  },
+  "overrides": [
+    {
+      "files": ["src/styles/tokens.css"],
+      "rules": { "color-no-hex": null, "declaration-property-value-allowed-list": null }
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+# Local full stack: Postgres, one-shot migrations, API, web.  Run from the repo root:
+#   docker compose -f deploy/docker-compose.yml up --build
+# Then open http://localhost:8080 and create users with:
+#   docker compose -f deploy/docker-compose.yml run --rm api verita users seed-demo
+name: verita
+
+x-api-env: &api-env
+  VERITA_ENV: prod
+  VERITA_DATABASE_URL: postgresql+psycopg://verita:${POSTGRES_PASSWORD:-verita-local-only}@db:5432/verita
+  VERITA_CORS_ORIGINS: '["http://localhost:8080"]'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: verita
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-verita-local-only}
+      POSTGRES_DB: verita
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U verita -d verita"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  migrate:
+    build: ../backend
+    environment: *api-env
+    command: ["verita", "db", "upgrade"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  api:
+    build: ../backend
+    environment: *api-env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    read_only: true
+    tmpfs: [/tmp]
+
+  web:
+    build: ../frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:

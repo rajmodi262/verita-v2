@@ -1,0 +1,175 @@
+"""``verita`` command-line interface. Pipeline stages are added here as milestones land."""
+
+from __future__ import annotations
+
+import json
+import os
+import secrets
+from collections.abc import Callable
+from pathlib import Path
+from typing import Annotated, Any
+
+import typer
+from alembic import command
+from alembic.config import Config
+
+from verita.core.config import get_settings
+from verita.core.errors import AppError
+from verita.db.models import Role
+from verita.db.session import make_engine, make_session_factory, session_scope
+from verita.pipeline import run as pipeline
+from verita.pipeline.config import REPO_ROOT, PipelineError, get_dataset
+from verita.pipeline.datacard import write_card
+from verita.pipeline.fixture import generate_fixture
+from verita.services.auth import AuthService
+
+app = typer.Typer(no_args_is_help=True, help="Verita command-line interface.")
+db_app = typer.Typer(no_args_is_help=True, help="Database migrations.")
+users_app = typer.Typer(no_args_is_help=True, help="User management.")
+data_app = typer.Typer(
+    no_args_is_help=True, help="Data pipeline (M1): verify → ingest → link → graph → split."
+)
+app.add_typer(db_app, name="db")
+app.add_typer(users_app, name="users")
+app.add_typer(data_app, name="data")
+
+BACKEND_ROOT = Path(__file__).resolve().parent.parent
+
+DEMO_USERS: tuple[tuple[str, Role], ...] = (
+    ("analyst", Role.ANALYST),
+    ("analyst2", Role.ANALYST),
+    ("mlro", Role.MLRO),
+    ("validator", Role.VALIDATOR),
+    ("reviewer", Role.REVIEWER),
+)
+
+
+def alembic_config(database_url: str) -> Config:
+    cfg = Config(str(BACKEND_ROOT / "alembic.ini"))
+    cfg.set_main_option("script_location", str(BACKEND_ROOT / "migrations"))
+    cfg.set_main_option("sqlalchemy.url", database_url)
+    return cfg
+
+
+@db_app.command("upgrade")
+def db_upgrade(revision: str = "head") -> None:
+    """Apply migrations up to REVISION (default: head)."""
+    command.upgrade(alembic_config(get_settings().database_url), revision)
+    typer.echo(f"Database upgraded to {revision}")
+
+
+@users_app.command("create")
+def users_create(
+    username: Annotated[str, typer.Option(prompt=True)],
+    role: Annotated[Role, typer.Option(prompt=True, case_sensitive=False)],
+    password: Annotated[str, typer.Option(prompt=True, hide_input=True, confirmation_prompt=True)],
+) -> None:
+    """Create a user."""
+    settings = get_settings()
+    factory = make_session_factory(make_engine(settings.database_url))
+    try:
+        for db in session_scope(factory):
+            user = AuthService(db, settings).create_user(username, password, role)
+            typer.echo(f"Created {user.username} ({user.role})")
+    except (AppError, ValueError) as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+
+
+@users_app.command("seed-demo")
+def users_seed_demo() -> None:
+    """Create the demo users. Password: VERITA_DEMO_PASSWORD, or a random one printed once."""
+    settings = get_settings()
+    password = os.environ.get("VERITA_DEMO_PASSWORD") or secrets.token_urlsafe(12)
+    factory = make_session_factory(make_engine(settings.database_url))
+    created: list[str] = []
+    for db in session_scope(factory):
+        service = AuthService(db, settings)
+        for username, role in DEMO_USERS:
+            try:
+                service.create_user(username, password, role)
+                created.append(username)
+            except AppError as exc:
+                if exc.slug != "username-taken":
+                    raise
+    if not created:
+        typer.echo("Demo users already exist; nothing changed.")
+        return
+    typer.echo(f"Created demo users: {', '.join(created)}")
+    if "VERITA_DEMO_PASSWORD" not in os.environ:
+        typer.echo(f"Generated password (shown once): {password}")
+
+
+DatasetOpt = Annotated[str, typer.Option("--dataset", "-d", help="hi_small, li_small or fixture")]
+RootOpt = Annotated[Path, typer.Option(help="Repository root (tests use a temp dir)")]
+
+
+def _run_stage(stage: Callable[..., Any], dataset: str, root: Path) -> None:
+    try:
+        result = stage(get_dataset(dataset, root=root))
+    except PipelineError as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(json.dumps(result, indent=2, default=str))
+
+
+@data_app.command("fixture")
+def data_fixture(root: RootOpt = REPO_ROOT, seed: int = 7) -> None:
+    """Generate the IBM-format fixture into data/fixture/."""
+    ds = get_dataset("fixture", root=root)
+    summary = generate_fixture(ds.raw_dir, seed=seed)
+    typer.echo(
+        f"Wrote {summary.transactions:,} transactions, {summary.patterns} patterns to {ds.raw_dir}"
+    )
+
+
+@data_app.command("verify")
+def data_verify(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Check raw files exist and match configs/data_manifest.yaml."""
+    _run_stage(pipeline.stage_verify, dataset, root)
+
+
+@data_app.command("ingest")
+def data_ingest(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Validate the raw CSV against the data contract and write transactions.parquet."""
+    _run_stage(pipeline.stage_ingest, dataset, root)
+
+
+@data_app.command("link")
+def data_link(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Parse the patterns file and link each pattern row to its transaction."""
+    _run_stage(pipeline.stage_link, dataset, root)
+
+
+@data_app.command("graph")
+def data_graph(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Build accounts.parquet and account_day.parquet."""
+    _run_stage(pipeline.stage_graph, dataset, root)
+
+
+@data_app.command("split")
+def data_split(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Write count-based temporal splits (train / hpo / calib / test)."""
+    _run_stage(pipeline.stage_split, dataset, root)
+
+
+@data_app.command("all")
+def data_all(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Run every data stage in order."""
+    _run_stage(pipeline.stage_all, dataset, root)
+
+
+@data_app.command("card")
+def data_card(
+    datasets: Annotated[list[str] | None, typer.Option("--dataset", "-d")] = None,
+    out: Annotated[Path | None, typer.Option(help="Output file (default: DATA_CARD.md)")] = None,
+    root: RootOpt = REPO_ROOT,
+) -> None:
+    """Render DATA_CARD.md from the validation reports."""
+    names = datasets or ["hi_small", "li_small"]
+    try:
+        path = write_card(names, out or root / "DATA_CARD.md", root)
+    except PipelineError as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"Wrote {path}")

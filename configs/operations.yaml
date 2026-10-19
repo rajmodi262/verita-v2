@@ -1,0 +1,25 @@
+# Operational ASSUMPTIONS for Decide (PIVOT §4.3).
+# None of these come from data. Every UI value derived from them carries an ASSUMPTION stamp.
+schema_version: 1
+handling_time_minutes:
+  distribution: lognormal
+  median: 12.0
+  sigma: 0.6
+  typology_multiplier:       # relative effort by predicted typology
+    FAN-IN: 1.0
+    FAN-OUT: 1.0
+    CYCLE: 1.6
+    SCATTER-GATHER: 1.4
+    GATHER-SCATTER: 1.4
+    BIPARTITE: 1.3
+    STACK: 1.5
+    RANDOM: 1.2
+    UNKNOWN: 1.0
+analysts:
+  min: 1
+  max: 20
+  productive_hours_per_day: 6.5
+costs:
+  analyst_hourly_rate: 55.0          # loaded cost, in the dataset's base currency
+  missed_laundering_cost_rate: 1.0   # cost of a miss = rate × amount laundered
+label_delay_days: 30                 # how long until a true label becomes known (replay / ACI)

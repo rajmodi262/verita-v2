@@ -1,0 +1,21 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-7) var(--space-6);
+  border: var(--border-width) dashed var(--color-rule);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+}
+
+.body {
+  color: var(--color-ink-muted);
+}
+
+.action {
+  margin-top: var(--space-2);
+}
