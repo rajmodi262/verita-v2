@@ -7,10 +7,13 @@ instead of failing on the first request.
 from __future__ import annotations
 
 from functools import lru_cache
+from pathlib import Path
 from typing import Literal
 
 from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from verita.pipeline.config import REPO_ROOT
 
 Environment = Literal["dev", "test", "prod"]
 
@@ -28,6 +31,10 @@ class Settings(BaseSettings):
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = "INFO"
 
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"])
+
+    # Where the pipeline artifacts live, and which dataset the API serves.
+    data_root: Path = REPO_ROOT
+    dataset: str = "hi_small"
 
     session_ttl_minutes: int = Field(default=480, ge=5, le=7 * 24 * 60)
     login_max_failures: int = Field(default=5, ge=1, le=50)

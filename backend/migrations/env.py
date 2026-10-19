@@ -8,7 +8,7 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 from verita.core.config import get_settings
-from verita.db import models  # noqa: F401  (registers tables on Base.metadata)
+from verita.db import capacity_models, detect_models, models  # noqa: F401  (registers tables on Base.metadata)
 from verita.db.base import Base
 
 config = context.config

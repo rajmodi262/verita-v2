@@ -17,3 +17,9 @@
 .verified {
   color: var(--color-verified-text);
 }
+
+/* Gold is too light for AAA text, so the gold rides the border and the label stays ink. */
+.assumption {
+  color: var(--color-ink-muted);
+  border-color: var(--color-gold);
+}

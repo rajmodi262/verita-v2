@@ -22,6 +22,7 @@ function page(Component: LazyExoticComponent<ComponentType>) {
 const LandingPage = lazy(() => import("../routes/landing/LandingPage"));
 const LoginPage = lazy(() => import("../routes/login/LoginPage"));
 const QueuePage = lazy(() => import("../routes/queue/QueuePage"));
+const InvestigationPage = lazy(() => import("../routes/alert/InvestigationPage"));
 const CapacityPage = lazy(() => import("../routes/capacity/CapacityPage"));
 const CasesPage = lazy(() => import("../routes/cases/CasesPage"));
 const EvidenceRoomPage = lazy(() => import("../routes/evidence-room/EvidenceRoomPage"));
@@ -34,6 +35,7 @@ export const routes: RouteObject[] = [
     element: <RequireAuth />,
     children: [
       { path: "/queue", element: page(QueuePage) },
+      { path: "/alerts/:id", element: page(InvestigationPage) },
       { path: "/capacity", element: page(CapacityPage) },
       { path: "/cases", element: page(CasesPage) },
       { path: "/evidence-room", element: page(EvidenceRoomPage) },

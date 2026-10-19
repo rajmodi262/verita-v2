@@ -38,3 +38,6 @@ Thumbs.db
 .idea/
 .vscode/
 .audit-requirements.txt
+
+# local agent/editor config
+.claude/

@@ -3,8 +3,11 @@ import { cx } from "../../lib/cx";
 import styles from "./Stamp.module.css";
 
 export interface StampProps {
-  /** Stamps are declarations (DESIGN.md): alert = flagged/needs action, verified = proven. */
-  tone: "alert" | "verified";
+  /**
+   * Stamps are declarations (DESIGN.md): alert = flagged/needs action, verified = proven,
+   * assumption = a number we chose rather than measured (PIVOT §13 AssumptionStamp).
+   */
+  tone: "alert" | "verified" | "assumption";
   children: string;
 }
 

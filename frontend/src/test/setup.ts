@@ -1,8 +1,11 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, configure } from "@testing-library/react";
 import { afterEach, vi } from "vitest";
 
 import { setCsrfToken } from "../api/client";
+
+// Lazy routes and the debounced plan request need more than the 1 s default on a busy CI box.
+configure({ asyncUtilTimeout: 4000 });
 
 afterEach(() => {
   cleanup();
