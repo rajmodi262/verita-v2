@@ -1,0 +1,120 @@
+[project]
+name = "verita"
+version = "0.1.0"
+description = "Detect → Decide → Defend: an auditable anti-money-laundering system."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "alembic>=1.20.0",
+    "argon2-cffi>=25.1.0",
+    "duckdb>=1.5.6",
+    "fastapi>=0.148.0",
+    "jinja2>=3.1.6",
+    "numpy>=2.4.6",
+    "pandas>=3.0.6",
+    "psutil>=7.2.2",
+    "psycopg[binary]>=3.3.6",
+    "pyarrow>=26.0.0",
+    "pydantic>=2.14.1",
+    "pydantic-settings>=2.16.0",
+    "pyyaml>=6.0.3",
+    "sqlalchemy>=2",
+    "structlog>=26.1.0",
+    "typer>=0.27.3",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+verita = "verita.cli:app"
+
+[project.optional-dependencies]
+dev = [
+    "bandit>=1.9.4",
+    "httpx>=0.28.1",
+    "hypothesis>=6.170.2",
+    "mypy>=2.4.0",
+    "pandas-stubs>=3.0.5.260914",
+    "pip-audit>=2.10.1",
+    "poethepoet>=0.49.0",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.1",
+    "testcontainers[postgres]>=4.15.0",
+    "types-psutil>=7.2.2.20260906",
+    "types-pyyaml>=6.0.12.20260906",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["verita"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "S", "BLE", "SIM", "RUF", "PL", "N", "ANN", "TID"]
+ignore = [
+  "PLR0913",  # FastAPI endpoints legitimately take many dependencies
+  "ANN401",   # Any is allowed at explicit boundaries
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "ANN", "PLR2004", "S105", "S106", "PLC0415", "S608", "PLR0917"]
+"migrations/**" = ["ANN", "N999"]
+# The data card template is Markdown table text; wrapping it would change the output.
+"verita/pipeline/datacard.py" = ["E501"]
+# Pipeline SQL is assembled only from internal constants, config enums escaped as literals, and
+# our own file paths (escaped). No user input reaches it (ADR-007), so S608 is noise here.
+"verita/pipeline/*.py" = ["S608"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["verita"]
+
+[[tool.mypy.overrides]]
+module = ["pyarrow", "pyarrow.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers --cov=verita --cov-branch --cov-report=term-missing --cov-fail-under=90"
+markers = [
+  "postgres: needs a Postgres instance (testcontainers or VERITA_TEST_DATABASE_URL)",
+]
+
+[tool.poe.tasks]
+lint = "ruff check ."
+fmt = "ruff format ."
+fmt-check = "ruff format --check ."
+typecheck = "mypy"
+test = "pytest"
+security = ["_bandit", "_export", "_audit"]
+_bandit = "bandit -q -r verita -c pyproject.toml"
+_export = "uv export --frozen --no-emit-project --all-extras --no-hashes --quiet -o .audit-requirements.txt"
+_audit = "pip-audit --strict --progress-spinner off -r .audit-requirements.txt"
+migrate = "verita db upgrade"
+serve = "uvicorn verita.api.app:create_app --factory --reload --port 8000"
+check = ["lint", "fmt-check", "typecheck", "test"]
+fixtures = "verita data fixture"
+pipeline-fixture = ["fixtures", { cmd = "verita data all --dataset fixture" }]
+pipeline = [
+  { cmd = "verita data all --dataset hi_small" },
+  { cmd = "verita data all --dataset li_small" },
+  { cmd = "verita data card" },
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "migrations"]
+# B608 duplicates ruff S608, which stays enforced everywhere except the pipeline modules
+# (see docs/SECURITY_EXCEPTIONS.md SE-2). Ruff can scope the exception per file; bandit cannot.
+skips = ["B608"]

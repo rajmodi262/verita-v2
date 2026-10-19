@@ -1,0 +1,27 @@
+# Datasets the pipeline knows about. Paths are relative to the repository root.
+schema_version: 1
+sources:
+  ibm_aml:
+    title: "IBM Transactions for Anti Money Laundering (AML)"
+    url: "https://www.kaggle.com/datasets/ealtman2019/ibm-transactions-for-anti-money-laundering-aml"
+    citation: "E. Altman, J. Blanuša, L. von Niederhäusern, B. Egressy, A. Anghel, K. Atasu. Realistic Synthetic Financial Transactions for Anti-Money Laundering Models. NeurIPS 2023 Datasets and Benchmarks. arXiv:2306.16424"
+    license: "TO CONFIRM — read the license shown on the Kaggle page and record it here before publishing"
+    synthetic: true
+datasets:
+  hi_small:
+    description: "IBM AML HI-Small (higher illicit ratio) — primary"
+    source: ibm_aml
+    raw_dir: data/raw/ibm_aml
+    transactions: HI-Small_Trans.csv
+    patterns: HI-Small_Patterns.txt
+  li_small:
+    description: "IBM AML LI-Small (lower illicit ratio) — robustness"
+    source: ibm_aml
+    raw_dir: data/raw/ibm_aml
+    transactions: LI-Small_Trans.csv
+    patterns: LI-Small_Patterns.txt
+  fixture:
+    description: "Generated fixture in IBM format (all 8 typologies) — tests and development"
+    raw_dir: data/fixture
+    transactions: FIXTURE_Trans.csv
+    patterns: FIXTURE_Patterns.txt

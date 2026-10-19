@@ -1,0 +1,19 @@
+.stamp {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border: 3px double currentcolor;
+  border-radius: var(--radius-stamp);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.alert {
+  color: var(--color-alert-text);
+}
+
+.verified {
+  color: var(--color-verified-text);
+}

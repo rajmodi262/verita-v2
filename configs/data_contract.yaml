@@ -1,0 +1,38 @@
+# Data contract for IBM-format transaction files (PIVOT §4.5).
+# Ingest fails on any violation. If real data contains a value not listed here, add it
+# deliberately (with a note) rather than loosening the check.
+schema_version: 1
+timestamp_format: "%Y/%m/%d %H:%M"
+currencies:
+  - Australian Dollar
+  - Bitcoin
+  - Brazil Real
+  - Canadian Dollar
+  - Euro
+  - Mexican Peso
+  - Ruble
+  - Rupee
+  - Saudi Riyal
+  - Shekel
+  - Swiss Franc
+  - UK Pound
+  - US Dollar
+  - Yen
+  - Yuan
+payment_formats:
+  - ACH
+  - Bitcoin
+  - Cash
+  - Cheque
+  - Credit Card
+  - Reinvestment
+  - Wire
+typologies:
+  - FAN-OUT
+  - FAN-IN
+  - GATHER-SCATTER
+  - SCATTER-GATHER
+  - CYCLE
+  - RANDOM
+  - BIPARTITE
+  - STACK

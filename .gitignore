@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Node
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+playwright-report/
+test-results/
+
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+*.pem
+!keys/*-pub.pem
+
+# Data and generated artifacts (raw data is downloaded, never committed)
+data/raw/
+data/processed/
+artifacts/
+*.parquet
+*.db
+*.sqlite
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.audit-requirements.txt

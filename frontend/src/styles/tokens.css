@@ -1,0 +1,88 @@
+/*
+ * Verita design tokens — "The Forensic Ledger" (DESIGN.md).
+ * The ONLY file allowed to contain raw colors and font sizes (enforced by Stylelint).
+ * Text/background pairs are checked for WCAG AAA (7:1) by src/styles/contrast.test.ts.
+ */
+
+:root,
+[data-theme="paper"] {
+  color-scheme: light;
+
+  /* Grounds */
+  --color-bg: #f3eee2;
+  --color-surface: #fffdf6;
+  --color-surface-2: #ece5d3;
+
+  /* Ink (text) */
+  --color-ink: #14120b;
+  --color-ink-muted: #4a4434;
+  --color-alert-text: #7a1d10;
+  --color-verified-text: #0e4a30;
+  --color-link: #2b3a8c;
+
+  /* Non-text marks (borders, fills, focus) */
+  --color-border: #14120b;
+  --color-rule: #b9ae93;
+  --color-alert: #c2331f;
+  --color-verified: #1c6e4a;
+  --color-gold: #a8842c;
+  --color-focus: #8a6a1f;
+  --color-on-ink: #f3eee2;
+  --shadow-desk: 4px 4px 0 #14120b33;
+  --shadow-desk-press: 1px 1px 0 #14120b33;
+}
+
+[data-theme="night"] {
+  color-scheme: dark;
+
+  --color-bg: #131110;
+  --color-surface: #1b1916;
+  --color-surface-2: #24211c;
+  --color-ink: #ece4cf;
+  --color-ink-muted: #c9bea2;
+  --color-alert-text: #ffa494;
+  --color-verified-text: #7fdcb1;
+  --color-link: #b3bdff;
+  --color-border: #ece4cf;
+  --color-rule: #4a4434;
+  --color-alert: #ff6b55;
+  --color-verified: #4fd6a0;
+  --color-gold: #d9b75a;
+  --color-focus: #d9b75a;
+  --color-on-ink: #131110;
+  --shadow-desk: 4px 4px 0 #00000080;
+  --shadow-desk-press: 1px 1px 0 #00000080;
+}
+
+:root {
+  /* Type — nothing below 12px (PIVOT §13.2). */
+  --font-display: "Fraunces Variable", georgia, serif;
+  --font-title: "Space Grotesk Variable", system-ui, sans-serif;
+  --font-body: "Inter Variable", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+  --fs-label: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-body: 0.9375rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.5rem;
+  --fs-xl: 2rem;
+  --fs-display: clamp(2.25rem, 5vw, 3.5rem);
+
+  /* Space */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Shape and motion */
+  --border-width: 2px;
+  --radius-stamp: 6px;
+  --rail-width: 220px;
+  --topbar-height: 52px;
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+}

@@ -1,0 +1,19 @@
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--color-alert);
+  background: var(--color-surface);
+}
+
+.title {
+  font-size: var(--fs-md);
+  color: var(--color-alert-text);
+}
+
+.meta {
+  font-size: var(--fs-sm);
+  color: var(--color-ink-muted);
+}
