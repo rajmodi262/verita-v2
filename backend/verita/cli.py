@@ -16,7 +16,7 @@ from alembic.config import Config
 from verita.core.config import get_settings
 from verita.core.errors import AppError
 from verita.db.models import Role
-from verita.db.session import make_engine, make_session_factory, session_scope
+from verita.db.session import make_engine, make_session_factory, transaction
 from verita.pipeline import run as pipeline
 from verita.pipeline.config import REPO_ROOT, PipelineError, get_dataset
 from verita.pipeline.datacard import write_card
@@ -32,6 +32,12 @@ data_app = typer.Typer(
 app.add_typer(db_app, name="db")
 app.add_typer(users_app, name="users")
 app.add_typer(data_app, name="data")
+detect_app = typer.Typer(no_args_is_help=True, help="Detect (M2): features, training, evaluation.")
+app.add_typer(detect_app, name="detect")
+decide_app = typer.Typer(
+    no_args_is_help=True, help="Decide (M4): calibration, guarantee, capacity."
+)
+app.add_typer(decide_app, name="decide")
 
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
 
@@ -68,7 +74,7 @@ def users_create(
     settings = get_settings()
     factory = make_session_factory(make_engine(settings.database_url))
     try:
-        for db in session_scope(factory):
+        with transaction(factory) as db:
             user = AuthService(db, settings).create_user(username, password, role)
             typer.echo(f"Created {user.username} ({user.role})")
     except (AppError, ValueError) as exc:
@@ -83,7 +89,7 @@ def users_seed_demo() -> None:
     password = os.environ.get("VERITA_DEMO_PASSWORD") or secrets.token_urlsafe(12)
     factory = make_session_factory(make_engine(settings.database_url))
     created: list[str] = []
-    for db in session_scope(factory):
+    with transaction(factory) as db:
         service = AuthService(db, settings)
         for username, role in DEMO_USERS:
             try:
@@ -173,3 +179,84 @@ def data_card(
         typer.echo(f"Error: {exc}", err=True)
         raise typer.Exit(code=1) from exc
     typer.echo(f"Wrote {path}")
+
+
+@detect_app.command("features")
+def detect_features(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Build as-of features for every transaction."""
+    from verita.ml import stages  # noqa: PLC0415 - heavy ML imports only when needed
+
+    _run_stage(stages.stage_features, dataset, root)
+
+
+@detect_app.command("train")
+def detect_train(
+    dataset: DatasetOpt,
+    root: RootOpt = REPO_ROOT,
+    quick: Annotated[bool, typer.Option(help="Tiny settings (tests, fixture)")] = False,
+) -> None:
+    """Tune, train, evaluate and save the detector; writes artifacts/<dataset>/detect/."""
+    from verita.ml import stages  # noqa: PLC0415
+
+    _run_stage(lambda ds: stages.stage_detect(ds, quick=quick), dataset, root)
+
+
+@detect_app.command("alerts")
+def detect_alerts(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Build the evidence store and load test-window alerts into the database."""
+    from verita.ml import stages  # noqa: PLC0415
+
+    settings = get_settings()
+    factory = make_session_factory(make_engine(settings.database_url))
+
+    def run(ds: Any) -> Any:
+        with transaction(factory) as db:
+            return stages.stage_alerts(ds, db)
+
+    _run_stage(run, dataset, root)
+
+
+@app.command("openapi")
+def export_openapi(
+    out: Annotated[Path, typer.Option(help="Where to write the schema")] = REPO_ROOT
+    / "frontend"
+    / "src"
+    / "api"
+    / "openapi.json",
+) -> None:
+    """Write the OpenAPI schema the frontend types are generated from."""
+    from verita.api.app import create_app  # noqa: PLC0415
+    from verita.core.config import Settings  # noqa: PLC0415
+
+    schema = create_app(Settings(env="dev", _env_file=None)).openapi()
+    out.write_text(json.dumps(schema, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    typer.echo(f"Wrote {out}")
+
+
+@decide_app.command("run")
+def decide_run(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Calibrate, fit recall guarantees, replay coverage, forecast, drift, frontiers."""
+    from verita.ml import stages  # noqa: PLC0415
+
+    settings = get_settings()
+    factory = make_session_factory(make_engine(settings.database_url))
+
+    def run(ds: Any) -> Any:
+        with transaction(factory) as db:
+            return stages.stage_decide(ds, db)
+
+    _run_stage(run, dataset, root)
+
+
+@app.command("bench")
+def bench(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Latency of subgraph extraction and exact plans; writes artifacts/<dataset>/bench.json."""
+    from verita.ml.bench import run_bench  # noqa: PLC0415
+
+    factory = make_session_factory(make_engine(get_settings().database_url))
+
+    def run(ds: Any) -> Any:
+        with transaction(factory) as db:
+            return run_bench(ds, db)
+
+    _run_stage(run, dataset, root)

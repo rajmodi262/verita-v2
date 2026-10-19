@@ -22,4 +22,6 @@ analysts:
 costs:
   analyst_hourly_rate: 55.0          # loaded cost, in the dataset's base currency
   missed_laundering_cost_rate: 1.0   # cost of a miss = rate × amount laundered
-label_delay_days: 30                 # how long until a true label becomes known (replay / ACI)
+# How long until an alert's true outcome becomes known (ACI replay). Hours, because the IBM
+# data has only ~10 days of bulk traffic (see PIVOT §4.4).
+label_delay_hours: 24

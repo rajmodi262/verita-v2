@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from contextlib import contextmanager
 
 from sqlalchemy import Engine, create_engine, event
 from sqlalchemy.engine.interfaces import DBAPIConnection
@@ -44,3 +45,14 @@ def session_scope(factory: sessionmaker[Session]) -> Iterator[Session]:
         raise
     finally:
         session.close()
+
+
+@contextmanager
+def transaction(factory: sessionmaker[Session]) -> Iterator[Session]:
+    """``with transaction(factory) as db:`` — commits even when the block returns early.
+
+    Scripts must use this rather than iterating :func:`session_scope`: a ``return`` inside
+    ``for db in session_scope(...)`` closes the generator at its ``yield`` and the commit after
+    it never runs (that silently discarded every CLI write until it was caught).
+    """
+    yield from session_scope(factory)

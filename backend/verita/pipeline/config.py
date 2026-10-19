@@ -98,6 +98,14 @@ class Dataset:
         return self.processed_dir / "account_day.parquet"
 
     @property
+    def features_parquet(self) -> Path:
+        return self.processed_dir / "features.parquet"
+
+    @property
+    def models_dir(self) -> Path:
+        return self.artifacts_dir / "models"
+
+    @property
     def splits_json(self) -> Path:
         return self.artifacts_dir / "splits.json"
 

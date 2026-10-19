@@ -1,0 +1,3060 @@
+{
+  "components": {
+    "schemas": {
+      "AlertDetail": {
+        "properties": {
+          "account_id": {
+            "title": "Account Id",
+            "type": "string"
+          },
+          "alert_date": {
+            "title": "Alert Date",
+            "type": "string"
+          },
+          "calibrated_prob": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibrated Prob"
+          },
+          "dispositions": {
+            "items": {
+              "$ref": "#/components/schemas/DispositionOut"
+            },
+            "title": "Dispositions",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "n_flagged": {
+            "title": "N Flagged",
+            "type": "integer"
+          },
+          "n_transactions": {
+            "title": "N Transactions",
+            "type": "integer"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/Reason"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "score_top3_mean": {
+            "title": "Score Top3 Mean",
+            "type": "number"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "top_amount": {
+            "title": "Top Amount",
+            "type": "number"
+          },
+          "top_currency": {
+            "title": "Top Currency",
+            "type": "string"
+          },
+          "top_txn_id": {
+            "title": "Top Txn Id",
+            "type": "integer"
+          },
+          "typology_conf": {
+            "title": "Typology Conf",
+            "type": "number"
+          },
+          "typology_pred": {
+            "title": "Typology Pred",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "alert_date",
+          "score",
+          "score_top3_mean",
+          "calibrated_prob",
+          "typology_pred",
+          "typology_conf",
+          "top_txn_id",
+          "top_amount",
+          "top_currency",
+          "n_transactions",
+          "n_flagged",
+          "status",
+          "reasons",
+          "dispositions"
+        ],
+        "title": "AlertDetail",
+        "type": "object"
+      },
+      "AlertList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AlertSummary"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          },
+          "threshold": {
+            "title": "Threshold",
+            "type": "number"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor",
+          "total",
+          "threshold"
+        ],
+        "title": "AlertList",
+        "type": "object"
+      },
+      "AlertSummary": {
+        "properties": {
+          "account_id": {
+            "title": "Account Id",
+            "type": "string"
+          },
+          "alert_date": {
+            "title": "Alert Date",
+            "type": "string"
+          },
+          "calibrated_prob": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibrated Prob"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "n_flagged": {
+            "title": "N Flagged",
+            "type": "integer"
+          },
+          "n_transactions": {
+            "title": "N Transactions",
+            "type": "integer"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "score_top3_mean": {
+            "title": "Score Top3 Mean",
+            "type": "number"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "top_amount": {
+            "title": "Top Amount",
+            "type": "number"
+          },
+          "top_currency": {
+            "title": "Top Currency",
+            "type": "string"
+          },
+          "top_txn_id": {
+            "title": "Top Txn Id",
+            "type": "integer"
+          },
+          "typology_conf": {
+            "title": "Typology Conf",
+            "type": "number"
+          },
+          "typology_pred": {
+            "title": "Typology Pred",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "account_id",
+          "alert_date",
+          "score",
+          "score_top3_mean",
+          "calibrated_prob",
+          "typology_pred",
+          "typology_conf",
+          "top_txn_id",
+          "top_amount",
+          "top_currency",
+          "n_transactions",
+          "n_flagged",
+          "status"
+        ],
+        "title": "AlertSummary",
+        "type": "object"
+      },
+      "AlphaPoint": {
+        "properties": {
+          "alpha_t": {
+            "title": "Alpha T",
+            "type": "number"
+          },
+          "hour": {
+            "title": "Hour",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hour",
+          "alpha_t"
+        ],
+        "title": "AlphaPoint",
+        "type": "object"
+      },
+      "Assumptions": {
+        "properties": {
+          "analyst_hourly_rate": {
+            "title": "Analyst Hourly Rate",
+            "type": "number"
+          },
+          "max_analysts": {
+            "title": "Max Analysts",
+            "type": "integer"
+          },
+          "median_minutes": {
+            "title": "Median Minutes",
+            "type": "number"
+          },
+          "min_analysts": {
+            "title": "Min Analysts",
+            "type": "integer"
+          },
+          "miss_cost_rate": {
+            "title": "Miss Cost Rate",
+            "type": "number"
+          },
+          "overridden": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Overridden",
+            "type": "array"
+          },
+          "productive_hours": {
+            "title": "Productive Hours",
+            "type": "number"
+          },
+          "typology_multiplier": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Typology Multiplier",
+            "type": "object"
+          }
+        },
+        "required": [
+          "median_minutes",
+          "typology_multiplier",
+          "productive_hours",
+          "analyst_hourly_rate",
+          "miss_cost_rate",
+          "min_analysts",
+          "max_analysts"
+        ],
+        "title": "Assumptions",
+        "type": "object"
+      },
+      "Band": {
+        "description": "Out-of-sample ensemble forecast for one hour (issued at the latest rolling origin).",
+        "properties": {
+          "hour": {
+            "title": "Hour",
+            "type": "string"
+          },
+          "q025": {
+            "title": "Q025",
+            "type": "number"
+          },
+          "q10": {
+            "title": "Q10",
+            "type": "number"
+          },
+          "q50": {
+            "title": "Q50",
+            "type": "number"
+          },
+          "q90": {
+            "title": "Q90",
+            "type": "number"
+          },
+          "q975": {
+            "title": "Q975",
+            "type": "number"
+          }
+        },
+        "required": [
+          "hour",
+          "q025",
+          "q10",
+          "q50",
+          "q90",
+          "q975"
+        ],
+        "title": "Band",
+        "type": "object"
+      },
+      "Calibration": {
+        "properties": {
+          "after": {
+            "$ref": "#/components/schemas/CalibrationSide"
+          },
+          "before": {
+            "$ref": "#/components/schemas/CalibrationSide"
+          },
+          "evaluated_on": {
+            "$ref": "#/components/schemas/SplitInfo"
+          },
+          "fitted_on": {
+            "$ref": "#/components/schemas/SplitInfo"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fitted_on",
+          "evaluated_on",
+          "before",
+          "after",
+          "note"
+        ],
+        "title": "Calibration",
+        "type": "object"
+      },
+      "CalibrationSide": {
+        "properties": {
+          "brier": {
+            "title": "Brier",
+            "type": "number"
+          },
+          "ece": {
+            "title": "Ece",
+            "type": "number"
+          },
+          "reliability": {
+            "items": {
+              "$ref": "#/components/schemas/ReliabilityBin"
+            },
+            "title": "Reliability",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ece",
+          "brier",
+          "reliability"
+        ],
+        "title": "CalibrationSide",
+        "type": "object"
+      },
+      "CapacityMeta": {
+        "properties": {
+          "alphas": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Alphas",
+            "type": "array"
+          },
+          "days": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "default_alpha": {
+            "title": "Default Alpha",
+            "type": "number"
+          },
+          "frontier_alphas": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Frontier Alphas",
+            "type": "array"
+          },
+          "modes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Modes",
+            "type": "array"
+          },
+          "objectives": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Objectives",
+            "type": "array"
+          },
+          "operations": {
+            "$ref": "#/components/schemas/Assumptions"
+          }
+        },
+        "required": [
+          "days",
+          "alphas",
+          "frontier_alphas",
+          "modes",
+          "objectives",
+          "default_alpha",
+          "operations"
+        ],
+        "title": "CapacityMeta",
+        "type": "object"
+      },
+      "Coverage": {
+        "properties": {
+          "alpha": {
+            "title": "Alpha",
+            "type": "number"
+          },
+          "gamma": {
+            "title": "Gamma",
+            "type": "number"
+          },
+          "label_delay_sensitivity": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/OverallRecall"
+            },
+            "title": "Label Delay Sensitivity",
+            "type": "object"
+          },
+          "runs": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ReplayRun"
+            },
+            "title": "Runs",
+            "type": "object"
+          },
+          "tail_days": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tail Days",
+            "type": "array"
+          }
+        },
+        "required": [
+          "alpha",
+          "runs",
+          "tail_days",
+          "label_delay_sensitivity",
+          "gamma"
+        ],
+        "title": "Coverage",
+        "type": "object"
+      },
+      "DayCount": {
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "alerts"
+        ],
+        "title": "DayCount",
+        "type": "object"
+      },
+      "DayRecall": {
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "caught": {
+            "title": "Caught",
+            "type": "integer"
+          },
+          "day": {
+            "title": "Day",
+            "type": "string"
+          },
+          "positives": {
+            "title": "Positives",
+            "type": "integer"
+          },
+          "recall": {
+            "$ref": "#/components/schemas/Interval"
+          },
+          "review_share": {
+            "title": "Review Share",
+            "type": "number"
+          },
+          "reviewed": {
+            "title": "Reviewed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "positives",
+          "caught",
+          "recall",
+          "reviewed",
+          "alerts",
+          "review_share",
+          "day"
+        ],
+        "title": "DayRecall",
+        "type": "object"
+      },
+      "DispositionAction": {
+        "enum": [
+          "escalate",
+          "dismiss",
+          "reopen"
+        ],
+        "title": "DispositionAction",
+        "type": "string"
+      },
+      "DispositionIn": {
+        "properties": {
+          "action": {
+            "$ref": "#/components/schemas/DispositionAction"
+          },
+          "note": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Note",
+            "type": "string"
+          },
+          "reason_code": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Reason Code",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "reason_code"
+        ],
+        "title": "DispositionIn",
+        "type": "object"
+      },
+      "DispositionOut": {
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "reason_code": {
+            "title": "Reason Code",
+            "type": "string"
+          },
+          "user_id": {
+            "title": "User Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "action",
+          "reason_code",
+          "note",
+          "user_id",
+          "created_at"
+        ],
+        "title": "DispositionOut",
+        "type": "object"
+      },
+      "DominantPath": {
+        "properties": {
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Evidence Ids",
+            "type": "array"
+          },
+          "txn_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Txn Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "txn_ids",
+          "evidence_ids"
+        ],
+        "title": "DominantPath",
+        "type": "object"
+      },
+      "Drift": {
+        "properties": {
+          "baseline": {
+            "title": "Baseline",
+            "type": "string"
+          },
+          "by_day": {
+            "items": {
+              "$ref": "#/components/schemas/DriftDay"
+            },
+            "title": "By Day",
+            "type": "array"
+          },
+          "features_checked": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Features Checked",
+            "type": "array"
+          }
+        },
+        "required": [
+          "baseline",
+          "features_checked",
+          "by_day"
+        ],
+        "title": "Drift",
+        "type": "object"
+      },
+      "DriftDay": {
+        "properties": {
+          "day": {
+            "title": "Day",
+            "type": "string"
+          },
+          "features": {
+            "items": {
+              "$ref": "#/components/schemas/DriftFeature"
+            },
+            "title": "Features",
+            "type": "array"
+          },
+          "max_psi": {
+            "title": "Max Psi",
+            "type": "number"
+          },
+          "recalibrate": {
+            "title": "Recalibrate",
+            "type": "boolean"
+          },
+          "rows": {
+            "title": "Rows",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "day",
+          "rows",
+          "features",
+          "max_psi",
+          "recalibrate"
+        ],
+        "title": "DriftDay",
+        "type": "object"
+      },
+      "DriftFeature": {
+        "properties": {
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "ks_pvalue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ks Pvalue"
+          },
+          "ks_statistic": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ks Statistic"
+          },
+          "psi": {
+            "title": "Psi",
+            "type": "number"
+          },
+          "severity": {
+            "title": "Severity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "feature",
+          "psi",
+          "severity",
+          "ks_statistic",
+          "ks_pvalue"
+        ],
+        "title": "DriftFeature",
+        "type": "object"
+      },
+      "ForecastOut": {
+        "properties": {
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/Band"
+            },
+            "title": "Bands",
+            "type": "array"
+          },
+          "horizon_hours": {
+            "title": "Horizon Hours",
+            "type": "integer"
+          },
+          "mase_scale": {
+            "title": "Mase Scale",
+            "type": "number"
+          },
+          "models": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ModelScore"
+            },
+            "title": "Models",
+            "type": "object"
+          },
+          "origins": {
+            "title": "Origins",
+            "type": "integer"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/HourCount"
+            },
+            "title": "Series",
+            "type": "array"
+          },
+          "step_hours": {
+            "title": "Step Hours",
+            "type": "integer"
+          },
+          "test_start": {
+            "title": "Test Start",
+            "type": "string"
+          },
+          "workload_definition": {
+            "title": "Workload Definition",
+            "type": "string"
+          }
+        },
+        "required": [
+          "origins",
+          "horizon_hours",
+          "step_hours",
+          "mase_scale",
+          "models",
+          "series",
+          "bands",
+          "test_start",
+          "workload_definition"
+        ],
+        "title": "ForecastOut",
+        "type": "object"
+      },
+      "Frontier": {
+        "properties": {
+          "alpha": {
+            "title": "Alpha",
+            "type": "number"
+          },
+          "day": {
+            "title": "Day",
+            "type": "string"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "objective": {
+            "title": "Objective",
+            "type": "string"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/PlanPoint"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "solver": {
+            "title": "Solver",
+            "type": "string"
+          }
+        },
+        "required": [
+          "day",
+          "alpha",
+          "mode",
+          "objective",
+          "solver",
+          "points"
+        ],
+        "title": "Frontier",
+        "type": "object"
+      },
+      "GraphEdge": {
+        "properties": {
+          "amount_paid": {
+            "title": "Amount Paid",
+            "type": "number"
+          },
+          "amount_received": {
+            "title": "Amount Received",
+            "type": "number"
+          },
+          "currency_paid": {
+            "title": "Currency Paid",
+            "type": "string"
+          },
+          "currency_received": {
+            "title": "Currency Received",
+            "type": "string"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "flagged": {
+            "title": "Flagged",
+            "type": "boolean"
+          },
+          "from": {
+            "title": "From",
+            "type": "string"
+          },
+          "on_dominant_path": {
+            "title": "On Dominant Path",
+            "type": "boolean"
+          },
+          "payment_format": {
+            "title": "Payment Format",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "to": {
+            "title": "To",
+            "type": "string"
+          },
+          "ts": {
+            "title": "Ts",
+            "type": "string"
+          },
+          "txn_id": {
+            "title": "Txn Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "txn_id",
+          "from",
+          "to",
+          "ts",
+          "amount_paid",
+          "currency_paid",
+          "amount_received",
+          "currency_received",
+          "payment_format",
+          "score",
+          "flagged",
+          "on_dominant_path"
+        ],
+        "title": "GraphEdge",
+        "type": "object"
+      },
+      "GraphNode": {
+        "properties": {
+          "degree": {
+            "title": "Degree",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "is_center": {
+            "title": "Is Center",
+            "type": "boolean"
+          },
+          "max_score": {
+            "title": "Max Score",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "is_center",
+          "max_score",
+          "degree"
+        ],
+        "title": "GraphNode",
+        "type": "object"
+      },
+      "Guarantee": {
+        "properties": {
+          "analysts_needed": {
+            "title": "Analysts Needed",
+            "type": "integer"
+          },
+          "feasible": {
+            "title": "Feasible",
+            "type": "boolean"
+          },
+          "required_alerts": {
+            "title": "Required Alerts",
+            "type": "integer"
+          },
+          "required_minutes": {
+            "title": "Required Minutes",
+            "type": "number"
+          }
+        },
+        "required": [
+          "required_alerts",
+          "required_minutes",
+          "feasible",
+          "analysts_needed"
+        ],
+        "title": "Guarantee",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HourCount": {
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "hour": {
+            "title": "Hour",
+            "type": "string"
+          }
+        },
+        "required": [
+          "hour",
+          "alerts"
+        ],
+        "title": "HourCount",
+        "type": "object"
+      },
+      "Interval": {
+        "properties": {
+          "high": {
+            "title": "High",
+            "type": "number"
+          },
+          "low": {
+            "title": "Low",
+            "type": "number"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "value",
+          "low",
+          "high"
+        ],
+        "title": "Interval",
+        "type": "object"
+      },
+      "LiveResponse": {
+        "properties": {
+          "status": {
+            "const": "ok",
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "version"
+        ],
+        "title": "LiveResponse",
+        "type": "object"
+      },
+      "LoginRequest": {
+        "properties": {
+          "password": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Password",
+            "type": "string"
+          },
+          "username": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username",
+          "password"
+        ],
+        "title": "LoginRequest",
+        "type": "object"
+      },
+      "LoginResponse": {
+        "properties": {
+          "csrf_token": {
+            "title": "Csrf Token",
+            "type": "string"
+          },
+          "expires_at": {
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "user": {
+            "$ref": "#/components/schemas/UserOut"
+          }
+        },
+        "required": [
+          "user",
+          "csrf_token",
+          "expires_at"
+        ],
+        "title": "LoginResponse",
+        "type": "object"
+      },
+      "ModelInfo": {
+        "properties": {
+          "alert_floor": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alert Floor"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "threshold": {
+            "title": "Threshold",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "dataset",
+          "threshold",
+          "alert_floor"
+        ],
+        "title": "ModelInfo",
+        "type": "object"
+      },
+      "ModelScore": {
+        "properties": {
+          "coverage_80": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage 80"
+          },
+          "coverage_95": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage 95"
+          },
+          "mase": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mase"
+          },
+          "pinball_10": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinball 10"
+          },
+          "pinball_50": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinball 50"
+          },
+          "pinball_90": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pinball 90"
+          }
+        },
+        "required": [
+          "mase",
+          "pinball_10",
+          "pinball_50",
+          "pinball_90",
+          "coverage_80",
+          "coverage_95"
+        ],
+        "title": "ModelScore",
+        "type": "object"
+      },
+      "Motif": {
+        "properties": {
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "signals": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Signals",
+            "type": "array"
+          }
+        },
+        "required": [
+          "evidence_id",
+          "signals"
+        ],
+        "title": "Motif",
+        "type": "object"
+      },
+      "OverallRecall": {
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "alpha_trace": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/AlphaPoint"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alpha Trace"
+          },
+          "caught": {
+            "title": "Caught",
+            "type": "integer"
+          },
+          "gamma": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gamma"
+          },
+          "label_delay_hours": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label Delay Hours"
+          },
+          "positives": {
+            "title": "Positives",
+            "type": "integer"
+          },
+          "recall": {
+            "$ref": "#/components/schemas/Interval"
+          },
+          "review_share": {
+            "title": "Review Share",
+            "type": "number"
+          },
+          "reviewed": {
+            "title": "Reviewed",
+            "type": "integer"
+          },
+          "target_recall": {
+            "title": "Target Recall",
+            "type": "number"
+          }
+        },
+        "required": [
+          "positives",
+          "caught",
+          "recall",
+          "reviewed",
+          "alerts",
+          "review_share",
+          "target_recall"
+        ],
+        "title": "OverallRecall",
+        "type": "object"
+      },
+      "Plan": {
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "alpha": {
+            "title": "Alpha",
+            "type": "number"
+          },
+          "analysts": {
+            "title": "Analysts",
+            "type": "integer"
+          },
+          "assumptions": {
+            "$ref": "#/components/schemas/Assumptions"
+          },
+          "capacity_minutes": {
+            "title": "Capacity Minutes",
+            "type": "number"
+          },
+          "day": {
+            "title": "Day",
+            "type": "string"
+          },
+          "expected_cases_caught": {
+            "title": "Expected Cases Caught",
+            "type": "number"
+          },
+          "expected_cases_total": {
+            "title": "Expected Cases Total",
+            "type": "number"
+          },
+          "expected_miss_cost_usd": {
+            "title": "Expected Miss Cost Usd",
+            "type": "number"
+          },
+          "expected_missed_value_usd": {
+            "title": "Expected Missed Value Usd",
+            "type": "number"
+          },
+          "expected_recall": {
+            "$ref": "#/components/schemas/Interval"
+          },
+          "expected_value_caught_usd": {
+            "title": "Expected Value Caught Usd",
+            "type": "number"
+          },
+          "greedy_objective_value": {
+            "title": "Greedy Objective Value",
+            "type": "number"
+          },
+          "guarantee": {
+            "$ref": "#/components/schemas/Guarantee"
+          },
+          "guaranteed_alert_ids": {
+            "description": "Alerts the guarantee requires; empty when the guarantee is infeasible",
+            "items": {
+              "type": "integer"
+            },
+            "title": "Guaranteed Alert Ids",
+            "type": "array"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "objective": {
+            "title": "Objective",
+            "type": "string"
+          },
+          "objective_value": {
+            "title": "Objective Value",
+            "type": "number"
+          },
+          "optimality_gap": {
+            "title": "Optimality Gap",
+            "type": "number"
+          },
+          "outside_expected": {
+            "title": "Outside Expected",
+            "type": "number"
+          },
+          "realised": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Realised"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "review_cost_usd": {
+            "title": "Review Cost Usd",
+            "type": "number"
+          },
+          "review_minutes": {
+            "title": "Review Minutes",
+            "type": "number"
+          },
+          "reviewed": {
+            "title": "Reviewed",
+            "type": "integer"
+          },
+          "selected_alert_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Selected Alert Ids",
+            "type": "array"
+          },
+          "solver": {
+            "title": "Solver",
+            "type": "string"
+          },
+          "target_recall": {
+            "title": "Target Recall",
+            "type": "number"
+          },
+          "threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Threshold"
+          },
+          "value_recall": {
+            "title": "Value Recall",
+            "type": "number"
+          }
+        },
+        "required": [
+          "analysts",
+          "objective",
+          "capacity_minutes",
+          "alerts",
+          "reviewed",
+          "review_minutes",
+          "guarantee",
+          "expected_recall",
+          "expected_cases_caught",
+          "expected_cases_total",
+          "expected_value_caught_usd",
+          "expected_missed_value_usd",
+          "value_recall",
+          "review_cost_usd",
+          "expected_miss_cost_usd",
+          "objective_value",
+          "greedy_objective_value",
+          "optimality_gap",
+          "solver",
+          "day",
+          "alpha",
+          "mode",
+          "target_recall",
+          "threshold",
+          "selected_alert_ids",
+          "guaranteed_alert_ids",
+          "assumptions",
+          "outside_expected"
+        ],
+        "title": "Plan",
+        "type": "object"
+      },
+      "PlanPoint": {
+        "description": "One staffing level: what reviewing the best alerts that fit would achieve.",
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "analysts": {
+            "title": "Analysts",
+            "type": "integer"
+          },
+          "capacity_minutes": {
+            "title": "Capacity Minutes",
+            "type": "number"
+          },
+          "expected_cases_caught": {
+            "title": "Expected Cases Caught",
+            "type": "number"
+          },
+          "expected_cases_total": {
+            "title": "Expected Cases Total",
+            "type": "number"
+          },
+          "expected_miss_cost_usd": {
+            "title": "Expected Miss Cost Usd",
+            "type": "number"
+          },
+          "expected_missed_value_usd": {
+            "title": "Expected Missed Value Usd",
+            "type": "number"
+          },
+          "expected_recall": {
+            "$ref": "#/components/schemas/Interval"
+          },
+          "expected_value_caught_usd": {
+            "title": "Expected Value Caught Usd",
+            "type": "number"
+          },
+          "greedy_objective_value": {
+            "title": "Greedy Objective Value",
+            "type": "number"
+          },
+          "guarantee": {
+            "$ref": "#/components/schemas/Guarantee"
+          },
+          "objective": {
+            "title": "Objective",
+            "type": "string"
+          },
+          "objective_value": {
+            "title": "Objective Value",
+            "type": "number"
+          },
+          "optimality_gap": {
+            "title": "Optimality Gap",
+            "type": "number"
+          },
+          "realised": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Realised"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "review_cost_usd": {
+            "title": "Review Cost Usd",
+            "type": "number"
+          },
+          "review_minutes": {
+            "title": "Review Minutes",
+            "type": "number"
+          },
+          "reviewed": {
+            "title": "Reviewed",
+            "type": "integer"
+          },
+          "solver": {
+            "title": "Solver",
+            "type": "string"
+          },
+          "value_recall": {
+            "title": "Value Recall",
+            "type": "number"
+          }
+        },
+        "required": [
+          "analysts",
+          "objective",
+          "capacity_minutes",
+          "alerts",
+          "reviewed",
+          "review_minutes",
+          "guarantee",
+          "expected_recall",
+          "expected_cases_caught",
+          "expected_cases_total",
+          "expected_value_caught_usd",
+          "expected_missed_value_usd",
+          "value_recall",
+          "review_cost_usd",
+          "expected_miss_cost_usd",
+          "objective_value",
+          "greedy_objective_value",
+          "optimality_gap",
+          "solver"
+        ],
+        "title": "PlanPoint",
+        "type": "object"
+      },
+      "QueueMeta": {
+        "properties": {
+          "by_status": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "By Status",
+            "type": "object"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/DayCount"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "dismiss_reasons": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Dismiss Reasons",
+            "type": "object"
+          },
+          "escalate_reasons": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Escalate Reasons",
+            "type": "object"
+          },
+          "model": {
+            "$ref": "#/components/schemas/ModelInfo"
+          },
+          "typologies": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Typologies",
+            "type": "array"
+          }
+        },
+        "required": [
+          "model",
+          "days",
+          "by_status",
+          "typologies",
+          "dismiss_reasons",
+          "escalate_reasons"
+        ],
+        "title": "QueueMeta",
+        "type": "object"
+      },
+      "ReadyResponse": {
+        "properties": {
+          "checks": {
+            "additionalProperties": {
+              "const": "ok",
+              "type": "string"
+            },
+            "title": "Checks",
+            "type": "object"
+          },
+          "status": {
+            "const": "ready",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "checks"
+        ],
+        "title": "ReadyResponse",
+        "type": "object"
+      },
+      "Realised": {
+        "description": "Replay-only backtest: what the plan actually caught, judged by the true labels.",
+        "properties": {
+          "caught": {
+            "title": "Caught",
+            "type": "integer"
+          },
+          "positives": {
+            "title": "Positives",
+            "type": "integer"
+          },
+          "recall": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recall"
+          }
+        },
+        "required": [
+          "positives",
+          "caught",
+          "recall"
+        ],
+        "title": "Realised",
+        "type": "object"
+      },
+      "Reason": {
+        "properties": {
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "feature": {
+            "title": "Feature",
+            "type": "string"
+          },
+          "rank": {
+            "title": "Rank",
+            "type": "integer"
+          },
+          "shap": {
+            "title": "Shap",
+            "type": "number"
+          },
+          "text": {
+            "title": "Text",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "rank",
+          "feature",
+          "value",
+          "shap",
+          "text",
+          "evidence_id"
+        ],
+        "title": "Reason",
+        "type": "object"
+      },
+      "ReliabilityBin": {
+        "properties": {
+          "high": {
+            "title": "High",
+            "type": "number"
+          },
+          "low": {
+            "title": "Low",
+            "type": "number"
+          },
+          "mean_predicted": {
+            "title": "Mean Predicted",
+            "type": "number"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "observed_rate": {
+            "title": "Observed Rate",
+            "type": "number"
+          }
+        },
+        "required": [
+          "mean_predicted",
+          "observed_rate",
+          "low",
+          "high",
+          "n"
+        ],
+        "title": "ReliabilityBin",
+        "type": "object"
+      },
+      "ReplayRun": {
+        "properties": {
+          "alpha": {
+            "title": "Alpha",
+            "type": "number"
+          },
+          "by_day": {
+            "items": {
+              "$ref": "#/components/schemas/DayRecall"
+            },
+            "title": "By Day",
+            "type": "array"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "overall": {
+            "$ref": "#/components/schemas/OverallRecall"
+          }
+        },
+        "required": [
+          "alpha",
+          "mode",
+          "by_day",
+          "overall"
+        ],
+        "title": "ReplayRun",
+        "type": "object"
+      },
+      "Role": {
+        "enum": [
+          "analyst",
+          "mlro",
+          "validator",
+          "reviewer"
+        ],
+        "title": "Role",
+        "type": "string"
+      },
+      "SavePlanIn": {
+        "properties": {
+          "alpha": {
+            "exclusiveMaximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Alpha",
+            "type": "number"
+          },
+          "analysts": {
+            "maximum": 50.0,
+            "minimum": 1.0,
+            "title": "Analysts",
+            "type": "integer"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "mode": {
+            "pattern": "^(pooled|mondrian)$",
+            "title": "Mode",
+            "type": "string"
+          },
+          "objective": {
+            "default": "cases",
+            "pattern": "^(cases|value)$",
+            "title": "Objective",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "analysts",
+          "alpha",
+          "mode"
+        ],
+        "title": "SavePlanIn",
+        "type": "object"
+      },
+      "SavedPlan": {
+        "properties": {
+          "alpha": {
+            "title": "Alpha",
+            "type": "number"
+          },
+          "analysts": {
+            "title": "Analysts",
+            "type": "integer"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_by": {
+            "title": "Created By",
+            "type": "integer"
+          },
+          "date": {
+            "title": "Date",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          },
+          "result": {
+            "additionalProperties": true,
+            "title": "Result",
+            "type": "object"
+          },
+          "selected_alert_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Selected Alert Ids",
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "analysts",
+          "alpha",
+          "mode",
+          "created_by",
+          "created_at",
+          "result",
+          "selected_alert_ids"
+        ],
+        "title": "SavedPlan",
+        "type": "object"
+      },
+      "SavedPlanOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/Plan"
+          }
+        },
+        "required": [
+          "id",
+          "plan"
+        ],
+        "title": "SavedPlanOut",
+        "type": "object"
+      },
+      "SplitInfo": {
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "positives": {
+            "title": "Positives",
+            "type": "integer"
+          },
+          "split": {
+            "title": "Split",
+            "type": "string"
+          }
+        },
+        "required": [
+          "split",
+          "alerts",
+          "positives"
+        ],
+        "title": "SplitInfo",
+        "type": "object"
+      },
+      "Staffing": {
+        "properties": {
+          "alpha": {
+            "title": "Alpha",
+            "type": "number"
+          },
+          "days": {
+            "items": {
+              "$ref": "#/components/schemas/StaffingDay"
+            },
+            "title": "Days",
+            "type": "array"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "alpha",
+          "mode",
+          "days"
+        ],
+        "title": "Staffing",
+        "type": "object"
+      },
+      "StaffingDay": {
+        "properties": {
+          "alerts": {
+            "title": "Alerts",
+            "type": "integer"
+          },
+          "analysts_needed": {
+            "title": "Analysts Needed",
+            "type": "integer"
+          },
+          "day": {
+            "title": "Day",
+            "type": "string"
+          },
+          "required_alerts": {
+            "title": "Required Alerts",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "day",
+          "alerts",
+          "required_alerts",
+          "analysts_needed"
+        ],
+        "title": "StaffingDay",
+        "type": "object"
+      },
+      "Subgraph": {
+        "properties": {
+          "alert_id": {
+            "title": "Alert Id",
+            "type": "integer"
+          },
+          "center": {
+            "title": "Center",
+            "type": "string"
+          },
+          "dominant_path": {
+            "$ref": "#/components/schemas/DominantPath"
+          },
+          "edges": {
+            "items": {
+              "$ref": "#/components/schemas/GraphEdge"
+            },
+            "title": "Edges",
+            "type": "array"
+          },
+          "motif": {
+            "$ref": "#/components/schemas/Motif"
+          },
+          "nodes": {
+            "items": {
+              "$ref": "#/components/schemas/GraphNode"
+            },
+            "title": "Nodes",
+            "type": "array"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "window": {
+            "$ref": "#/components/schemas/Window"
+          }
+        },
+        "required": [
+          "alert_id",
+          "window",
+          "center",
+          "nodes",
+          "edges",
+          "dominant_path",
+          "motif",
+          "truncated"
+        ],
+        "title": "Subgraph",
+        "type": "object"
+      },
+      "UserOut": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "role": {
+            "$ref": "#/components/schemas/Role"
+          },
+          "username": {
+            "title": "Username",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "username",
+          "role"
+        ],
+        "title": "UserOut",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "Window": {
+        "properties": {
+          "from": {
+            "title": "From",
+            "type": "string"
+          },
+          "to": {
+            "title": "To",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "title": "Window",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Verita API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/alerts": {
+      "get": {
+        "operationId": "list_alerts_api_v1_alerts_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "date",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "pattern": "^(open|escalated|dismissed|in_case)$",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "in": "query",
+            "name": "typology",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 32,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Typology"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_score",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 1,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Min Score"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maxLength": 200,
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Cursor"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "maximum": 200,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Alerts",
+        "tags": [
+          "alerts"
+        ]
+      }
+    },
+    "/api/v1/alerts/meta": {
+      "get": {
+        "operationId": "meta_api_v1_alerts_meta_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueueMeta"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Meta",
+        "tags": [
+          "alerts"
+        ]
+      }
+    },
+    "/api/v1/alerts/{alert_id}": {
+      "get": {
+        "operationId": "detail_api_v1_alerts__alert_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "title": "Alert Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Detail",
+        "tags": [
+          "alerts"
+        ]
+      }
+    },
+    "/api/v1/alerts/{alert_id}/disposition": {
+      "post": {
+        "operationId": "disposition_api_v1_alerts__alert_id__disposition_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "title": "Alert Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispositionIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AlertDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Disposition",
+        "tags": [
+          "alerts"
+        ]
+      }
+    },
+    "/api/v1/alerts/{alert_id}/subgraph": {
+      "get": {
+        "operationId": "subgraph_api_v1_alerts__alert_id__subgraph_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alert_id",
+            "required": true,
+            "schema": {
+              "title": "Alert Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Subgraph"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Subgraph",
+        "tags": [
+          "alerts"
+        ]
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "operationId": "login_api_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Login",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/auth/logout": {
+      "post": {
+        "operationId": "logout_api_v1_auth_logout_post",
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Logout",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/api/v1/capacity/calibration": {
+      "get": {
+        "operationId": "calibration_api_v1_capacity_calibration_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Calibration"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Calibration",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/coverage": {
+      "get": {
+        "operationId": "coverage_api_v1_capacity_coverage_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "alpha",
+            "required": false,
+            "schema": {
+              "default": 0.05,
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "title": "Alpha",
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Coverage"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Coverage",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/drift": {
+      "get": {
+        "operationId": "drift_api_v1_capacity_drift_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Drift"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Drift",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/forecast": {
+      "get": {
+        "operationId": "forecast_api_v1_capacity_forecast_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForecastOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Forecast",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/frontier": {
+      "get": {
+        "operationId": "frontier_api_v1_capacity_frontier_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "alpha",
+            "required": false,
+            "schema": {
+              "default": 0.05,
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "title": "Alpha",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "pooled",
+              "pattern": "^(pooled|mondrian)$",
+              "title": "Mode",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "objective",
+            "required": false,
+            "schema": {
+              "default": "cases",
+              "pattern": "^(cases|value)$",
+              "title": "Objective",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Frontier"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Frontier",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/meta": {
+      "get": {
+        "operationId": "meta_api_v1_capacity_meta_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CapacityMeta"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Meta",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/plan": {
+      "get": {
+        "description": "Exact plan; the optional assumption overrides are a what-if and are never saved.",
+        "operationId": "plan_api_v1_capacity_plan_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Date",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "analysts",
+            "required": true,
+            "schema": {
+              "maximum": 50,
+              "minimum": 1,
+              "title": "Analysts",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "alpha",
+            "required": false,
+            "schema": {
+              "default": 0.05,
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "title": "Alpha",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "pooled",
+              "pattern": "^(pooled|mondrian)$",
+              "title": "Mode",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "objective",
+            "required": false,
+            "schema": {
+              "default": "cases",
+              "pattern": "^(cases|value)$",
+              "title": "Objective",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "median_minutes",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 600,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Median Minutes"
+            }
+          },
+          {
+            "in": "query",
+            "name": "productive_hours",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 12,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Productive Hours"
+            }
+          },
+          {
+            "in": "query",
+            "name": "analyst_hourly_rate",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "maximum": 1000,
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Analyst Hourly Rate"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plan"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Plan",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/plans": {
+      "post": {
+        "operationId": "save_api_v1_capacity_plans_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavePlanIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedPlanOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/plans/latest": {
+      "get": {
+        "operationId": "latest_api_v1_capacity_plans_latest_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "required": true,
+            "schema": {
+              "format": "date",
+              "title": "Date",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedPlan"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Latest",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/capacity/staffing": {
+      "get": {
+        "operationId": "staffing_api_v1_capacity_staffing_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "alpha",
+            "required": false,
+            "schema": {
+              "default": 0.05,
+              "exclusiveMaximum": 1,
+              "exclusiveMinimum": 0,
+              "title": "Alpha",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "required": false,
+            "schema": {
+              "default": "pooled",
+              "pattern": "^(pooled|mondrian)$",
+              "title": "Mode",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Staffing"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Staffing",
+        "tags": [
+          "capacity"
+        ]
+      }
+    },
+    "/api/v1/health/live": {
+      "get": {
+        "description": "The process is up. Never touches dependencies.",
+        "operationId": "live_api_v1_health_live_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LiveResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Live",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/health/ready": {
+      "get": {
+        "description": "The process can serve traffic: the database answers.",
+        "operationId": "ready_api_v1_health_ready_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadyResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Ready",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/api/v1/me": {
+      "get": {
+        "operationId": "me_api_v1_me_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserOut"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Me",
+        "tags": [
+          "auth"
+        ]
+      }
+    }
+  }
+}

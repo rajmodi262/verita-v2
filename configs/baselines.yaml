@@ -1,0 +1,28 @@
+# Published baselines (PIVOT §4.1, TRACKER M2.20). Copied from the source; never edited to fit.
+#
+# Source: Altman et al., "Realistic Synthetic Financial Transactions for Anti-Money Laundering
+# Models", NeurIPS 2023 Datasets & Benchmarks, arXiv:2306.16424v3, Table 2 (page 9).
+# Metric: minority-class (laundering) F1, percent, mean ± std over runs.
+# Split: 60/20/20 temporal split of transaction indices ordered by timestamp (paper §4, "Data
+#        Split"). Ours is the same split by transaction order; our 20% validation is further
+#        halved into hpo + calib, and test is identical in definition.
+# Features: the paper does not use account IDs as features; neither do we.
+# Comparable: yes for the test split and metric. GFP rows use the IBM Graph Feature
+#             Preprocessor (engineered graph features) — the closest analogue to our champion.
+schema_version: 1
+source: "arXiv:2306.16424v3 Table 2"
+metric: minority_class_f1_percent
+comparable: true
+datasets:
+  hi_small:
+    GIN: {mean: 28.70, std: 1.13}
+    "GIN + EU": {mean: 47.73, std: 7.86}
+    PNA: {mean: 56.77, std: 2.41}
+    "GFP + LightGBM": {mean: 62.86, std: 0.25}
+    "GFP + XGBoost": {mean: 63.23, std: 0.17}
+  li_small:
+    GIN: {mean: 7.90, std: 2.78}
+    "GIN + EU": {mean: 20.62, std: 2.41}
+    PNA: {mean: 16.45, std: 1.46}
+    "GFP + LightGBM": {mean: 20.83, std: 1.50}
+    "GFP + XGBoost": {mean: 27.30, std: 0.33}

@@ -4,12 +4,16 @@ import { defineConfig } from "vite";
 
 // The SPA and the API share one origin: Vite proxies /api in dev, the host proxies it in
 // production. Cookies stay first-party and CORS is never needed by the app itself.
+// VERITA_WEB_PORT / VERITA_API_URL move both ends when the defaults are taken locally.
+const webPort = Number(process.env.VERITA_WEB_PORT ?? 5173);
+const apiUrl = process.env.VERITA_API_URL ?? "http://localhost:8000";
+
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5173,
+    port: webPort,
     strictPort: true,
-    proxy: { "/api": { target: "http://localhost:8000", changeOrigin: false } },
+    proxy: { "/api": { target: apiUrl, changeOrigin: false } },
   },
   build: { sourcemap: true, target: "es2022" },
   test: {

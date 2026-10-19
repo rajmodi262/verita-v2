@@ -28,6 +28,10 @@
   --color-gold: #a8842c;
   --color-focus: #8a6a1f;
   --color-on-ink: #f3eee2;
+  --color-backdrop: #14120b99;
+  --color-path: #c2331f;
+  --color-edge: #6b6250;
+  --color-node: #fffdf6;
   --shadow-desk: 4px 4px 0 #14120b33;
   --shadow-desk-press: 1px 1px 0 #14120b33;
 }
@@ -50,6 +54,10 @@
   --color-gold: #d9b75a;
   --color-focus: #d9b75a;
   --color-on-ink: #131110;
+  --color-backdrop: #000000b3;
+  --color-path: #ff6b55;
+  --color-edge: #8a8068;
+  --color-node: #24211c;
   --shadow-desk: 4px 4px 0 #00000080;
   --shadow-desk-press: 1px 1px 0 #00000080;
 }
