@@ -28,7 +28,14 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.test.{ts,tsx}", "src/test/**", "src/main.tsx", "src/vite-env.d.ts"],
+      exclude: [
+        "src/**/*.test.{ts,tsx}",
+        "src/test/**",
+        "src/main.tsx",
+        "src/vite-env.d.ts",
+        // WebGL scene: jsdom has no GPU; the e2e run and the screen captures exercise it.
+        "src/components/hero/VaultScene.tsx",
+      ],
       thresholds: { lines: 85, branches: 80, functions: 85, statements: 85 },
     },
   },
