@@ -1,3 +1,5 @@
+import type { PointerEvent } from "react";
+
 import type { PlanPoint } from "../../api/capacity";
 import { compact, integer, percent, usd } from "../../lib/format";
 import { bandPath, linePath, linear, ticks } from "../../lib/scale";
@@ -13,10 +15,17 @@ export interface FrontierChartProps {
   points: PlanPoint[];
   analysts: number;
   targetRecall: number;
+  /** Drag or click on the chart to staff the day (the slider stays the keyboard control). */
+  onAnalystsChange?: (analysts: number) => void;
 }
 
 /** Expected recall (band) and value recall against analysts on duty, one replay day. */
-export function FrontierChart({ points, analysts, targetRecall }: FrontierChartProps) {
+export function FrontierChart({
+  points,
+  analysts,
+  targetRecall,
+  onAnalystsChange,
+}: FrontierChartProps) {
   const first = points[0];
   const last = points[points.length - 1];
   if (!first || !last) return null;
@@ -26,6 +35,18 @@ export function FrontierChart({ points, analysts, targetRecall }: FrontierChartP
   const needed = first.guarantee.analysts_needed;
   const feasibleInRange = needed <= last.analysts;
   const current = points.find((p) => p.analysts === analysts);
+  const hatchEnd = feasibleInRange ? x(needed) : W - M.right;
+
+  const pick = (ev: PointerEvent<SVGRectElement>) => {
+    if (!onAnalystsChange || (ev.type === "pointermove" && ev.buttons !== 1)) return;
+    const box = ev.currentTarget.ownerSVGElement?.getBoundingClientRect();
+    if (!box?.width) return;
+    const vx = ((ev.clientX - box.left) / box.width) * W;
+    const nearest = points.reduce((best, p) =>
+      Math.abs(x(p.analysts) - vx) < Math.abs(x(best.analysts) - vx) ? p : best,
+    );
+    if (nearest.analysts !== analysts) onAnalystsChange(nearest.analysts);
+  };
 
   const summary = feasibleInRange
     ? `The ${percent(targetRecall, 0)} recall guarantee becomes feasible at ${String(needed)} analysts.`
@@ -38,6 +59,32 @@ export function FrontierChart({ points, analysts, targetRecall }: FrontierChartP
       role="img"
       aria-label={`Staffing frontier. ${summary}`}
     >
+      <defs>
+        <pattern
+          id="frontier-hatch"
+          width="6"
+          height="6"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45)"
+        >
+          <line x1="0" y1="0" x2="0" y2="6" className={styles.hatchLine} />
+        </pattern>
+      </defs>
+      {hatchEnd > M.left ? (
+        <g>
+          <rect
+            x={M.left}
+            y={M.top}
+            width={hatchEnd - M.left}
+            height={H - M.bottom - M.top}
+            fill="url(#frontier-hatch)"
+            className={styles.hatch}
+          />
+          <text x={M.left + 8} y={H - M.bottom - 10} className={styles.hatchText}>
+            Guarantee cannot hold here
+          </text>
+        </g>
+      ) : null}
       {ticks(0, 1, 5).map((t) => (
         <g key={t}>
           <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} className={styles.grid} />
@@ -124,7 +171,26 @@ export function FrontierChart({ points, analysts, targetRecall }: FrontierChartP
             r={6}
             className={styles.markerDot}
           />
+          <text
+            x={x(current.analysts) + (x(current.analysts) > W / 2 ? -10 : 10)}
+            y={y(current.expected_recall.value) - 12}
+            textAnchor={x(current.analysts) > W / 2 ? "end" : "start"}
+            className={styles.markerText}
+          >
+            {String(current.analysts)} analysts · {percent(current.expected_recall.value)} recall
+          </text>
         </g>
+      ) : null}
+      {onAnalystsChange ? (
+        <rect
+          x={M.left}
+          y={M.top}
+          width={W - M.left - M.right}
+          height={H - M.bottom - M.top}
+          className={styles.dragSurface}
+          onPointerDown={pick}
+          onPointerMove={pick}
+        />
       ) : null}
     </svg>
   );

@@ -1,4 +1,4 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { ROLE_LABELS, useLogout } from "../../api/auth";
 import type { User } from "../../api/auth";
@@ -13,6 +13,7 @@ export const NAV_ITEMS = [
   { to: "/queue", label: "Alert queue" },
   { to: "/capacity", label: "Capacity planner" },
   { to: "/cases", label: "Case files" },
+  { to: "/models", label: "Model governance" },
   { to: "/evidence-room", label: "Evidence room" },
 ] as const;
 
@@ -20,6 +21,7 @@ export function AppShell({ user }: { user: User }) {
   const { theme, toggle } = useTheme();
   const logout = useLogout();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const onLogout = () => {
     logout.mutate(undefined, { onSettled: () => void navigate("/login", { replace: true }) });
@@ -73,7 +75,10 @@ export function AppShell({ user }: { user: User }) {
           </div>
         </header>
         <main id="main" className={styles.content} tabIndex={-1}>
-          <Outlet />
+          {/* Keyed by route so every page makes an entrance. */}
+          <div key={location.pathname} className={styles.page}>
+            <Outlet />
+          </div>
         </main>
         {user.role === "reviewer" ? <Tour /> : null}
       </div>

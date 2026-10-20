@@ -30,9 +30,11 @@
 
 .tableWrap {
   overflow-x: auto;
-  border: var(--border-width) solid var(--color-border);
-  background: var(--color-surface);
+  border: 1px solid var(--color-glass-edge);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
   box-shadow: var(--shadow-desk);
+  border-radius: 12px;
 }
 
 .table {
@@ -47,11 +49,12 @@
   padding: var(--space-2) var(--space-3);
   background: var(--color-surface-2);
   border-bottom: var(--border-width) solid var(--color-border);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.07em;
   text-align: left;
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -90,9 +93,33 @@
   gap: var(--space-2);
 }
 
+/* Score meters glow from violet into magenta as risk rises. */
 .meter {
   width: 64px;
-  height: 8px;
+  height: 6px;
+  appearance: none;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-surface-2);
+}
+
+.meter::-webkit-meter-bar {
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-surface-2);
+}
+
+.meter::-webkit-meter-optimum-value,
+.meter::-webkit-meter-suboptimum-value,
+.meter::-webkit-meter-even-less-good-value {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-guilloche), var(--color-path));
+  box-shadow: 0 0 8px var(--color-path);
+}
+
+.meter::-moz-meter-bar {
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--color-guilloche), var(--color-path));
 }
 
 .plan {
@@ -101,7 +128,18 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-3) var(--space-4);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-edge);
   font-size: var(--fs-sm);
+  border-radius: 12px;
+}
+
+/* Rows light up under the pointer, like a lit line on the tape. */
+.table tbody tr {
+  transition: background var(--duration-fast);
+}
+
+.table tbody tr:hover {
+  background: linear-gradient(90deg, var(--color-glow-2), transparent 70%);
 }

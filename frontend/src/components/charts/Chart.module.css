@@ -24,14 +24,17 @@
 .toggle button {
   min-height: 36px;
   padding: var(--space-1) var(--space-3);
-  background: var(--color-surface);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
   color: var(--color-ink);
-  border: var(--border-width) solid var(--color-border);
-  font-family: var(--font-mono);
+  border: 1px solid var(--color-glass-edge);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   cursor: pointer;
+  border-radius: 12px;
 }
 
 .toggle button + button {
@@ -64,10 +67,11 @@
 
 .axisTitle {
   fill: var(--color-ink);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .primary {
@@ -224,10 +228,11 @@
   position: sticky;
   top: 0;
   background: var(--color-surface-2);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .num {
@@ -244,4 +249,40 @@
 .whiskerOnBar {
   stroke: var(--color-surface);
   stroke-width: 2;
+}
+
+/* Staffing frontier: the region where the recall guarantee cannot hold is engraved with a hatch. */
+.hatch {
+  opacity: 0.5;
+}
+
+.hatchLine {
+  stroke: var(--color-alert);
+  stroke-width: 1;
+}
+
+.hatchText {
+  font-family: var(--font-title);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  fill: var(--color-alert-text);
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 3px;
+}
+
+.markerText {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  fill: var(--color-ink);
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 4px;
+}
+
+.dragSurface {
+  fill: transparent;
+  cursor: ew-resize;
+  touch-action: none;
 }

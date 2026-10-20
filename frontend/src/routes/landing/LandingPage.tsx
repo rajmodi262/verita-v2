@@ -1,10 +1,25 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 
 import { useHeadline } from "../../api/evidence";
+import { GuillocheSeal } from "../../components/seal/GuillocheSeal";
 import type { Headline, HeadlineResponse } from "../../api/evidence";
 import { percent } from "../../lib/format";
 
 import styles from "./LandingPage.module.css";
+
+const VaultScene = lazy(() => import("../../components/hero/VaultScene"));
+
+/** A fixed root for the decorative landing seal (any hex string seeds a valid rosette). */
+const SEAL_ROOT = "5e7a11fe9e3779b97f4a7c15f39cc0605cedc834";
+
+function hasWebGL(): boolean {
+  try {
+    return Boolean(document.createElement("canvas").getContext("webgl2"));
+  } catch {
+    return false;
+  }
+}
 
 interface Pillar {
   name: string;
@@ -69,16 +84,48 @@ function Measured({ data, pillar }: { data: HeadlineResponse | undefined; pillar
 export default function LandingPage() {
   const headline = useHeadline();
   const data = headline.data;
+  const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // The 3D stage is for wide screens with WebGL; phones get the engraved 2D seal (no 3D download).
+  const cinematic = window.matchMedia("(min-width: 900px)").matches && hasWebGL();
   return (
     <main id="main" className={styles.page}>
-      <header className={styles.hero}>
-        <p className={styles.kicker}>Verita · anti-money-laundering</p>
-        <h1 className={styles.headline}>
-          Every alert explained. Every miss quantified. Every report provable.
-        </h1>
+      <header className={styles.stage}>
+        <nav className={styles.nav} aria-label="Site">
+          <span className={styles.brand}>Verita</span>
+          <span className={styles.navLinks}>
+            <a href="#measured">Detect</a>
+            <a href="#measured">Decide</a>
+            <a href="#measured">Defend</a>
+          </span>
+          <Link to="/login" className={styles.navCta}>
+            Sign in
+          </Link>
+        </nav>
+        <p className={styles.wordTop} aria-hidden="true">
+          Follow
+        </p>
+        <p className={styles.wordBottom} aria-hidden="true">
+          the money
+        </p>
+        <div className={styles.scene} aria-hidden="true">
+          {cinematic ? (
+            <Suspense fallback={null}>
+              <VaultScene still={still} />
+            </Suspense>
+          ) : (
+            <div className={styles.flatSeal}>
+              <GuillocheSeal root={SEAL_ROOT} leaves={[]} serial="Verita" size={260} />
+            </div>
+          )}
+        </div>
+        <div className={styles.band}>
+          <h1 className={styles.headline}>
+            Every alert explained · Every miss quantified · Every report provable
+          </h1>
+        </div>
         <div className={styles.cta}>
           <Link to="/login" className={styles.primary}>
-            Sign in
+            Open the case files
           </Link>
           <a href="#measured" className={styles.secondary}>
             See the measurements

@@ -1,7 +1,40 @@
+/* Glass on the night stage: translucent, blurred, a luminous edge, and a glow that follows hover. */
 .panel {
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  position: relative;
+  background: var(--color-glass);
+  border: 1px solid var(--color-glass-edge);
+  border-radius: 14px;
   box-shadow: var(--shadow-desk);
+  backdrop-filter: blur(16px);
+  animation: panel-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  transition:
+    border-color var(--duration-base),
+    box-shadow var(--duration-base),
+    transform var(--duration-base);
+}
+
+.panel:hover {
+  border-color: var(--color-guilloche);
+  transform: translateY(-2px);
+}
+
+.panel:nth-of-type(2) {
+  animation-delay: 80ms;
+}
+
+.panel:nth-of-type(3) {
+  animation-delay: 160ms;
+}
+
+.panel:nth-of-type(n + 4) {
+  animation-delay: 240ms;
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
 }
 
 .header {
@@ -14,15 +47,19 @@
 }
 
 .label {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
+  font-style: italic;
   font-size: var(--fs-label);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
 .title {
   font-size: var(--fs-md);
+  font-weight: 650;
+  letter-spacing: -0.01em;
 }
 
 .actions {

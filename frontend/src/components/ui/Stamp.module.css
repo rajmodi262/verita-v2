@@ -3,11 +3,11 @@
   padding: var(--space-1) var(--space-3);
   border: 3px double currentcolor;
   border-radius: var(--radius-stamp);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
   font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
 }
 
 .alert {

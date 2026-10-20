@@ -7,6 +7,11 @@ versions follow [Semantic Versioning](https://semver.org/). Measured results liv
 ## [Unreleased]
 
 ### Added
+- **Intaglio interface** (`docs/DESIGN.md`): a security-printing identity (new palette, Bodoni
+  Moda / Schibsted Grotesk / Martian Mono, engraved frames) with a guilloché case seal seeded by
+  the Merkle root that breaks at a tampered exhibit, a transit-map money flow with replay, a queue
+  risk tape, a draggable staffing frontier, evidence threads in the case file, and a model
+  governance page (lifecycle rail, gate certificates, role-gated actions). Cytoscape removed.
 - **goAML export (M10.04):** at approval the case's suspicious transaction report is generated
   in goAML XML and signed as a Merkle leaf of the case file; validated against the bundled goAML
   5.0.1 schema (XSD 1.1, `xmlschema`), regenerated from the evidence by the signature check

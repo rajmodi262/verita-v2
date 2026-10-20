@@ -17,24 +17,26 @@
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
 .title {
-  font-size: var(--fs-lg);
+  max-width: 24ch;
 }
 
 .plainState {
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--color-border);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .actions {
@@ -58,6 +60,7 @@
 }
 
 .grid {
+  position: relative; /* evidence threads are drawn over the columns */
   display: grid;
   grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr) minmax(260px, 1.2fr);
   gap: var(--space-4);
@@ -129,9 +132,10 @@
 }
 
 .sigList dt {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -151,12 +155,14 @@
   align-items: center;
   min-height: 44px;
   padding: var(--space-2) var(--space-4);
-  border: var(--border-width) solid var(--color-border);
-  font-family: var(--font-mono);
+  border: 1px solid var(--color-glass-edge);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   text-decoration: none;
+  border-radius: 12px;
 }
 
 .download {
@@ -182,4 +188,11 @@
   .grid {
     grid-template-columns: 1fr;
   }
+}
+
+.sealPending {
+  width: 300px;
+  height: 300px;
+  border: 1px dashed var(--color-rule);
+  border-radius: var(--radius-seal);
 }

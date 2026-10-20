@@ -6,17 +6,18 @@
   min-height: 40px;
   padding: var(--space-2) var(--space-4);
   border: var(--border-width) solid var(--color-border);
-  border-radius: 0;
-  font-family: var(--font-mono);
+  border-radius: 999px;
+  font-family: var(--font-title);
   font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
   cursor: pointer;
   box-shadow: var(--shadow-desk);
   transition:
     transform var(--duration-fast),
-    box-shadow var(--duration-fast);
+    box-shadow var(--duration-fast),
+    background var(--duration-fast);
 }
 
 .button:disabled {
@@ -25,8 +26,12 @@
   box-shadow: none;
 }
 
+.button:hover:not(:disabled) {
+  box-shadow: 0 0 22px -4px var(--color-path);
+}
+
 .button:active:not(:disabled) {
-  transform: translate(3px, 3px);
+  transform: scale(0.97);
   box-shadow: var(--shadow-desk-press);
 }
 

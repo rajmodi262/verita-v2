@@ -17,10 +17,11 @@
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -56,10 +57,11 @@
 }
 
 .stats dt {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -126,8 +128,10 @@
 .tableWrap {
   overflow-x: auto;
   max-height: 460px;
-  border: var(--border-width) solid var(--color-border);
-  background: var(--color-surface);
+  border: 1px solid var(--color-glass-edge);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
 }
 
 .table {
@@ -148,9 +152,10 @@
   position: sticky;
   top: 0;
   background: var(--color-surface-2);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .onPath {

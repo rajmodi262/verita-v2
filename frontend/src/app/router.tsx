@@ -27,6 +27,7 @@ const CapacityPage = lazy(() => import("../routes/capacity/CapacityPage"));
 const CasesPage = lazy(() => import("../routes/cases/CasesPage"));
 const CaseFilePage = lazy(() => import("../routes/case/CaseFilePage"));
 const EvidenceRoomPage = lazy(() => import("../routes/evidence-room/EvidenceRoomPage"));
+const GovernancePage = lazy(() => import("../routes/governance/GovernancePage"));
 const NotFoundPage = lazy(() => import("../routes/not-found/NotFoundPage"));
 
 export const routes: RouteObject[] = [
@@ -42,6 +43,7 @@ export const routes: RouteObject[] = [
       { path: "/cases", element: page(CasesPage) },
       { path: "/cases/:id", element: page(CaseFilePage) },
       { path: "/evidence-room", element: page(EvidenceRoomPage) },
+      { path: "/models", element: page(GovernancePage) },
       { path: "/app", element: <Navigate to="/queue" replace /> },
     ],
   },

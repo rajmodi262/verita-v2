@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -14,6 +14,7 @@ import {
   useJob,
   usePublicKeys,
   useReturn,
+  useCaseExport,
   useSignatureCheck,
   useSubmit,
   useVerify,
@@ -26,7 +27,9 @@ import {
   VerifierPanel,
   VerifyDropzone,
 } from "../../components/case/Panels";
+import { EvidenceThreads } from "../../components/case/EvidenceThreads";
 import { ErrorState } from "../../components/ErrorState";
+import { GuillocheSeal } from "../../components/seal/GuillocheSeal";
 import {
   Button,
   Dialog,
@@ -123,13 +126,22 @@ function SignedPanel({ detail }: { detail: CaseDetail }) {
   const sig = detail.signature;
   const check = useSignatureCheck(detail.id, sig !== null);
   const keys = usePublicKeys();
+  const signed = useCaseExport(detail.id, sig !== null);
   if (!sig) return null;
   return (
     <Panel title="Signed case file" label="Seal">
       <div className={styles.sealRow}>
-        <div className={styles.seal} aria-hidden="true">
-          V
-        </div>
+        {signed.data ? (
+          <GuillocheSeal
+            root={sig.merkle_root}
+            leaves={Object.keys(signed.data.leaves).sort()}
+            broken={check.data?.changed_leaves ?? []}
+            serial={String(detail.id).padStart(6, "0")}
+            size={300}
+          />
+        ) : (
+          <div className={styles.sealPending} aria-hidden="true" />
+        )}
         <dl className={styles.sigList}>
           <div>
             <dt>Merkle root</dt>
@@ -196,6 +208,8 @@ export default function CaseFilePage() {
   const close = useClose(caseId);
   const [editing, setEditing] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
+  const [reading, setReading] = useState<number | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const [dialog, setDialog] = useState<"return" | "close" | null>(null);
   const [injected, setInjected] = useState<string | null>(null);
   const [mode, setMode] = useState<"auto" | "offline">("auto");
@@ -375,7 +389,13 @@ export default function CaseFilePage() {
       </div>
       {actionError ? <ErrorState error={actionError} /> : null}
 
-      <div className={styles.grid}>
+      <div className={styles.grid} ref={gridRef}>
+        <EvidenceThreads
+          root={gridRef}
+          sentence={reading}
+          ids={reading === null ? [] : (d.narrative?.sentences[reading]?.evidence_ids ?? [])}
+          failed={reading !== null && reports[reading]?.passed === false}
+        />
         <Panel title="Evidence" label="Exhibits">
           <EvidencePanel evidence={d.evidence} selected={selected} onSelect={setSelected} />
         </Panel>
@@ -418,6 +438,7 @@ export default function CaseFilePage() {
               reports={reports}
               selectedEvidence={selected}
               onSelectEvidence={setSelected}
+              onReadSentence={setReading}
             />
           )}
         </Panel>

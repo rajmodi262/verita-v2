@@ -11,16 +11,19 @@
   gap: var(--space-4);
   width: min(420px, 100%);
   padding: var(--space-6);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-edge);
   box-shadow: var(--shadow-desk);
+  border-radius: 12px;
 }
 
 .label {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
