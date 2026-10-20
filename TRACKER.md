@@ -18,7 +18,7 @@
 | M7 | Defend — Case File UX and maker-checker | 12 / 12 | Done |
 | M8 | Evidence Room, honesty pipeline, robustness | 13 / 14 | SAML-D optional, needs the dataset |
 | M9 | Harden and ship | 14 / 16 | Going live needs a VM + domain (U8); rehearsal recording (U9) |
-| M10 | Regulatory fit (PLAN_10 phase 2) | 1 / 6 | In progress |
+| M10 | Regulatory fit (PLAN_10 phase 2) | 2 / 6 | In progress |
 
 ## Blocked on you
 
@@ -325,7 +325,7 @@ model reaches the queue without independent review.
 - [x] M10.01 Model governance: lifecycle (candidate → approved → champion), policy gates in `configs/model_policy.yaml`, generated validation report with SHA-256, validator approves, a different MLRO promotes, DB check forbids an unreviewed champion, visible bypass for dev/demo. Found while building it: mutating routes validated the request body before checking the role (422 leaked the input shape to forbidden callers) — every mutating route now authorizes first; the drift gate needed a volume floor (tail days of 11–396 rows made every feature "drift")
 - [ ] M10.02 PII masking by role + retention policy and purge job (legal hold on open cases)
 - [ ] M10.03 Regulator audit bundle: every event for a case in one signed export
-- [ ] M10.04 goAML XML export of a signed case, validated against the official XSD
+- [x] M10.04 goAML XML export of a signed case, validated against the official XSD — generated at approval as a Merkle leaf (the signature covers the filing), validated with an XSD 1.1 processor against goAML 5.0.1 (CRF Luxembourg distribution, source and hash in `backend/verita/defend/schemas/SOURCE.md`), regenerated from the evidence on verification; `GET /cases/{id}/export.goaml.xml`
 - [ ] M10.05 DPIA document; erasure vs append-only ledger (crypto-shredding)
 - [ ] M10.06 Disposition feedback into the next training run (with leakage guards)
 
@@ -335,6 +335,7 @@ model reaches the queue without independent review.
 
 | Date | Change |
 |------|--------|
+| 2026-10-20 | M10.04 goAML export: the STR is a signed Merkle leaf of the case file, valid against goAML 5.0.1 including its XSD 1.1 assertions, and regenerable from the evidence. **Found while building it:** the only public copy of the schema is an FIU's adaptation (CRF Luxembourg: EUR fixed as local currency, rejection rules as XSD 1.1 asserts, so lxml cannot validate it); goAML code values are per-FIU lookup tables, so they live in config as labelled placeholders; the committed OpenAPI schema had been missing the M10.01 `/models` routes (regenerated). |
 | 2026-10-20 | Credible rules incumbent: structuring (USD, just under 10k), velocity, fan-out, fan-in, rapid pass-through, round-tripping, high value; every threshold and the alert threshold tuned on train only; lift-weighted score; per-rule test hits in the eval report; `verita detect rules` re-tunes it without retraining the champion. The old six-rule count barely beat chance; the champion still passes every gate, including beats-incumbent. **Found while tuning:** velocity and pass-through pick the edge of a wide grid — weak signals on this data, reported as tuned rather than chased. |
 | 2026-10-20 | `docs/DEFEND_IT.md`: 40 panel questions (leakage, temporal splits, conformal/ACI, CP-SAT, JCS/Merkle/Ed25519, verifier limits, governance, LightGBM, bank scale), each answered with the file:line where it lives; no hand-typed figures, results point to the Evidence Room. |
 | 2026-10-20 | M10.01 model governance (validate → approve → promote, separation of duties, DB-enforced). The real HI-Small champion passes all seven gates; three features show major drift on bulk days, one of them the model's own score. |

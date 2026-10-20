@@ -1,0 +1,39 @@
+# goAML export settings (backend/verita/defend/goaml.py).
+#
+# goAML code values are FIU lookup tables: the schema lists the allowed codes but not their
+# meaning, and each FIU publishes its own list. The values below are valid against the bundled
+# schema and are PLACEHOLDERS for this synthetic demo — a reporting entity replaces them with the
+# codes from its FIU's lookup lists before filing.
+version: 1
+
+# Reporting entity ID issued by the FIU on registration.
+rentity_id: 1
+submission_code: E          # electronic submission
+report_code: STR            # suspicious transaction report
+
+# Transmission mode per payment format (conduction_type).
+transmode_by_format:
+  ACH: K
+  Wire: K
+  Cheque: K
+  Credit Card: K
+  Reinvestment: K
+  Cash: A
+  Bitcoin: K
+default_transmode: K
+
+# Funds type for both sides of a transfer between accounts. The bundled schema's own assertion
+# REJ-TRS03 identifies Q as "Transfer" (both sides must then be accounts, which they are here).
+funds_code: Q
+
+# Report indicators per typology (report_indicator_type). Placeholders, see above.
+indicators_by_typology:
+  FAN-IN: ["2"]
+  FAN-OUT: ["2"]
+  CYCLE: ["3"]
+  SCATTER-GATHER: ["2"]
+  GATHER-SCATTER: ["2"]
+  BIPARTITE: ["2"]
+  STACK: ["2"]
+  RANDOM: ["2"]
+default_indicators: ["2"]

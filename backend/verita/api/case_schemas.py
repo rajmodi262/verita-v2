@@ -156,6 +156,7 @@ class SignatureCheck(BaseModel):
     root_matches: bool
     recomputed_root: str
     changed_leaves: list[str]
+    goaml_regenerates: bool | None = None
     ledger: LedgerCheck
 
 

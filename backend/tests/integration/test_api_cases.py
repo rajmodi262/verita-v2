@@ -16,6 +16,7 @@ from verita.api.app import create_app
 from verita.core.config import Settings
 from verita.db.base import Base
 from verita.db.models import Role
+from verita.defend import goaml
 from verita.defend.verify_cli import app as verify_cli
 from verita.ml import stages
 from verita.ml.detect import DetectConfig, run_detect
@@ -140,6 +141,15 @@ def test_offline_draft_verifies_and_full_signing_path(env):
 
     check = marcus.get(f"/cases/{case_id}/verify-signature").json()
     assert check["valid"] and check["changed_leaves"] == [] and check["ledger"]["valid"]
+    assert check["goaml_regenerates"] is True
+
+    # the goAML filing is a signed leaf and valid against the official schema
+    report = priya.get(f"/cases/{case_id}/export.goaml.xml")
+    assert report.status_code == 200 and report.headers["content-type"].startswith(
+        "application/xml"
+    )
+    assert goaml.validate(report.text) == []
+    assert f"<entity_reference>VERITA-CASE-{case_id}</entity_reference>" in report.text
 
     # the export verifies offline with only the file and the published key
     export = priya.get(f"/cases/{case_id}/export.json")
