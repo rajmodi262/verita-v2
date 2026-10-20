@@ -8,7 +8,7 @@
 
 | Milestone | Scope | Done / Total | State |
 |-----------|-------|--------------|-------|
-| M0 | Reset: repo, tooling, CI, auth skeleton | 28 / 30 | M0.28/29 need the GitHub repo (U4) |
+| M0 | Reset: repo, tooling, CI, auth skeleton | 30 / 30 | Done |
 | M1 | Data foundation | 17 / 18 | M1.15 needs license (U7) |
 | M2 | Detect — models and evaluation | 21 / 22 | M2.07 dropped (needs a label-delay model) |
 | M3 | Detect — Queue and Investigation UX | 18 / 18 | Done |
@@ -24,7 +24,6 @@
 | ID | What I need | Unblocks |
 |----|-------------|----------|
 | U1 | Rotate the Groq key that is in v1's `START_BACKEND.bat`, and remove `GROQ_API_KEY` from the Windows environment if it is that key | Security hygiene; Defend calls an LLM only when you opt in |
-| U4 | Create an empty GitHub repo for v2 and push (I won't publish anything) | M0.29 (CI running on GitHub) |
 | U5 | Put `GEMINI_API_KEY` and `GROQ_API_KEY` in `backend/.env` when we reach M6 | M6.07 |
 | U7 | Confirm the IBM AML dataset license on its Kaggle page (I'll record it in `configs/datasets.yaml`) | M1.15, publishing DATA_CARD |
 | U8 | A small VM (2 vCPU, 4 GB) and a domain for the public demo; then `deploy/prod/` per ADR-008 | M9.13 going live |
@@ -73,8 +72,8 @@ Exit: empty app builds and runs locally; every CI gate is blocking and green; no
 
 **Delivery**
 - [x] M0.27 Dockerfiles (multi-stage, non-root, read-only root, healthcheck) + `deploy/docker-compose.yml` — built, smoke-tested end to end on Postgres
-- [~] M0.28 GitHub Actions CI: lint, types, tests, build, gitleaks, pip-audit, npm audit — all blocking — written, first run needs U4
-- [ ] M0.29 [!U4] CI green on GitHub
+- [x] M0.28 GitHub Actions CI: lint, types, tests, build, gitleaks, pip-audit, npm audit — all blocking
+- [x] M0.29 CI green on GitHub (public repo rajmodi262/verita-v2). The first runs found four issues, all fixed: an order-sensitive leakage property test (row order, not leakage), frontend branch coverage at 79%, gitleaks-action failing on a first push, six bandit findings
 - [x] M0.30 pre-commit hooks (ruff, prettier, gitleaks)
 
 ---
@@ -310,11 +309,11 @@ Exit: every PIVOT §23 rubric check passes.
 | Frontend engineering | lazy routes, generated API types, zero `any`, no inline styles, bundle budgets | 0 `any`, 0 inline styles (ESLint-enforced); bundle check + Lighthouse in CI; landing bundled on purpose |
 | UX / accessibility | 6 screens, keyboard-first, axe zero, AAA contrast, ≥ 12 px, responsive, tour | 18 Playwright tests incl. axe in both themes, keyboard triage, phone width; Lighthouse accessibility 1.0 |
 | Tests | ≥ 90% backend coverage; property, golden, contract, authz, e2e, perf | 90.6% backend; hypothesis, golden case files, schemathesis, authz matrix, Playwright, k6 |
-| DevOps / CI | one deploy path, non-root pinned images, SBOM + scan, health/readiness, release automation, k6 | compose stack = deploy path; release workflow; k6 against the Docker stack. Gap: CI has never run on GitHub (U4) |
+| DevOps / CI | one deploy path, non-root pinned images, SBOM + scan, health/readiness, release automation, k6 | compose stack = deploy path; CI green on GitHub (incl. grype gate, Lighthouse); release workflow; k6 against the Docker stack |
 | Honesty | every metric generated; CI check; limitations up front | `report check` + `report scan` pass; DEMO_SCRIPT quotes no numbers |
 | Repo hygiene | clean tree, conventional commits, CHANGELOG, LICENSE, CONTRIBUTING | all present; CHANGELOG added |
 
-Open gaps, all outside the code: GitHub repo + first CI run (U4), LLM keys for the raw
+Open gaps, all outside the code: LLM keys for the raw
 hallucination rate (U5), the dataset licence (U7), a VM and domain (U8), the recording (U9).
 
 ---
