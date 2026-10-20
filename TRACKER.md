@@ -14,8 +14,8 @@
 | M3 | Detect — Queue and Investigation UX | 16 / 18 | e2e + axe (Playwright) left |
 | M4 | Decide — calibration, conformal, forecast, optimizer, drift | 20 / 20 | Done |
 | M5 | Decide — Capacity Planner UX | 9 / 10 | e2e + axe left |
-| M6 | Defend — narratives, verifier, signing, ledger | 0 / 22 | Not started |
-| M7 | Defend — Case File UX and maker-checker | 0 / 12 | Not started |
+| M6 | Defend — narratives, verifier, signing, ledger | 20 / 22 | M6.15 needs a key (U5); M6.02 DB role at deploy |
+| M7 | Defend — Case File UX and maker-checker | 11 / 12 | Playwright e2e left |
 | M8 | Evidence Room, honesty pipeline, robustness | 0 / 14 | Not started |
 | M9 | Harden and ship | 0 / 16 | Not started |
 
@@ -23,7 +23,7 @@
 
 | ID | What I need | Unblocks |
 |----|-------------|----------|
-| U1 | Rotate the Groq key that is in v1's `START_BACKEND.bat` | Security hygiene (v1) |
+| U1 | Rotate the Groq key that is in v1's `START_BACKEND.bat`, and remove `GROQ_API_KEY` from the Windows environment if it is that key | Security hygiene; Defend calls an LLM only when you opt in |
 | U3 | Start Docker Desktop (needed for Postgres-only tests and compose) | M0.22, M0.27 |
 | U4 | Create an empty GitHub repo for v2 and push (I won't publish anything) | M0.29 (CI running on GitHub) |
 | U5 | Put `GEMINI_API_KEY` and `GROQ_API_KEY` in `backend/.env` when we reach M6 | M6.07 |
@@ -205,45 +205,57 @@ Exit: slider < 150ms; every Stat has provenance.
 
 Exit: verifier eval in metrics.json; tamper test passes in CLI.
 
-- [ ] M6.01 `cases`, `case_alerts`, `case_evidence`, `narratives`, `verifications`, `case_events`, `signatures`, `jobs` tables
-- [ ] M6.02 Append-only trigger on `case_events` + DB role without UPDATE/DELETE
-- [ ] M6.03 Persisted hash chain on `case_events`
-- [ ] M6.04 Case state machine with tests for every transition
-- [ ] M6.05 Postgres SKIP LOCKED job queue + worker process
-- [ ] M6.06 Narrative JSON schema (sentences with section + evidence IDs)
-- [ ] M6.07 [!U5] LLM provider interface: Gemini primary, Groq fallback, timeouts, retries
-- [ ] M6.08 Offline deterministic template generator
-- [ ] M6.09 Prompt v1 + prompt hash recorded
-- [ ] M6.10 Claim parsers (money, counts, dates, durations, accounts, banks, typologies, %)
-- [ ] M6.11 Verifier: citation, claim-match, coverage rules
-- [ ] M6.12 Golden tests on 30 fixed narratives
-- [ ] M6.13 Fault injection (8 fault types)
-- [ ] M6.14 Verifier eval: per-fault detection with CI, clean false-alarm rate
-- [ ] M6.15 Raw LLM unsupported-claim rate on clean generations
-- [ ] M6.16 RFC 8785 canonicalization
-- [ ] M6.17 Merkle tree + property tests
-- [ ] M6.18 Ed25519 signing, key ID, public key endpoint, key file handling
-- [ ] M6.19 `verita-verify` offline CLI naming the changed leaf
-- [ ] M6.20 Signed JSON export
-- [ ] M6.21 PDF rendering (WeasyPrint) with root hash + key ID
-- [ ] M6.22 APIs for cases (create, narrative, verify, submit, approve, return, export, verify-signature)
+**Verifier evaluation (HI-Small, 300 test-window cases, 13,142 claims checked on clean
+narratives):** false alarms **0 / 300** (95% CI 0–1.3%); planted faults detected **2,437 / 2,438
+(99.96%, CI 99.77–99.99%)**, every detection localised to the faulty sentence. The one miss is a
+real limitation: claims are matched by *value*, not by *role* — a hop amount scaled ×1.8 happened
+to equal the path's two-hop total, a true fact the sentence cited. wrong_typology was plantable in
+only 40 cases (260 of the 300 are UNATTRIBUTED).
+
+- [x] M6.01 `cases`, `case_alerts`, `case_evidence`, `narratives`, `verifications`, `case_events`, `signatures`, `jobs` tables (migration 0004)
+- [~] M6.02 Append-only triggers on `case_events` for PostgreSQL and SQLite (UPDATE/DELETE rejected, tested). Separate DB role without UPDATE/DELETE: with the deploy (M9.13)
+- [x] M6.03 Persisted hash chain; `verify_chain` names the first broken, missing or relinked event
+- [x] M6.04 State machine draft → verified → submitted → signed, returned, closed; every transition and the 409s tested end to end
+- [x] M6.05 Job queue: `FOR UPDATE SKIP LOCKED` claim (atomic UPDATE on SQLite), 3 attempts, work rolled back on failure; `verita worker`; inline mode for dev. PostgreSQL path runs in CI (U3)
+- [x] M6.06 Narrative JSON schema (section / text / evidence_ids), free prose rejected
+- [x] M6.07 Provider interface: Gemini (key in header, temperature 0, JSON mode) → Groq (JSON mode) → offline; retries; unit-tested with mocked HTTP. **Live run waits on U5** — and see U1: a `GROQ_API_KEY` is set in this machine's environment (possibly the leaked v1 key); the API is launched with providers off and the eval calls an LLM only with `--llm`
+- [x] M6.08 Offline deterministic template (section-ordered, pluralised, 8-decimal small amounts)
+- [x] M6.09 `prompts/narrative_v1.md`; its SHA-256 is recorded on every narrative and ledger event
+- [x] M6.10 Claim parsers: amounts (symbols, codes, names, k/m/bn, rounding resolution), counts, dates (ISO / D Month Y / Month D, Y), **date ranges**, durations, accounts, banks, typologies, percentages
+- [x] M6.11 Verifier: citation, claim-match against *cited* evidence only, coverage (path, total, range, typology / unattributed)
+- [x] M6.12 Golden snapshot of verdicts on 30 fixed narratives (`tests/defend/golden/verifier_30.json`)
+- [x] M6.13 Fault injection: 9 types (the 8 planned + irrelevant citation, chosen to support none of the claims)
+- [x] M6.14 Eval with Wilson CIs, localisation and verbatim misses → `artifacts/<ds>/defend/verifier_eval.json`. **Bugs it found:** evidence rounded Bitcoin amounts to 2 decimals (0.0034 → 0.00); a range start inside the range passed (date_range claims added)
+- [!] M6.15 [!U5] Raw LLM unsupported-claim rate — harness built (`verita defend eval --llm`), not run without a valid key
+- [x] M6.16 RFC 8785 canonicalisation (RFC §3.2.2 vector, every double bit pattern round-trips, UTF-16 key order, exact-double integer rule)
+- [x] M6.17 RFC 6962 Merkle tree with domain separation; audit-path property tests
+- [x] M6.18 Ed25519 signing over `verita-case-v1:<case>:<root>`, key ID = SHA-256(raw key)[:16], `GET /keys` (public), key created on first use in dev (`keys/`, private key git-ignored)
+- [x] M6.19 `verita-verify` offline CLI naming the changed leaf (exit 0 valid / 1 invalid / 2 unreadable)
+- [x] M6.20 Signed JSON export (canonical bytes, embedded public key and instructions) + tampered demo copy
+- [x] M6.21 PDF rendering — **fpdf2 instead of WeasyPrint** (no GTK/Pango system libraries; the PDF is a view, the JSON is the proof)
+- [x] M6.22 Case APIs (create, narrative, edit, verify, submit, approve, return, close, export ×3, verify-signature, jobs, keys), typed response models
 
 ## M7 — Defend: Case File UX and maker-checker
 
 Exit: full demo path e2e green.
 
-- [ ] M7.01 Case File layout (evidence / narrative / verifier)
-- [ ] M7.02 EvidenceChip + evidence previews
-- [ ] M7.03 Inline narrative editing with re-verification
-- [ ] M7.04 ClaimResult component + in-text highlights
-- [ ] M7.05 Real job progress for narrative drafting
-- [ ] M7.06 Inject-a-fault demo action
-- [ ] M7.07 Maker-checker: approve disabled for author, with explanation
-- [ ] M7.08 Seal animation on real sign event (+ reduced-motion fallback)
-- [ ] M7.09 Export buttons + tampered-copy download (demo)
-- [ ] M7.10 In-browser verification dropzone (WebCrypto Ed25519, WASM fallback)
-- [ ] M7.11 Authorization matrix test for every route × role
-- [ ] M7.12 e2e: full demo path
+**Live run on HI-Small (2026-10-20):** analyst opened C-1 from alert 19737 → offline draft, 43
+claims verified → injected fault (18,888.26 → 19,454.91) highlighted, submit blocked → redraft →
+submit → MLRO approved and signed (37 leaves) → the browser dropzone and `verita-verify` both
+say VALID for the export and INVALID naming `EV-TXN-1892582` for the tampered copy.
+
+- [x] M7.01 Case File layout (evidence / narrative / verifier), state stamp, ledger panel
+- [x] M7.02 Evidence chips on every sentence; selecting one previews the item's payload (a key–value view, not a mini graph)
+- [x] M7.03 Editing with re-verification on save (per-sentence form rather than in-text editing)
+- [x] M7.04 Claim results per sentence; failing claims highlighted in the text (`<mark>` + screen-reader text)
+- [x] M7.05 Real job progress (polls `GET /jobs/{id}`)
+- [x] M7.06 Inject-a-fault demo action (+3% on one amount, saved as an edit)
+- [x] M7.07 Maker-checker: approve disabled for the case's creator and submitter, with the reason shown
+- [x] M7.08 Seal stamp-in on a real signature; reduced-motion falls back to a fade
+- [x] M7.09 Export buttons (JSON, PDF) + tampered-copy download
+- [x] M7.10 In-browser verification (WebCrypto Ed25519, native JCS) — agrees with Python on the root, every leaf and the signature (fixtures signed by `backend/scripts/make_case_export_fixture.py`). No WASM fallback: Ed25519 WebCrypto ships in current Chrome, Firefox and Safari
+- [x] M7.11 Authorization matrix: every OpenAPI route × 4 roles + anonymous, CSRF on every mutation; a route without a policy fails the test
+- [ ] M7.12 e2e: full demo path (Playwright, with M3.16)
 
 ## M8 — Evidence Room, honesty, robustness
 
@@ -291,6 +303,7 @@ Exit: every PIVOT §23 rubric check passes.
 
 | Date | Change |
 |------|--------|
+| 2026-10-20 | M6–M7 built and run on HI-Small. Verifier: 0/300 false alarms, 2,437/2,438 faults caught. Full demo path live: draft → fault caught → submit → maker-checker sign → browser and CLI verification agree. Found and fixed: Bitcoin amounts rounded to 0.00 in evidence; date-range starts not checked; a no-op fault injector; ESLint autofix inverted a null check. **Security note (U1):** a `GROQ_API_KEY` is present in the machine environment; 30 eval calls to Groq failed — LLM use is now opt-in. Backend 307+ tests, 93% coverage; frontend 151 tests. |
 | 2026-10-20 | M2–M5 built and run on HI-Small. Detect F1 0.503 (CI 0.440–0.591) vs paper GFP+LightGBM 62.86. Decide: static and ACI guarantees hold at every α; ACI reviews 10% less. The 95% guarantee is unstaffable on bulk days (401–3,139 analysts) — the planner says so. **Bugs found by running on real data:** CLI writes were never committed (`return` inside `for db in session_scope()` skips the commit — fixed with `transaction()` + regression test); CP-SAT lost to greedy because minutes were rounded up; subgraph p95 4.1 s on hub accounts (now 257 ms); drift alarm driven by account-age features (now excluded); dollar objective caught 2% of cases with 97% of value (cases objective added, now default). Backend 215 tests, 93% coverage; frontend 133 tests. |
 | 2026-10-19 | Tracker created; decisions recorded in PIVOT §26 |
 | 2026-10-19 | M1 complete except M1.11/M1.15. Real data: both datasets pass the contract; 100% of pattern rows link. HI-Small splits — train 3,047,007 (2,298 laundering, 0.075%), hpo 507,835 (558), calib 507,834 (524), test 1,015,669 (1,797, 0.177%). Note the **label shift**: the test laundering rate is 2.3× train (the sparse tail falls in test); M2 must report it and evaluate the bulk and the tail separately. Backend: 120 tests, 99.3% coverage, ruff + mypy strict + bandit + pip-audit clean. |

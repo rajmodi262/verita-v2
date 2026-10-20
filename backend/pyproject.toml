@@ -8,8 +8,11 @@ requires-python = ">=3.11,<3.12"
 dependencies = [
     "alembic>=1.20.0",
     "argon2-cffi>=25.1.0",
+    "cryptography>=50.0.2",
     "duckdb>=1.5.6",
     "fastapi>=0.148.0",
+    "fpdf2>=2.8.9",
+    "httpx>=0.28.1",
     "jinja2>=3.1.6",
     "lightgbm>=4.7.0",
     "numba>=0.68.0",
@@ -35,6 +38,7 @@ dependencies = [
 
 [project.scripts]
 verita = "verita.cli:app"
+verita-verify = "verita.defend.verify_cli:app"
 
 [project.optional-dependencies]
 dev = [

@@ -366,6 +366,7 @@ const calibration = z.object({
 const drift = z.object({
   baseline: z.string(),
   features_checked: z.array(z.string()),
+  excluded_time_anchored: z.array(z.string()),
   by_day: z.array(
     z.object({
       day: z.string(),

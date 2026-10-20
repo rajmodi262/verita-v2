@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useAlert, useSubgraph } from "../../api/alerts";
 import type { DispositionAction, GraphEdge } from "../../api/alerts";
 import { useMe } from "../../api/auth";
+import { useCreateCase } from "../../api/cases";
 import { DispositionDialog } from "../../components/DispositionDialog";
 import { ErrorState } from "../../components/ErrorState";
 import { MoneyFlowGraph } from "../../components/graph/MoneyFlowGraph";
@@ -93,6 +94,8 @@ export default function InvestigationPage() {
   );
   const pathEdges = timeline.filter((e) => e.on_dominant_path);
   const canDecide = me.data?.role === "analyst" || me.data?.role === "mlro";
+  const createCase = useCreateCase();
+  const navigate = useNavigate();
 
   if (!Number.isInteger(alertId) || alertId <= 0) {
     return <ErrorState error={new Error("Invalid alert id")} />;
@@ -124,6 +127,19 @@ export default function InvestigationPage() {
           </h1>
         </div>
         <div className={styles.actions}>
+          {canDecide && (a.status === "open" || a.status === "escalated") ? (
+            <Button
+              variant="ghost"
+              busy={createCase.isPending}
+              onClick={() => {
+                createCase.mutate([a.id], {
+                  onSuccess: (c) => void navigate(`/cases/${String(c.id)}`),
+                });
+              }}
+            >
+              Open a case file
+            </Button>
+          ) : null}
           {a.status === "open" ? (
             <>
               <Button

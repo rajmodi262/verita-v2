@@ -10,7 +10,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, model_validator
+from pydantic import AliasChoices, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from verita.pipeline.config import REPO_ROOT
@@ -35,6 +35,24 @@ class Settings(BaseSettings):
     # Where the pipeline artifacts live, and which dataset the API serves.
     data_root: Path = REPO_ROOT
     dataset: str = "hi_small"
+
+    # Defend: narrative drafting. Providers are tried in order; "offline" (the deterministic
+    # template) always works and is the fallback when no key is set.
+    llm_providers: list[str] = Field(default_factory=lambda: ["gemini", "groq"])
+    gemini_model: str = "gemini-2.5-flash"
+    groq_model: str = "llama-3.3-70b-versatile"
+    gemini_api_key: SecretStr | None = Field(
+        default=None, validation_alias=AliasChoices("VERITA_GEMINI_API_KEY", "GEMINI_API_KEY")
+    )
+    groq_api_key: SecretStr | None = Field(
+        default=None, validation_alias=AliasChoices("VERITA_GROQ_API_KEY", "GROQ_API_KEY")
+    )
+    llm_timeout_seconds: float = Field(default=45.0, gt=0, le=300)
+    # Ed25519 signing key (PEM). Created on first use in dev; a mounted secret in production.
+    signing_key_path: Path = REPO_ROOT / "keys" / "verita-signing.pem"
+    public_key_path: Path = REPO_ROOT / "keys" / "verita-pub.pem"
+    # Run queued jobs in-process right after enqueueing (dev/demo); production runs `verita worker`.
+    inline_jobs: bool = True
 
     session_ttl_minutes: int = Field(default=480, ge=5, le=7 * 24 * 60)
     login_max_failures: int = Field(default=5, ge=1, le=50)
