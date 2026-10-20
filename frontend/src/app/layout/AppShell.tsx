@@ -13,6 +13,7 @@ export const NAV_ITEMS = [
   { to: "/queue", label: "Alert queue" },
   { to: "/capacity", label: "Capacity planner" },
   { to: "/cases", label: "Case files" },
+  { to: "/models", label: "Model governance" },
   { to: "/evidence-room", label: "Evidence room" },
 ] as const;
 

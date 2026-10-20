@@ -108,7 +108,7 @@ export function TransitMap({ graph, selectedTxn, onSelectTxn }: TransitMapProps)
         className={styles.map}
         viewBox={`${minX.toFixed(0)} ${minY.toFixed(0)} ${width.toFixed(0)} ${height.toFixed(0)}`}
         role="img"
-        aria-label={`Money flow around ${graph.center}: ${String(graph.edges.length)} payments, ${String(shown.length)} shown`}
+        aria-label={`Money-flow graph: ${String(graph.nodes.length)} accounts and ${String(graph.edges.length)} payments, drawn as a transit map (${String(shown.length)} shown)`}
       >
         {shown.map((e) => (
           <path

@@ -15,7 +15,6 @@ body {
   font-family: var(--font-body);
   font-size: var(--fs-body);
   line-height: 1.6;
-  font-variant-numeric: tabular-nums; /* amounts and identifiers line up like a statement */
   -webkit-font-smoothing: antialiased;
 }
 
@@ -82,4 +81,9 @@ samp {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* Figures line up like a statement in tables (tnum widens punctuation in running text). */
+table {
+  font-variant-numeric: tabular-nums;
 }

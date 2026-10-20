@@ -191,7 +191,7 @@ export function GuillocheSeal({
           x2={C + 188 * Math.cos(s.mid)}
           y2={C + 188 * Math.sin(s.mid)}
         >
-          <title>{s.name}</title>
+          <title>{`Exhibit ${s.name}`}</title>
         </line>
       ))}
 
