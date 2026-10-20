@@ -38,11 +38,12 @@ export function EvidenceThreads({ root, sentence, ids, failed }: EvidenceThreads
       if (!from) return;
       const a = from.getBoundingClientRect();
       const out: Thread[] = [];
+      const exhibits = [...grid.querySelectorAll<HTMLElement>("[data-ev]")];
       for (const id of ids) {
-        let target = grid.querySelector<HTMLElement>(`[data-ev="${CSS.escape(id)}"]`);
-        if (target?.getClientRects().length === 0) {
-          target = target.closest("details")?.querySelector("summary") ?? null;
-        }
+        let target = exhibits.find((el) => el.dataset.ev === id) ?? null;
+        // An exhibit inside a collapsed group threads to the group's heading.
+        const closed = target?.closest("details:not([open])");
+        if (closed) target = closed.querySelector("summary");
         if (!target) continue;
         const b = target.getBoundingClientRect();
         const x1 = a.left - base.left;

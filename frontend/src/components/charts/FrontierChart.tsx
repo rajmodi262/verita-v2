@@ -40,7 +40,7 @@ export function FrontierChart({
   const pick = (ev: PointerEvent<SVGRectElement>) => {
     if (!onAnalystsChange || (ev.type === "pointermove" && ev.buttons !== 1)) return;
     const box = ev.currentTarget.ownerSVGElement?.getBoundingClientRect();
-    if (!box) return;
+    if (!box?.width) return;
     const vx = ((ev.clientX - box.left) / box.width) * W;
     const nearest = points.reduce((best, p) =>
       Math.abs(x(p.analysts) - vx) < Math.abs(x(best.analysts) - vx) ? p : best,
