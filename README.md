@@ -59,6 +59,18 @@ npm ci
 npm run dev
 ```
 
+The full stack (PostgreSQL, API, job worker, nginx on one origin) after building a demo pack:
+
+```bash
+docker compose -f deploy/docker-compose.yml up --build -d
+docker compose -f deploy/docker-compose.yml run --rm api verita users seed-demo
+```
+
+Then open <http://localhost:8080>. For a guided walkthrough see
+[docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md); for operating it,
+[docs/RUNBOOK.md](docs/RUNBOOK.md); for what it defends against and what it does not,
+[docs/THREAT_MODEL.md](docs/THREAT_MODEL.md).
+
 ## Repository layout
 
 | Path | Contents |
@@ -67,7 +79,9 @@ npm run dev
 | `frontend/` | React + TypeScript app |
 | `configs/` | Data manifest, operational assumptions, model config |
 | `docs/adr/` | Architecture decision records |
-| `deploy/` | Docker Compose, monitoring config |
+| `deploy/` | Docker Compose, monitoring config, production override (`deploy/prod/`) |
+| `perf/` | k6 load test and its recorded results |
+| `reports/` | Generated metrics, eval report, security scans and SBOMs |
 
 ## License
 

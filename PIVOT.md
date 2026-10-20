@@ -970,7 +970,7 @@ placeholders — the rehearsed script reads them from `metrics.json` and the dem
 | 1 | Fresh repo: `verita-v2/` with clean git history; v1 untouched. You push it to a new GitHub repo. | Decided |
 | 2 | Dataset: you download IBM AML HI-Small + LI-Small from Kaggle; until then everything runs on a generated fixture. | Decided |
 | 3 | LLM: Gemini primary, Groq fallback, offline template always available (CI uses offline). | Decided |
-| 4 | Demo host: Fly.io vs Render — ADR-008, decided in M9. | Open |
+| 4 | Demo host: one VM running the compose stack behind Caddy, same origin (ADR-008). Fly.io and Render were considered and rejected. | Decided |
 | 5 | Name: Verita. | Decided |
 | 6 | Python 3.11 (installed locally), uv for env + lockfile, poethepoet for tasks. | Decided |
 | 7 | License: MIT (change before publishing if you prefer another). | Decided (default) |

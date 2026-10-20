@@ -6,7 +6,16 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "coverage", "node_modules", "src/api/schema.d.ts"] },
+  {
+    ignores: [
+      "dist",
+      "coverage",
+      "node_modules",
+      "lighthouse-report",
+      ".lighthouseci",
+      "src/api/schema.d.ts",
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
@@ -41,5 +50,21 @@ export default tseslint.config(
   {
     files: ["eslint.config.js"],
     ...tseslint.configs.disableTypeChecked,
+  },
+  {
+    // Node build scripts (bundle budget, Lighthouse CI config): not part of the app bundle.
+    files: ["scripts/**/*.mjs", "lighthouserc.cjs"],
+    ...tseslint.configs.disableTypeChecked,
+    languageOptions: {
+      globals: globals.node,
+      sourceType: "module",
+      parserOptions: { projectService: false, project: null },
+    },
+    rules: { ...tseslint.configs.disableTypeChecked.rules, "no-console": "off" },
+  },
+  {
+    files: ["lighthouserc.cjs"],
+    languageOptions: { sourceType: "commonjs" },
+    rules: { "@typescript-eslint/no-require-imports": "off" },
   },
 );

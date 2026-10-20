@@ -1,0 +1,35 @@
+# Production override (ADR-008): released images instead of local builds, HTTPS via Caddy.
+#   cp deploy/prod/.env.example deploy/prod/.env   # then fill it in
+#   docker compose -f deploy/docker-compose.yml -f deploy/prod/docker-compose.prod.yml \
+#     --env-file deploy/prod/.env up -d
+#   VERITA_DEMO_PASSWORD=... uv run python backend/scripts/smoke.py https://$VERITA_DOMAIN
+x-released-api: &released-api
+  image: ${VERITA_REGISTRY:?}/verita-api:${VERITA_TAG:?}
+  build: !reset null
+
+services:
+  migrate: *released-api
+  api:
+    <<: *released-api
+    environment:
+      VERITA_CORS_ORIGINS: '["https://${VERITA_DOMAIN:?}"]'
+  worker: *released-api
+  web:
+    image: ${VERITA_REGISTRY:?}/verita-web:${VERITA_TAG:?}
+    build: !reset null
+    ports: !reset []  # only Caddy is public
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      VERITA_DOMAIN: ${VERITA_DOMAIN:?}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      web:
+        condition: service_healthy
+
+volumes:
+  caddy_data:

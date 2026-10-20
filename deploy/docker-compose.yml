@@ -8,7 +8,9 @@ name: verita
 
 x-api-env: &api-env
   VERITA_ENV: prod
-  VERITA_DATABASE_URL: postgresql+psycopg://verita:${POSTGRES_PASSWORD:-verita-local-only}@db:5432/verita
+  # The API and the worker connect as a least-privilege role (no UPDATE/DELETE on the ledger,
+  # audit log or signatures; owns nothing). `migrate` connects as the owner and grants it.
+  VERITA_DATABASE_URL: postgresql+psycopg://verita_app:${VERITA_APP_DB_PASSWORD:-verita-app-local-only}@db:5432/verita
   VERITA_CORS_ORIGINS: '["http://localhost:8080"]'
   VERITA_DATASET: ${VERITA_DATASET:-hi_small}
   VERITA_DEMO_PACK: /srv/verita/demo-pack
@@ -54,7 +56,17 @@ services:
   migrate:
     <<: *api
     restart: "no"
-    command: ["sh", "-c", "verita db upgrade && verita demo load --pack /srv/verita/demo-pack"]
+    environment:
+      <<: *api-env
+      VERITA_DATABASE_URL: postgresql+psycopg://verita:${POSTGRES_PASSWORD:-verita-local-only}@db:5432/verita
+      VERITA_APP_DB_PASSWORD: ${VERITA_APP_DB_PASSWORD:-verita-app-local-only}
+    command:
+      - sh
+      - -c
+      - >-
+        verita db upgrade &&
+        verita db app-role --role verita_app &&
+        verita demo load --pack /srv/verita/demo-pack
     depends_on:
       db:
         condition: service_healthy

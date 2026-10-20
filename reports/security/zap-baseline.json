@@ -1,8 +1,8 @@
 {
 	"@programName": "ZAP",
 	"@version": "2.17.0",
-	"@generated": "Tue, 20 Oct 2026 09:51:21",
-	"created": "2026-10-20T09:51:21.420125724Z",
+	"@generated": "Tue, 20 Oct 2026 11:03:35",
+	"created": "2026-10-20T11:03:35.047470482Z",
 	"insights":[
 		{
 			"level": "Info",
@@ -10,7 +10,15 @@
 			"site": "http://host.docker.internal:8080",
 			"key": "insight.code.2xx",
 			"description": "Percentage of responses with status code 2xx",
-			"statistic": "100"
+			"statistic": "88"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://host.docker.internal:8080",
+			"key": "insight.code.4xx",
+			"description": "Percentage of responses with status code 4xx",
+			"statistic": "11"
 		},
 		{
 			"level": "Info",
@@ -18,7 +26,23 @@
 			"site": "http://host.docker.internal:8080",
 			"key": "insight.endpoint.ctype.application/javascript",
 			"description": "Percentage of endpoints with content type application/javascript",
-			"statistic": "25"
+			"statistic": "14"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://host.docker.internal:8080",
+			"key": "insight.endpoint.ctype.application/problem+json",
+			"description": "Percentage of endpoints with content type application/problem+json",
+			"statistic": "14"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://host.docker.internal:8080",
+			"key": "insight.endpoint.ctype.image/svg+xml",
+			"description": "Percentage of endpoints with content type image/svg+xml",
+			"statistic": "14"
 		},
 		{
 			"level": "Info",
@@ -26,7 +50,7 @@
 			"site": "http://host.docker.internal:8080",
 			"key": "insight.endpoint.ctype.text/css",
 			"description": "Percentage of endpoints with content type text/css",
-			"statistic": "25"
+			"statistic": "14"
 		},
 		{
 			"level": "Info",
@@ -34,7 +58,15 @@
 			"site": "http://host.docker.internal:8080",
 			"key": "insight.endpoint.ctype.text/html",
 			"description": "Percentage of endpoints with content type text/html",
-			"statistic": "50"
+			"statistic": "28"
+		},
+		{
+			"level": "Info",
+			"reason": "Informational",
+			"site": "http://host.docker.internal:8080",
+			"key": "insight.endpoint.ctype.text/plain",
+			"description": "Percentage of endpoints with content type text/plain",
+			"statistic": "14"
 		},
 		{
 			"level": "Info",
@@ -50,7 +82,7 @@
 			"site": "http://host.docker.internal:8080",
 			"key": "insight.endpoint.total",
 			"description": "Count of total endpoints",
-			"statistic": "4"
+			"statistic": "7"
 		}
 	],
 	"site":[ 
@@ -71,24 +103,34 @@
 					"desc": "<p>The application appears to be a modern web application. If you need to explore it automatically then the Client Spider may well be more effective than the standard one.</p>",
 					"instances":[ 
 						{
-							"id": "0",
-							"uri": "http://host.docker.internal:8080/sitemap.xml",
-							"nodeName": "http:\/\/host.docker.internal:8080\/sitemap.xml",
+							"id": "2",
+							"uri": "http://host.docker.internal:8080",
+							"nodeName": "http:\/\/host.docker.internal:8080",
 							"method": "GET",
 							"param": "",
 							"attack": "",
-							"evidence": "<script type=\"module\" crossorigin src=\"/assets/index-DdLB55ql.js\"></script>",
+							"evidence": "<script type=\"module\" crossorigin src=\"/assets/index-C3WZCkXi.js\"></script>",
+							"otherinfo": "No links have been found while there are scripts, which is an indication that this is a modern web application."
+						},
+						{
+							"id": "7",
+							"uri": "http://host.docker.internal:8080/",
+							"nodeName": "http:\/\/host.docker.internal:8080\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "<script type=\"module\" crossorigin src=\"/assets/index-C3WZCkXi.js\"></script>",
 							"otherinfo": "No links have been found while there are scripts, which is an indication that this is a modern web application."
 						}
 					],
-					"count": "1",
+					"count": "2",
 					"systemic": false,
 					"solution": "<p>This is an informational alert and so no changes are required.</p>",
 					"otherinfo": "<p>No links have been found while there are scripts, which is an indication that this is a modern web application.</p>",
 					"reference": "",
 					"cweid": "-1",
 					"wascid": "-1",
-					"sourceid": "7"
+					"sourceid": "1"
 				},
 				{
 					"pluginid": "10049",
@@ -101,9 +143,19 @@
 					"desc": "<p>The response contents are storable by caching components such as proxy servers, and may be retrieved directly from the cache, rather than from the origin server by the caching servers, in response to similar requests from other users. If the response data is sensitive, personal or user-specific, this may result in sensitive information being leaked. In some cases, this may even result in a user gaining complete control of the session of another user, depending on the configuration of the caching components in use in their environment. This is primarily an issue where \"shared\" caching servers such as \"proxy\" caches are configured on the local network. This configuration is typically found in corporate or educational environments, for instance.</p>",
 					"instances":[ 
 						{
-							"id": "8",
-							"uri": "http://host.docker.internal:8080/assets/index-BjAUumOJ.css",
-							"nodeName": "http:\/\/host.docker.internal:8080\/assets\/index-BjAUumOJ.css",
+							"id": "10",
+							"uri": "http://host.docker.internal:8080/api/",
+							"nodeName": "http:\/\/host.docker.internal:8080\/api\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "",
+							"otherinfo": "In the absence of an explicitly specified caching lifetime directive in the response, a liberal lifetime heuristic of 1 year was assumed. This is permitted by rfc7234."
+						},
+						{
+							"id": "12",
+							"uri": "http://host.docker.internal:8080/assets/index-C3WZCkXi.js",
+							"nodeName": "http:\/\/host.docker.internal:8080\/assets\/index-C3WZCkXi.js",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -111,9 +163,9 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "9",
-							"uri": "http://host.docker.internal:8080/assets/index-DdLB55ql.js",
-							"nodeName": "http:\/\/host.docker.internal:8080\/assets\/index-DdLB55ql.js",
+							"id": "11",
+							"uri": "http://host.docker.internal:8080/assets/index-CEUhpWDT.css",
+							"nodeName": "http:\/\/host.docker.internal:8080\/assets\/index-CEUhpWDT.css",
 							"method": "GET",
 							"param": "",
 							"attack": "",
@@ -121,14 +173,14 @@
 							"otherinfo": ""
 						}
 					],
-					"count": "2",
+					"count": "3",
 					"systemic": false,
 					"solution": "<p>Validate that the response does not contain sensitive, personal or user-specific information. If it does, consider the use of the following HTTP response headers, to limit, or prevent the content being stored and retrieved from the cache by another user:</p><p>Cache-Control: no-cache, no-store, must-revalidate, private</p><p>Pragma: no-cache</p><p>Expires: 0</p><p>This configuration directs both HTTP 1.0 and HTTP 1.1 compliant caching servers to not store the response, and to not retrieve the response (without validation) from the cache, in response to a similar request.</p>",
-					"otherinfo": "",
+					"otherinfo": "<p>In the absence of an explicitly specified caching lifetime directive in the response, a liberal lifetime heuristic of 1 year was assumed. This is permitted by rfc7234.</p>",
 					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
 					"cweid": "524",
 					"wascid": "13",
-					"sourceid": "11"
+					"sourceid": "16"
 				},
 				{
 					"pluginid": "10049",
@@ -151,7 +203,27 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "7",
+							"id": "8",
+							"uri": "http://host.docker.internal:8080/",
+							"nodeName": "http:\/\/host.docker.internal:8080\/",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-cache",
+							"otherinfo": ""
+						},
+						{
+							"id": "9",
+							"uri": "http://host.docker.internal:8080/favicon.svg",
+							"nodeName": "http:\/\/host.docker.internal:8080\/favicon.svg",
+							"method": "GET",
+							"param": "",
+							"attack": "",
+							"evidence": "no-cache",
+							"otherinfo": ""
+						},
+						{
+							"id": "3",
 							"uri": "http://host.docker.internal:8080/robots.txt",
 							"nodeName": "http:\/\/host.docker.internal:8080\/robots.txt",
 							"method": "GET",
@@ -161,7 +233,7 @@
 							"otherinfo": ""
 						},
 						{
-							"id": "5",
+							"id": "6",
 							"uri": "http://host.docker.internal:8080/sitemap.xml",
 							"nodeName": "http:\/\/host.docker.internal:8080\/sitemap.xml",
 							"method": "GET",
@@ -171,14 +243,14 @@
 							"otherinfo": ""
 						}
 					],
-					"count": "3",
+					"count": "5",
 					"systemic": false,
 					"solution": "",
 					"otherinfo": "",
 					"reference": "<p>https://datatracker.ietf.org/doc/html/rfc7234</p><p>https://datatracker.ietf.org/doc/html/rfc7231</p><p>https://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html</p>",
 					"cweid": "524",
 					"wascid": "13",
-					"sourceid": "6"
+					"sourceid": "1"
 				}
 			]
 		}

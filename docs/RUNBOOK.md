@@ -27,7 +27,12 @@ cd backend && VERITA_DEMO_PASSWORD=... uv run python scripts/smoke.py http://loc
 docker compose -f deploy/docker-compose.yml --profile observability up -d   # Prometheus :9090, Grafana :3000
 ```
 
-`migrate` runs `verita db upgrade` and then `verita demo load`, which verifies the pack and is
+Production (ADR-008) adds `deploy/prod/docker-compose.prod.yml`: released images from GHCR and
+Caddy for HTTPS; see the header of that file. Releases are cut by pushing a `vX.Y.Z` tag
+(`.github/workflows/release.yml`); the demo pack is attached from the build machine with
+`deploy/prod/release-pack.sh vX.Y.Z`.
+
+`migrate` connects as the database owner and runs `verita db upgrade`, `verita db app-role --role verita_app` (the least-privilege role the API and worker use; set `VERITA_APP_DB_PASSWORD`) and then `verita demo load`, which verifies the pack and is
 idempotent per champion model. The API itself refuses to start if the pack fails verification —
 read its log for the file that did not match.
 
@@ -51,6 +56,8 @@ read its log for the file that did not match.
 | Narrative drafts stay "queued" | Worker down, or `VERITA_INLINE_JOBS=false` without a worker | `docker compose … up -d worker`; check its log |
 | 429s for everyone behind one proxy | Rate limit keyed on the proxy IP | Make sure nginx sets `X-Forwarded-For` and the API runs with `--proxy-headers` |
 | API OOM-killed under load | Too many workers for the host, or caches disabled | `VERITA_WORKERS=1`; check `docker stats`; the plan cache and single-flight loads must be in place |
+| `permission denied for table …` in the API log | A new code path writes an append-only table, or a migration added a table after the grant | Re-run `migrate` (it re-grants on every start); never grant UPDATE/DELETE on `case_events`, `audit_log` or `signatures` |
+| Site returns 502 after an API restart | (fixed) nginx cached the old container IP; it now re-resolves `api` every 10 s | Wait 10 s; otherwise `docker compose … restart web` |
 | Ledger check fails on a case | Rows altered outside the application | Treat as an incident: the trigger was bypassed (superuser). Restore from backup; the hash chain names the first altered event |
 
 ## Backups

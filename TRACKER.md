@@ -8,26 +8,27 @@
 
 | Milestone | Scope | Done / Total | State |
 |-----------|-------|--------------|-------|
-| M0 | Reset: repo, tooling, CI, auth skeleton | 26 / 30 | 4 left: need Docker (U3) and GitHub (U4) |
+| M0 | Reset: repo, tooling, CI, auth skeleton | 28 / 30 | M0.28/29 need the GitHub repo (U4) |
 | M1 | Data foundation | 17 / 18 | M1.15 needs license (U7) |
 | M2 | Detect — models and evaluation | 21 / 22 | M2.07 dropped (needs a label-delay model) |
 | M3 | Detect — Queue and Investigation UX | 18 / 18 | Done |
 | M4 | Decide — calibration, conformal, forecast, optimizer, drift | 20 / 20 | Done |
 | M5 | Decide — Capacity Planner UX | 10 / 10 | Done |
-| M6 | Defend — narratives, verifier, signing, ledger | 20 / 22 | M6.15 needs a key (U5); M6.02 DB role at deploy |
+| M6 | Defend — narratives, verifier, signing, ledger | 21 / 22 | M6.15 needs a key (U5) |
 | M7 | Defend — Case File UX and maker-checker | 12 / 12 | Done |
-| M8 | Evidence Room, honesty pipeline, robustness | 12 / 14 | LI-Small training running; SAML-D optional, needs the dataset |
-| M9 | Harden and ship | 0 / 16 | Not started |
+| M8 | Evidence Room, honesty pipeline, robustness | 13 / 14 | SAML-D optional, needs the dataset |
+| M9 | Harden and ship | 14 / 16 | Going live needs a VM + domain (U8); rehearsal recording (U9) |
 
 ## Blocked on you
 
 | ID | What I need | Unblocks |
 |----|-------------|----------|
 | U1 | Rotate the Groq key that is in v1's `START_BACKEND.bat`, and remove `GROQ_API_KEY` from the Windows environment if it is that key | Security hygiene; Defend calls an LLM only when you opt in |
-| U3 | Start Docker Desktop (needed for Postgres-only tests and compose) | M0.22, M0.27 |
 | U4 | Create an empty GitHub repo for v2 and push (I won't publish anything) | M0.29 (CI running on GitHub) |
 | U5 | Put `GEMINI_API_KEY` and `GROQ_API_KEY` in `backend/.env` when we reach M6 | M6.07 |
 | U7 | Confirm the IBM AML dataset license on its Kaggle page (I'll record it in `configs/datasets.yaml`) | M1.15, publishing DATA_CARD |
+| U8 | A small VM (2 vCPU, 4 GB) and a domain for the public demo; then `deploy/prod/` per ADR-008 | M9.13 going live |
+| U9 | Record the demo rehearsal following `docs/DEMO_SCRIPT.md` | M9.15 |
 | U6 | Upgrade Node 20.18 → Node 22 LTS (Node 20 is end-of-life; Vite 7+ and Vitest 5 need ≥20.19/22). CI already uses 22. | Future tooling upgrades |
 
 ---
@@ -62,7 +63,7 @@ Exit: empty app builds and runs locally; every CI gate is blocking and green; no
 **Backend quality**
 - [x] M0.20 ruff (lint + format) and mypy strict, both clean
 - [x] M0.21 Tests: config, hashing, lockout, CSRF, role matrix, problem+json, health
-- [~] M0.22 [!U3] Postgres integration test path (testcontainers) — written; skips locally (Docker off), runs in CI against a Postgres service
+- [x] M0.22 Postgres integration tests (testcontainers): migrations, append-only trigger, SKIP LOCKED job claims, least-privilege app role — run locally against Docker and in CI
 
 **Frontend skeleton**
 - [x] M0.23 Vite + React 18 + TS strict (`noUncheckedIndexedAccess`), React Router lazy routes
@@ -71,7 +72,7 @@ Exit: empty app builds and runs locally; every CI gate is blocking and green; no
 - [x] M0.26 ESLint (strict, jsx-a11y, no inline styles, no `any`), Prettier, Stylelint (min font size), Vitest
 
 **Delivery**
-- [~] M0.27 [!U3] Dockerfiles (multi-stage, non-root, healthcheck) + `deploy/docker-compose.yml` — written, not yet built (Docker off)
+- [x] M0.27 Dockerfiles (multi-stage, non-root, read-only root, healthcheck) + `deploy/docker-compose.yml` — built, smoke-tested end to end on Postgres
 - [~] M0.28 GitHub Actions CI: lint, types, tests, build, gitleaks, pip-audit, npm audit — all blocking — written, first run needs U4
 - [ ] M0.29 [!U4] CI green on GitHub
 - [x] M0.30 pre-commit hooks (ruff, prettier, gitleaks)
@@ -213,7 +214,7 @@ to equal the path's two-hop total, a true fact the sentence cited. wrong_typolog
 only 40 cases (260 of the 300 are UNATTRIBUTED).
 
 - [x] M6.01 `cases`, `case_alerts`, `case_evidence`, `narratives`, `verifications`, `case_events`, `signatures`, `jobs` tables (migration 0004)
-- [~] M6.02 Append-only triggers on `case_events` for PostgreSQL and SQLite (UPDATE/DELETE rejected, tested). Separate DB role without UPDATE/DELETE: with the deploy (M9.13)
+- [x] M6.02 Append-only triggers on `case_events` for PostgreSQL and SQLite (UPDATE/DELETE rejected, tested), plus the `verita_app` login role: owns nothing, SELECT/INSERT only on the ledger, audit log and signatures (`verita db app-role`; tested: UPDATE, DELETE, TRUNCATE, DISABLE/DROP TRIGGER all refused)
 - [x] M6.03 Persisted hash chain; `verify_chain` names the first broken, missing or relinked event
 - [x] M6.04 State machine draft → verified → submitted → signed, returned, closed; every transition and the 409s tested end to end
 - [x] M6.05 Job queue: `FOR UPDATE SKIP LOCKED` claim (atomic UPDATE on SQLite), 3 attempts, work rolled back on failure; `verita worker`; inline mode for dev. PostgreSQL path runs in CI (U3)
@@ -271,7 +272,7 @@ Exit: no hand-typed metric anywhere; Evidence Room complete.
 - [x] M8.08 Decide tab (reliability diagram, coverage by day and by α, forecast backtest, drift, latency)
 - [x] M8.09 Defend tab (detection by fault type, false alarms, misses verbatim, LLM status)
 - [x] M8.10 Lineage tab (stage manifests: git revision, config hash, durations, output hashes); every figure has a caption, a table and a JSON download; metrics.json SHA-256 in the footer
-- [ ] M8.11 LI-Small robustness results
+- [x] M8.11 LI-Small robustness results — full `poe eval --dataset li_small`; in metrics.json, the README robustness row and EVAL_REPORT
 - [ ] M8.12 SAML-D mapping + transfer results (optional)
 - [-] M8.13 GNN challenger — dropped: the published GIN/PNA results on the same split are reported as baselines instead; a GNN would add compute without changing a decision in the product
 - [x] M8.14 Landing page reads the public `/evidence-room/headline` (figure, CI, dataset, source, commit, file hash); 8-step skippable reviewer tour
@@ -280,22 +281,41 @@ Exit: no hand-typed metric anywhere; Evidence Room complete.
 
 Exit: every PIVOT §23 rubric check passes.
 
-- [ ] M9.01 Rate limiting (per user + per IP)
-- [ ] M9.02 schemathesis contract fuzzing — zero 500s
-- [ ] M9.03 k6 on queue / subgraph / plan — p95 < 300ms at 50 VUs
-- [ ] M9.04 Lighthouse CI budgets (LCP, INP, bundle)
-- [ ] M9.05 ZAP baseline scan
-- [ ] M9.06 SBOM (syft) + vulnerability scan (grype)
-- [ ] M9.07 Prometheus metrics + provisioned Grafana dashboard
-- [ ] M9.08 OpenTelemetry tracing
-- [ ] M9.09 THREAT_MODEL.md
-- [ ] M9.10 RUNBOOK.md (pipeline, key rotation, recovery)
-- [ ] M9.11 ADR-008 demo host decision
-- [ ] M9.12 Demo pack export + manifest verification on startup
-- [ ] M9.13 Deploy (API, worker, Postgres, frontend) — must be same-origin (SPA + /api on one host) because session cookies are SameSite=Lax
-- [ ] M9.14 Release workflow on tags
-- [ ] M9.15 DEMO_SCRIPT.md + rehearsal recording
-- [ ] M9.16 Final rubric review against PIVOT §23
+- [x] M9.01 Rate limiting: per IP, per IP on login, per session on mutations; 429 + Retry-After; configurable for load tests
+- [x] M9.02 schemathesis contract fuzzing on a populated stack — zero 5xx over every operation (found: path IDs > 32 bits crashed the driver; fixed)
+- [x] M9.03 k6 on queue / subgraph / plan against the Docker stack — 50 analysts within budget, plus a no-think-time stress run; results in `perf/results/` → metrics.json (found: OOM under load; fixed)
+- [x] M9.04 Lighthouse CI budgets on the production bundle (scores, LCP, TBT as the lab proxy for INP, CLS, bytes) + gzip bundle check, both in CI (found: two CSP violations, robots.txt served as HTML, landing page lazy-loaded; fixed)
+- [x] M9.05 ZAP baseline — 0 failures; report in `reports/security/` (found: headers dropped in nginx locations, missing COEP/CORP; fixed)
+- [x] M9.06 CycloneDX SBOMs (syft) + grype gate on fixable High/Critical in CI and release; unfixable Debian findings recorded as SE-3
+- [x] M9.07 Prometheus metrics by route template (multiprocess-safe, optional bearer token, 404 on the public origin) + provisioned Grafana dashboard
+- [x] M9.08 OpenTelemetry tracing (OTLP/HTTP) when an endpoint is configured; trace IDs in logs
+- [x] M9.09 THREAT_MODEL.md (STRIDE per trust boundary, each control tied to its test; residual risks)
+- [x] M9.10 RUNBOOK.md (pipeline, start/observe, key rotation, recovery table, backups, alerts)
+- [x] M9.11 ADR-008: one VM running the compose stack behind Caddy, same origin
+- [x] M9.12 Demo pack export (`verita demo pack|verify|load`) + SHA-256 manifest verified at API startup
+- [~] M9.13 Deploy config done (`deploy/prod/`: released images, Caddy HTTPS, same origin, least-privilege DB role; nginx re-resolves the API so restarts self-heal). Going live needs a VM and a domain (U8)
+- [x] M9.14 Release workflow on `v*.*.*` tags: GHCR images, SBOMs + grype gate, Python dist with `verita-verify`, GitHub release; demo pack attached by `deploy/prod/release-pack.sh`. First run needs the GitHub repo (U4)
+- [~] M9.15 DEMO_SCRIPT.md written and checked against the UI and the e2e suite. Rehearsal recording: yours (U9)
+- [x] M9.16 Rubric review against PIVOT §23 — see the table below
+
+### M9.16 — Rubric review (PIVOT §23), 2026-10-20
+
+| Dimension | Check | Result |
+|---|---|---|
+| Backend architecture | routers → services → repositories; mypy strict; silent excepts | mypy clean (88 files); 0 `except …: pass`; ADR-001…008; migrations 0001–0004 |
+| Security | threat model, authz matrix, append-only signed ledger, no user SQL, scanners blocking, no secrets | THREAT_MODEL; matrix over every route × role; trigger + least-privilege role; bandit, pip-audit, npm audit, gitleaks, grype blocking; ZAP 0 failures |
+| ML rigor | temporal splits, leakage tests, baselines, CIs, ablations, per-typology, robustness | EVAL_REPORT generated; LI-Small robustness in |
+| Statistics | calibration, conformal coverage over time with ACI, forecast coverage, bootstrap CIs | Evidence Room Decide tab |
+| GenAI / NLP | structured output, deterministic verifier, fault-injection eval, raw hallucination rate | Evidence Room Defend tab (LLM hallucination rate: needs U5) |
+| Frontend engineering | lazy routes, generated API types, zero `any`, no inline styles, bundle budgets | 0 `any`, 0 inline styles (ESLint-enforced); bundle check + Lighthouse in CI; landing bundled on purpose |
+| UX / accessibility | 6 screens, keyboard-first, axe zero, AAA contrast, ≥ 12 px, responsive, tour | 18 Playwright tests incl. axe in both themes, keyboard triage, phone width; Lighthouse accessibility 1.0 |
+| Tests | ≥ 90% backend coverage; property, golden, contract, authz, e2e, perf | 90.6% backend; hypothesis, golden case files, schemathesis, authz matrix, Playwright, k6 |
+| DevOps / CI | one deploy path, non-root pinned images, SBOM + scan, health/readiness, release automation, k6 | compose stack = deploy path; release workflow; k6 against the Docker stack. Gap: CI has never run on GitHub (U4) |
+| Honesty | every metric generated; CI check; limitations up front | `report check` + `report scan` pass; DEMO_SCRIPT quotes no numbers |
+| Repo hygiene | clean tree, conventional commits, CHANGELOG, LICENSE, CONTRIBUTING | all present; CHANGELOG added |
+
+Open gaps, all outside the code: GitHub repo + first CI run (U4), LLM keys for the raw
+hallucination rate (U5), the dataset licence (U7), a VM and domain (U8), the recording (U9).
 
 ---
 
@@ -303,6 +323,7 @@ Exit: every PIVOT §23 rubric check passes.
 
 | Date | Change |
 |------|--------|
+| 2026-10-20 | M9 hardening: rate limits, schemathesis (zero 5xx), k6 load + stress against the Docker stack, Prometheus/Grafana, OpenTelemetry, ZAP (0 failures), SBOM + grype gate, Lighthouse + bundle budgets, least-privilege DB role, release workflow, prod deploy config, THREAT_MODEL / RUNBOOK / DEMO_SCRIPT / ADR-008. **Bugs found by running it for real:** OOM under concurrent load; a commit-after-response race on Postgres; 64-bit path IDs crashing the driver; nginx dropping security headers and caching the API's IP (a recreated API broke the site); ledger appends locking a row the app role may not lock (and not covering a case's first event); two CSP violations on the landing page; 22 Critical OS findings in the web image (now 0 High/Critical). Backend 90.6% coverage; frontend 160 unit + 18 e2e tests. |
 | 2026-10-20 | M8 honesty pipeline, Evidence Room, live landing page, reviewer tour; Playwright suite (18 tests: demo path, keyboard triage, axe on every route in both themes, slider < 150 ms, phone width) green on a fresh fixture stack and wired into CI. Found and fixed: tables overflowing phone screens; report docs rendered from unsorted data (check/build mismatch). |
 | 2026-10-20 | M6–M7 built and run on HI-Small. Verifier: 0/300 false alarms, 2,437/2,438 faults caught. Full demo path live: draft → fault caught → submit → maker-checker sign → browser and CLI verification agree. Found and fixed: Bitcoin amounts rounded to 0.00 in evidence; date-range starts not checked; a no-op fault injector; ESLint autofix inverted a null check. **Security note (U1):** a `GROQ_API_KEY` is present in the machine environment; 30 eval calls to Groq failed — LLM use is now opt-in. Backend 307+ tests, 93% coverage; frontend 151 tests. |
 | 2026-10-20 | M2–M5 built and run on HI-Small. Detect F1 0.503 (CI 0.440–0.591) vs paper GFP+LightGBM 62.86. Decide: static and ACI guarantees hold at every α; ACI reviews 10% less. The 95% guarantee is unstaffable on bulk days (401–3,139 analysts) — the planner says so. **Bugs found by running on real data:** CLI writes were never committed (`return` inside `for db in session_scope()` skips the commit — fixed with `transaction()` + regression test); CP-SAT lost to greedy because minutes were rounded up; subgraph p95 4.1 s on hub accounts (now 257 ms); drift alarm driven by account-age features (now excluded); dollar objective caught 2% of cases with 97% of value (cases objective added, now default). Backend 215 tests, 93% coverage; frontend 133 tests. |
