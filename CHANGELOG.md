@@ -7,6 +7,11 @@ versions follow [Semantic Versioning](https://semver.org/). Measured results liv
 ## [Unreleased]
 
 ### Added
+- **goAML export (M10.04):** at approval the case's suspicious transaction report is generated
+  in goAML XML and signed as a Merkle leaf of the case file; validated against the bundled goAML
+  5.0.1 schema (XSD 1.1, `xmlschema`), regenerated from the evidence by the signature check
+  (`goaml_regenerates`), served at `GET /api/v1/cases/{id}/export.goaml.xml`. FIU code values are
+  configurable in `configs/goaml.yaml`.
 - **Credible rules incumbent:** seven typology rules (structuring under the USD 10k reporting
   threshold, velocity, fan-out, fan-in, rapid pass-through, round-tripping, high value), every
   threshold tuned on the train split only, lift-weighted alert score, tuned conditions and per-rule

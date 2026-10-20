@@ -813,6 +813,24 @@
         "title": "DayRecall",
         "type": "object"
       },
+      "DecisionIn": {
+        "properties": {
+          "note": {
+            "anyOf": [
+              {
+                "maxLength": 2000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "title": "DecisionIn",
+        "type": "object"
+      },
       "DispositionAction": {
         "enum": [
           "escalate",
@@ -1636,6 +1654,170 @@
         "title": "LoginResponse",
         "type": "object"
       },
+      "ModelDetail": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Id"
+          },
+          "bypass_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bypass Reason"
+          },
+          "champion_sha256": {
+            "title": "Champion Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "decision_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Note"
+          },
+          "git_revision": {
+            "title": "Git Revision",
+            "type": "string"
+          },
+          "governance": {
+            "description": "reviewed, bypassed, or not reviewed",
+            "title": "Governance",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_champion": {
+            "title": "Is Champion",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "promoted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promoted At"
+          },
+          "promoted_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promoted By Id"
+          },
+          "proposed_by": {
+            "title": "Proposed By",
+            "type": "string"
+          },
+          "report": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "The full validation report, if any",
+            "title": "Report"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "threshold": {
+            "title": "Threshold",
+            "type": "number"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidationSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "dataset",
+          "status",
+          "is_champion",
+          "champion_sha256",
+          "git_revision",
+          "threshold",
+          "created_at",
+          "proposed_by",
+          "validation",
+          "approved_by_id",
+          "approved_at",
+          "promoted_by_id",
+          "promoted_at",
+          "decision_note",
+          "governance",
+          "bypass_reason",
+          "report"
+        ],
+        "title": "ModelDetail",
+        "type": "object"
+      },
       "ModelInfo": {
         "properties": {
           "alert_floor": {
@@ -1674,6 +1856,172 @@
           "alert_floor"
         ],
         "title": "ModelInfo",
+        "type": "object"
+      },
+      "ModelList": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ModelOut"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "title": "ModelList",
+        "type": "object"
+      },
+      "ModelOut": {
+        "properties": {
+          "approved_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved At"
+          },
+          "approved_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Approved By Id"
+          },
+          "bypass_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bypass Reason"
+          },
+          "champion_sha256": {
+            "title": "Champion Sha256",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dataset": {
+            "title": "Dataset",
+            "type": "string"
+          },
+          "decision_note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Decision Note"
+          },
+          "git_revision": {
+            "title": "Git Revision",
+            "type": "string"
+          },
+          "governance": {
+            "description": "reviewed, bypassed, or not reviewed",
+            "title": "Governance",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "is_champion": {
+            "title": "Is Champion",
+            "type": "boolean"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "promoted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promoted At"
+          },
+          "promoted_by_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Promoted By Id"
+          },
+          "proposed_by": {
+            "title": "Proposed By",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "threshold": {
+            "title": "Threshold",
+            "type": "number"
+          },
+          "validation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ValidationSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "dataset",
+          "status",
+          "is_champion",
+          "champion_sha256",
+          "git_revision",
+          "threshold",
+          "created_at",
+          "proposed_by",
+          "validation",
+          "approved_by_id",
+          "approved_at",
+          "promoted_by_id",
+          "promoted_at",
+          "decision_note",
+          "governance",
+          "bypass_reason"
+        ],
+        "title": "ModelOut",
         "type": "object"
       },
       "ModelScore": {
@@ -2431,6 +2779,21 @@
         "title": "ReasonIn",
         "type": "object"
       },
+      "RejectIn": {
+        "properties": {
+          "note": {
+            "maxLength": 2000,
+            "minLength": 3,
+            "title": "Note",
+            "type": "string"
+          }
+        },
+        "required": [
+          "note"
+        ],
+        "title": "RejectIn",
+        "type": "object"
+      },
       "ReliabilityBin": {
         "properties": {
           "high": {
@@ -2765,6 +3128,17 @@
             "title": "Changed Leaves",
             "type": "array"
           },
+          "goaml_regenerates": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Goaml Regenerates"
+          },
           "ledger": {
             "$ref": "#/components/schemas/LedgerCheck"
           },
@@ -3014,6 +3388,51 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "ValidationSummary": {
+        "properties": {
+          "failed_gates": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Failed Gates",
+            "type": "array"
+          },
+          "passed": {
+            "title": "Passed",
+            "type": "boolean"
+          },
+          "policy_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Policy Version"
+          },
+          "sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sha256"
+          }
+        },
+        "required": [
+          "passed",
+          "sha256",
+          "policy_version",
+          "failed_gates"
+        ],
+        "title": "ValidationSummary",
+        "type": "object"
+      },
       "VerificationOut": {
         "properties": {
           "created_at": {
@@ -3224,10 +3643,14 @@
         "operationId": "detail_api_v1_alerts__alert_id__get",
         "parameters": [
           {
+            "description": "Alert ID",
             "in": "path",
             "name": "alert_id",
             "required": true,
             "schema": {
+              "description": "Alert ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Alert Id",
               "type": "integer"
             }
@@ -3266,10 +3689,14 @@
         "operationId": "disposition_api_v1_alerts__alert_id__disposition_post",
         "parameters": [
           {
+            "description": "Alert ID",
             "in": "path",
             "name": "alert_id",
             "required": true,
             "schema": {
+              "description": "Alert ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Alert Id",
               "type": "integer"
             }
@@ -3318,10 +3745,14 @@
         "operationId": "subgraph_api_v1_alerts__alert_id__subgraph_get",
         "parameters": [
           {
+            "description": "Alert ID",
             "in": "path",
             "name": "alert_id",
             "required": true,
             "schema": {
+              "description": "Alert ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Alert Id",
               "type": "integer"
             }
@@ -3985,10 +4416,14 @@
         "operationId": "detail_api_v1_cases__case_id__get",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4027,10 +4462,14 @@
         "operationId": "approve_api_v1_cases__case_id__approve_post",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4069,10 +4508,14 @@
         "operationId": "close_api_v1_cases__case_id__close_post",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4122,10 +4565,14 @@
         "operationId": "export_tampered_api_v1_cases__case_id__export_tampered_json_get",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4157,15 +4604,64 @@
         ]
       }
     },
+    "/api/v1/cases/{case_id}/export.goaml.xml": {
+      "get": {
+        "description": "The goAML suspicious transaction report, exactly as signed (a leaf of the case file).",
+        "operationId": "export_goaml_api_v1_cases__case_id__export_goaml_xml_get",
+        "parameters": [
+          {
+            "description": "Case ID",
+            "in": "path",
+            "name": "case_id",
+            "required": true,
+            "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "title": "Case Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Export Goaml",
+        "tags": [
+          "cases"
+        ]
+      }
+    },
     "/api/v1/cases/{case_id}/export.json": {
       "get": {
         "operationId": "export_json_api_v1_cases__case_id__export_json_get",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4202,10 +4698,14 @@
         "operationId": "export_pdf_api_v1_cases__case_id__export_pdf_get",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4243,10 +4743,14 @@
         "operationId": "draft_api_v1_cases__case_id__narrative_post",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4293,10 +4797,14 @@
         "operationId": "edit_api_v1_cases__case_id__narrative_put",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4345,10 +4853,14 @@
         "operationId": "return_case_api_v1_cases__case_id__return_post",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4397,10 +4909,14 @@
         "operationId": "submit_api_v1_cases__case_id__submit_post",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4439,10 +4955,14 @@
         "operationId": "run_verify_api_v1_cases__case_id__verify_post",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4482,10 +5002,14 @@
         "operationId": "verify_signature_api_v1_cases__case_id__verify_signature_get",
         "parameters": [
           {
+            "description": "Case ID",
             "in": "path",
             "name": "case_id",
             "required": true,
             "schema": {
+              "description": "Case ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Case Id",
               "type": "integer"
             }
@@ -4616,10 +5140,14 @@
         "operationId": "job_api_v1_jobs__job_id__get",
         "parameters": [
           {
+            "description": "Job ID",
             "in": "path",
             "name": "job_id",
             "required": true,
             "schema": {
+              "description": "Job ID",
+              "maximum": 2147483647,
+              "minimum": 1,
               "title": "Job Id",
               "type": "integer"
             }
@@ -4693,6 +5221,301 @@
         "summary": "Me",
         "tags": [
           "auth"
+        ]
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "operationId": "list_models_api_v1_models_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelList"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Models",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/models/{model_id}": {
+      "get": {
+        "operationId": "get_model_api_v1_models__model_id__get",
+        "parameters": [
+          {
+            "description": "Model version ID",
+            "in": "path",
+            "name": "model_id",
+            "required": true,
+            "schema": {
+              "description": "Model version ID",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "title": "Model Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Model",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/models/{model_id}/approve": {
+      "post": {
+        "operationId": "approve_api_v1_models__model_id__approve_post",
+        "parameters": [
+          {
+            "description": "Model version ID",
+            "in": "path",
+            "name": "model_id",
+            "required": true,
+            "schema": {
+              "description": "Model version ID",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "title": "Model Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/DecisionIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/models/{model_id}/promote": {
+      "post": {
+        "operationId": "promote_api_v1_models__model_id__promote_post",
+        "parameters": [
+          {
+            "description": "Model version ID",
+            "in": "path",
+            "name": "model_id",
+            "required": true,
+            "schema": {
+              "description": "Model version ID",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "title": "Model Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/DecisionIn"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Body"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Promote",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/models/{model_id}/reject": {
+      "post": {
+        "operationId": "reject_api_v1_models__model_id__reject_post",
+        "parameters": [
+          {
+            "description": "Model version ID",
+            "in": "path",
+            "name": "model_id",
+            "required": true,
+            "schema": {
+              "description": "Model version ID",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "title": "Model Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectIn"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/models/{model_id}/validate": {
+      "post": {
+        "operationId": "validate_api_v1_models__model_id__validate_post",
+        "parameters": [
+          {
+            "description": "Model version ID",
+            "in": "path",
+            "name": "model_id",
+            "required": true,
+            "schema": {
+              "description": "Model version ID",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "title": "Model Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModelDetail"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Validate",
+        "tags": [
+          "models"
         ]
       }
     }

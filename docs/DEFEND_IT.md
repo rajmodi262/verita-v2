@@ -197,6 +197,16 @@ the signature, rebuilds the root and names changed leaves — no network, databa
 `verify_export`, `backend/verita/services/cases.py:516`). The demo exports a deliberately
 tampered copy to show the failure (`backend/verita/api/routers/cases.py:161`).
 
+**Q28b. Can the case go to an FIU as-is?**
+Yes — as a goAML suspicious transaction report, the format most FIUs receive through UNODC's
+goAML. It is generated from the evidence at approval and stored as one more Merkle leaf, so the
+signature covers the exact XML filed (`backend/verita/defend/goaml.py`, wired in at
+`backend/verita/services/cases.py` `approve`). Tests validate it against the official schema —
+including the XSD 1.1 rejection rules — and the verifier regenerates it from the signed evidence
+to prove the filing says what the evidence says. Honest limit: goAML code values (transmission
+mode, indicators) are each FIU's lookup tables; `configs/goaml.yaml` holds valid placeholders a
+bank replaces with its FIU's codes, and synthetic banks have no country, so it is sent as unknown.
+
 **Q29. How is the case history protected?**
 Every state transition appends to a hash-chained ledger: each event hashes the previous hash
 plus its own body (`backend/verita/services/ledger.py:43`), and the chain is re-verified on

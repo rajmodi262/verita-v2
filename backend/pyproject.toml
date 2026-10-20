@@ -39,6 +39,7 @@ dependencies = [
     "structlog>=26.1.0",
     "typer>=0.27.3",
     "uvicorn[standard]>=0.54.0",
+    "xmlschema>=4.3.2",
 ]
 
 [project.scripts]
