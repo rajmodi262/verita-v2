@@ -43,7 +43,20 @@ export function RiskTape({ days, selected, onSelect }: RiskTapeProps) {
                 }}
               >
                 <svg viewBox="0 0 10 100" preserveAspectRatio="none" aria-hidden="true">
-                  <rect x="3" y={100 - h} width="4" height={h} />
+                  <defs>
+                    <linearGradient id={`tape-${d.date}`} x1="0" y1="1" x2="0" y2="0">
+                      <stop offset="0" className={styles.stopLow} />
+                      <stop offset="1" className={styles.stopHigh} />
+                    </linearGradient>
+                  </defs>
+                  <rect
+                    x="2"
+                    y={100 - h}
+                    width="6"
+                    height={h}
+                    rx="1.5"
+                    fill={`url(#tape-${d.date})`}
+                  />
                 </svg>
               </button>
               <span className={styles.label} aria-hidden="true">

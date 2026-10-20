@@ -26,7 +26,7 @@
 }
 
 .title {
-  font-size: var(--fs-lg);
+  max-width: 24ch;
 }
 
 .plainState {
@@ -155,13 +155,14 @@
   align-items: center;
   min-height: 44px;
   padding: var(--space-2) var(--space-4);
-  border: var(--border-width) solid var(--color-border);
+  border: 1px solid var(--color-glass-edge);
   font-family: var(--font-title);
   font-size: var(--fs-label);
   letter-spacing: 0.07em;
   font-variant-caps: all-small-caps;
   font-weight: 600;
   text-decoration: none;
+  border-radius: 12px;
 }
 
 .download {

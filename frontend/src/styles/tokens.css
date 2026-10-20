@@ -40,37 +40,49 @@
   --color-foil-1: #8c6d17;
   --color-foil-2: #2c6e78;
   --color-foil-3: #7a3a62;
+  --color-glass: #f6f7f1;
+  --color-glass-edge: #a3af9f;
+  --color-glow-1: #0000;
+  --color-glow-2: #0000;
+  --color-star: #0000;
 }
 
 [data-theme="night"] {
   color-scheme: dark;
 
-  /* The vault: deep green-black, engraved light lines */
-  --color-bg: #08110e;
-  --color-surface: #0e1915;
-  --color-surface-2: #14221d;
-  --color-ink: #e3ece5;
-  --color-ink-muted: #afc1b7;
-  --color-alert-text: #ff9e90;
-  --color-verified-text: #7eddb7;
-  --color-link: #aebeff;
-  --color-border: #e3ece5;
-  --color-rule: #2a3b35;
-  --color-alert: #ff5c4a;
-  --color-verified: #43c795;
-  --color-gold: #d6b35a;
-  --color-focus: #d6b35a;
-  --color-on-ink: #08110e;
-  --color-backdrop: #000000b3;
-  --color-path: #ff5c4a;
-  --color-edge: #7f9289;
-  --color-node: #14221d;
-  --shadow-desk: 0 1px 0 #0006;
+  /* Violet night — the cinematic stage the landing hero opens on */
+  --color-bg: #0a0618;
+  --color-surface: #140d2b;
+  --color-surface-2: #1c1338;
+  --color-ink: #f1ebff;
+  --color-ink-muted: #c4b5f0;
+  --color-alert-text: #ffa3b5;
+  --color-verified-text: #8ef0c8;
+  --color-link: #cdbfff;
+  --color-border: #c9b8ff;
+  --color-rule: #3a2a66;
+  --color-alert: #ff4f7a;
+  --color-verified: #3ee0a0;
+  --color-gold: #ffd27a;
+  --color-focus: #ffd27a;
+  --color-on-ink: #0a0618;
+  --color-backdrop: #05020fcc;
+  --color-path: #ff4fd8;
+  --color-edge: #8f7fc0;
+  --color-node: #1c1338;
+  --shadow-desk: 0 24px 60px -30px #ff4fd855;
   --shadow-desk-press: 0 0 0 #0000;
-  --color-guilloche: #7fb3a0;
-  --color-foil-1: #d6b35a;
-  --color-foil-2: #5ec2cf;
-  --color-foil-3: #c27ba8;
+  --color-guilloche: #b9a3ff;
+  --color-foil-1: #ffd27a;
+  --color-foil-2: #5ec2ff;
+  --color-foil-3: #ff4fd8;
+
+  /* Atmosphere (decorative only) */
+  --color-glass: #140d2bb8;
+  --color-glass-edge: #b9a3ff33;
+  --color-glow-1: #6b2bd955;
+  --color-glow-2: #ff4fd82e;
+  --color-star: #e9dcffcc;
 }
 
 :root {
@@ -87,6 +99,25 @@
   --fs-lg: 1.5rem;
   --fs-xl: 2rem;
   --fs-display: clamp(2.25rem, 5vw, 3.5rem);
+  --fs-poster: clamp(6rem, 21vw, 22rem);
+  --font-poster: "Big Shoulders Display", "Bodoni Moda Variable", sans-serif;
+  --fs-page-title: clamp(2.6rem, 4.6vw, 4.4rem);
+
+  /* Landing stage: always night — a violet sky of transactions (decorative, large type only) */
+  --hero-sky-1: #07031a;
+  --hero-sky-2: #1e0b4b;
+  --hero-sky-3: #3b1477;
+  --hero-band: #6b2bd9b3;
+  --hero-type-1: #f3ecff;
+  --hero-type-2: #b9a3ff;
+  --hero-engrave: #e9dcff;
+  --hero-coin: #2a1650;
+  --hero-rim: #b9a3ff;
+  --hero-neon: #ff4fd8;
+  --hero-flag: #ff3b3b;
+  --hero-particle: #d8c8ff;
+  --hero-key: #ff8be9;
+  --hero-fill: #6b7bff;
 
   /* Space */
   --space-1: 4px;

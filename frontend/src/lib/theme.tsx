@@ -21,12 +21,8 @@ function readStoredTheme(): Theme | null {
   }
 }
 
-function systemTheme(): Theme {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "night" : "paper";
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(() => readStoredTheme() ?? systemTheme());
+  const [theme, setTheme] = useState<Theme>(() => readStoredTheme() ?? "night"); // the violet stage is the default
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

@@ -25,12 +25,17 @@ h3 {
   line-height: 1.2;
 }
 
-/* Page titles are engraved: Bodoni at high contrast, like a banknote's denomination. */
+/* Page titles are poster type, lit from above — the same voice as the landing stage. */
 h1 {
-  font-family: var(--font-display);
-  font-size: var(--fs-xl);
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  font-family: var(--font-poster);
+  font-size: var(--fs-page-title);
+  font-weight: 300;
+  line-height: 0.95;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, var(--color-ink) 30%, var(--color-guilloche) 100%);
+  background-clip: text;
+  color: transparent;
 }
 
 h2 {

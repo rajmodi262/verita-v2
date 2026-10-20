@@ -1,4 +1,5 @@
 import "./zod-config";
+import "@fontsource/big-shoulders-display/300";
 import "@fontsource-variable/bodoni-moda";
 import "@fontsource-variable/martian-mono";
 import "@fontsource-variable/schibsted-grotesk";

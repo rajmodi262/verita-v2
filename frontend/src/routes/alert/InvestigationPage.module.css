@@ -128,8 +128,10 @@
 .tableWrap {
   overflow-x: auto;
   max-height: 460px;
-  border: var(--border-width) solid var(--color-border);
-  background: var(--color-surface);
+  border: 1px solid var(--color-glass-edge);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
+  border-radius: 12px;
 }
 
 .table {

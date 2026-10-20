@@ -14,8 +14,8 @@ function stubColorScheme(dark: boolean) {
   );
 }
 
-it("follows the system preference when nothing is stored", () => {
-  stubColorScheme(true);
+it("opens on the night stage when nothing is stored, whatever the system says", () => {
+  stubColorScheme(false);
   render(
     <ThemeProvider>
       <Probe />
@@ -43,7 +43,7 @@ it("ignores a corrupted stored value", () => {
       <Probe />
     </ThemeProvider>,
   );
-  expect(screen.getByText("theme:paper")).toBeInTheDocument();
+  expect(screen.getByText("theme:night")).toBeInTheDocument();
 });
 
 it("keeps working when storage throws", () => {
@@ -59,7 +59,7 @@ it("keeps working when storage throws", () => {
       <Probe />
     </ThemeProvider>,
   );
-  expect(screen.getByText("theme:paper")).toBeInTheDocument();
+  expect(screen.getByText("theme:night")).toBeInTheDocument();
 });
 
 it("throws a clear error outside the provider", () => {
