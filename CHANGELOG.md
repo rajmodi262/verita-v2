@@ -7,6 +7,8 @@ versions follow [Semantic Versioning](https://semver.org/). Measured results liv
 ## [Unreleased]
 
 ### Added
+- **`docs/DEFEND_IT.md`:** 40 interview questions a financial-crime panel would ask, each
+  with a model answer and the file:line that implements it. Results are referenced, never typed.
 - **Model governance (model risk management):** model lifecycle (candidate → approved →
   champion → retired/rejected), policy gates in `configs/model_policy.yaml` (discrimination,
   beats the incumbent, seed stability, calibration, label-shuffle leakage, drift with a volume
