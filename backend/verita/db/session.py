@@ -27,7 +27,9 @@ def make_engine(url: str) -> Engine:
             cursor.close()
 
         return engine
-    return create_engine(url, pool_pre_ping=True)
+    # The API serves sync routes from a 40-thread pool; 5 + 10 connections made requests queue
+    # for a connection under load.
+    return create_engine(url, pool_pre_ping=True, pool_size=10, max_overflow=20, pool_timeout=10)
 
 
 def make_session_factory(engine: Engine) -> sessionmaker[Session]:

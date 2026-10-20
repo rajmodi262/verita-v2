@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import base64
 import json
-from dataclasses import dataclass
+import threading
+import time
+from dataclasses import astuple, dataclass
 from datetime import date
 from typing import Any
 
@@ -79,6 +81,35 @@ def _filtered(version_id: int, filters: AlertFilters) -> Any:
     return and_(*clauses)
 
 
+COUNT_TTL_SECONDS = 5.0
+_counts: dict[tuple[Any, ...], tuple[float, int]] = {}
+_counts_lock = threading.Lock()
+
+
+def _count(db: Session, version_id: int, filters: AlertFilters, where: Any) -> int:
+    """Queue size for these filters, cached for a few seconds.
+
+    COUNT(*) over ~200k alerts was the most expensive part of every queue request; the total is
+    a "how many" hint next to a keyset-paged list, so being up to COUNT_TTL_SECONDS stale is
+    acceptable. Dispositions clear the cache immediately.
+    """
+    key = (id(db.get_bind()), version_id, *astuple(filters))  # one cache per database
+    now = time.monotonic()
+    with _counts_lock:
+        hit = _counts.get(key)
+        if hit is not None and now - hit[0] < COUNT_TTL_SECONDS:
+            return hit[1]
+    total = int(db.scalar(select(func.count()).select_from(Alert).where(where)) or 0)
+    with _counts_lock:
+        _counts[key] = (now, total)
+    return total
+
+
+def clear_counts() -> None:
+    with _counts_lock:
+        _counts.clear()
+
+
 def list_alerts(
     db: Session, filters: AlertFilters, cursor: str | None, limit: int
 ) -> dict[str, Any]:
@@ -90,7 +121,7 @@ def list_alerts(
         score, alert_id = _decode_cursor(cursor)
         stmt = stmt.where(or_(Alert.score < score, and_(Alert.score == score, Alert.id > alert_id)))
     rows = list(db.scalars(stmt.order_by(Alert.score.desc(), Alert.id).limit(limit + 1)))
-    total = db.scalar(select(func.count()).select_from(Alert).where(where)) or 0
+    total = _count(db, version.id, filters, where)
     next_cursor = (
         _encode_cursor(rows[limit - 1].score, rows[limit - 1].id) if len(rows) > limit else None
     )
@@ -248,4 +279,5 @@ def dispose(
         detail={"reason": reason_code},
     )
     db.flush()
+    clear_counts()
     return alert_detail(db, alert.id)

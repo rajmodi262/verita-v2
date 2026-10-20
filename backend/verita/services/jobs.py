@@ -17,6 +17,7 @@ from typing import Any
 from sqlalchemy import CursorResult, select, update
 from sqlalchemy.orm import Session, sessionmaker
 
+from verita.api.observability import JOBS
 from verita.core.errors import AppError
 from verita.db.base import utcnow
 from verita.db.case_models import Job, JobStatus
@@ -93,6 +94,7 @@ def run(factory: sessionmaker[Session], job_id: int | None = None) -> Job | None
             job.result = result
             job.progress = "done"
             job.updated_at = utcnow()
+            JOBS.labels(job.kind, "done").inc()
             return job
     except Exception as exc:  # noqa: BLE001 - a job failure is data, not a crash
         with transaction(factory) as db:
@@ -102,6 +104,7 @@ def run(factory: sessionmaker[Session], job_id: int | None = None) -> Job | None
             job.status = JobStatus.QUEUED.value if retry else JobStatus.FAILED.value
             job.error = f"{type(exc).__name__}: {exc}"
             job.progress = "retrying" if retry else "failed"
+            JOBS.labels(job.kind, "retry" if retry else "failed").inc()
             job.updated_at = utcnow()
             return job
 

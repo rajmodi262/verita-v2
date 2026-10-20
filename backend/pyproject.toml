@@ -17,9 +17,14 @@ dependencies = [
     "lightgbm>=4.7.0",
     "numba>=0.68.0",
     "numpy>=2.4.6",
+    "opentelemetry-api>=1.45.1",
+    "opentelemetry-exporter-otlp-proto-http>=1.45.1",
+    "opentelemetry-instrumentation-fastapi>=0.66b1",
+    "opentelemetry-sdk>=1.45.1",
     "optuna>=5.0.0",
     "ortools>=9.15.6755",
     "pandas>=3.0.6",
+    "prometheus-client>=0.26.0",
     "psutil>=7.2.2",
     "psycopg[binary]>=3.3.6",
     "pyarrow>=26.0.0",
@@ -52,6 +57,7 @@ dev = [
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
     "ruff>=0.17.1",
+    "schemathesis>=4.32.1",
     "testcontainers[postgres]>=4.15.0",
     "types-psutil>=7.2.2.20260906",
     "types-pyyaml>=6.0.12.20260906",
@@ -81,6 +87,8 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["S101", "ANN", "PLR2004", "S105", "S106", "PLC0415", "S608", "PLR0917"]
+# Operational scripts compare literal HTTP status codes.
+"scripts/**" = ["PLR2004"]
 "migrations/**" = ["ANN", "N999", "UP035", "UP007", "I001"]
 # The data card template is Markdown table text; wrapping it would change the output.
 "verita/pipeline/datacard.py" = ["E501"]

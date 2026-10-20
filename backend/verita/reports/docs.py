@@ -71,6 +71,12 @@ Synthetic data only: {{ m.synthetic_data_notice }}
 | Planted narrative faults caught by the verifier | {{ d.defend.overall_detection | ci(digits=2) }} | {{ d.defend.overall_detection.total | count }} faults in {{ d.defend.cases }} cases |
 | Clean narratives wrongly rejected | {{ d.defend.clean_false_alarm | ci }} | {{ d.defend.cases }} cases |
 {% endif %}
+{% for name, other in m.datasets.items() if name != m.primary_dataset and other.detect %}
+| Robustness: laundering F1 on {{ other.label }} | {{ other.detect.models.lgbm_champion.test.f1 | ci }} | published GFP + XGBoost {{ "%.2f" | format(other.detect.published_baselines.rows["GFP + XGBoost"].mean) }}% |
+{% endfor %}
+{% if m.perf.analysts %}
+| Latency p95, 50 analysts working (k6, through nginx) | {{ m.perf.analysts.p95_ms }} ms | {{ m.perf.analysts.requests | count }} requests, {{ m.perf.analysts.error_rate | pct }} errors |
+{% endif %}
 
 Where it is weak: bulk-day F1 is {{ bulk.f1 | ci }}; per-typology recall ranges from
 {{ worst.recall | ci }} ({{ worst.typology }}) to {{ best.recall | ci }} ({{ best.typology }});
@@ -217,6 +223,18 @@ Raw LLM unsupported-claim rate: not run — {{ d.defend.llm.reason }}.
 {% endif %}
 
 {% endfor %}
+
+{% if m.perf %}
+## Load (k6 through nginx, demo stack)
+| Scenario | Requests/s | p50 | p95 | Errors |
+|---|---|---|---|---|
+{% for name, p in m.perf.items() %}
+| {{ name }} | {{ p.requests_per_second }} | {{ p.p50_ms }} ms | {{ p.p95_ms }} ms | {{ p.error_rate | pct }} |
+{% endfor %}
+
+"analysts": 50 users pausing 1–3 s between actions (acceptance p95 < 300 ms). "stress": the same
+users with no pauses — the saturation throughput, reported without a latency target.
+{% endif %}
 """
 
 

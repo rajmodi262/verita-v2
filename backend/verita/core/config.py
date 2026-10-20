@@ -51,6 +51,9 @@ class Settings(BaseSettings):
     # Ed25519 signing key (PEM). Created on first use in dev; a mounted secret in production.
     signing_key_path: Path = REPO_ROOT / "keys" / "verita-signing.pem"
     public_key_path: Path = REPO_ROOT / "keys" / "verita-pub.pem"
+    # Observability (M9.07-08): OTLP/HTTP traces endpoint, and a bearer token for /api/metrics.
+    otel_endpoint: str | None = None
+    metrics_token: SecretStr | None = None
     # A verified demo pack (verita demo pack) to serve instead of the build machine's artifacts.
     demo_pack: Path | None = None
     # Run queued jobs in-process right after enqueueing (dev/demo); production runs `verita worker`.

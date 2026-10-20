@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import MutableMapping
 from contextvars import ContextVar
+from typing import Any
 
 import structlog
 
@@ -20,6 +22,12 @@ def _add_request_id(
     return event_dict
 
 
+def _trace_id(logger: Any, name: str, event: MutableMapping[str, Any]) -> MutableMapping[str, Any]:
+    from verita.api.observability import add_trace_id  # noqa: PLC0415 - avoid an import cycle
+
+    return add_trace_id(logger, name, event)
+
+
 def configure_logging(level: str = "INFO") -> None:
     """Route stdlib and structlog output through one JSON renderer on stdout."""
     shared: list[structlog.typing.Processor] = [
@@ -28,6 +36,7 @@ def configure_logging(level: str = "INFO") -> None:
         structlog.stdlib.add_log_level,
         structlog.stdlib.add_logger_name,
         structlog.processors.TimeStamper(fmt="iso", utc=True),
+        _trace_id,
     ]
     structlog.configure(
         processors=[*shared, structlog.stdlib.ProcessorFormatter.wrap_for_formatter],

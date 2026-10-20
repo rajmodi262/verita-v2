@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: verita
+    folder: Verita
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

@@ -8,7 +8,12 @@ RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npm run build
 
-FROM nginxinc/nginx-unprivileged:1.27-alpine AS runtime
+# alpine-slim: no image-filter/xslt modules, so no libxml2/libpng/tiff to patch. Packages are
+# upgraded at build time; CI fails on fixable High/Critical findings (grype --only-fixed).
+FROM nginxinc/nginx-unprivileged:1.29-alpine-slim AS runtime
+USER root
+RUN apk upgrade --no-cache
+USER 101
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /app/dist /usr/share/nginx/html

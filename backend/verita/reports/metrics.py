@@ -359,6 +359,21 @@ def _headline(name: str, sec: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
+def _perf(root: Path) -> dict[str, Any]:
+    """k6 results (perf/results/*.json, written by `k6 run --summary-export`)."""
+    out: dict[str, Any] = {}
+    for path in sorted((root / "perf" / "results").glob("*.json")):
+        m = _read(path)["metrics"]
+        out[path.stem] = {
+            "requests_per_second": round(m["http_reqs"]["rate"], 1),
+            "p95_ms": round(m["http_req_duration"]["p(95)"], 1),
+            "p50_ms": round(m["http_req_duration"]["med"], 1),
+            "error_rate": m["http_req_failed"]["value"],
+            "requests": m["http_reqs"]["count"],
+        }
+    return out
+
+
 def build(
     root: Path = REPO_ROOT, datasets: tuple[str, ...] = ("hi_small", "li_small")
 ) -> dict[str, Any]:
@@ -380,6 +395,7 @@ def build(
         sections[name] = sec
         headline += _headline(name, sec)
     return {
+        "perf": _perf(root),
         "schema_version": SCHEMA_VERSION,
         "generated_at": datetime.now(UTC).replace(microsecond=0).isoformat(),
         "git_sha": git_sha(),

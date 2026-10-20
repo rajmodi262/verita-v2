@@ -9,8 +9,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from verita import __version__
+from verita.api import observability
 from verita.api.deps import CSRF_HEADER
 from verita.api.middleware import RequestContextMiddleware
+from verita.api.observability import MetricsMiddleware
 from verita.api.ratelimit import Limits, RateLimitMiddleware
 from verita.api.routers import alerts, auth, capacity, cases, evidence_room, health
 from verita.core.config import Settings, get_settings
@@ -73,6 +75,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 settings.rate_limit_mutations_per_session,
             ),
         )
+    app.add_middleware(MetricsMiddleware)
     app.add_middleware(RequestContextMiddleware)
     app.add_middleware(
         CORSMiddleware,
@@ -89,4 +92,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(capacity.router, prefix=API_PREFIX)
     app.include_router(cases.router, prefix=API_PREFIX)
     app.include_router(evidence_room.router, prefix=API_PREFIX)
+    app.include_router(observability.router)
+    observability.setup_tracing(app, settings.otel_endpoint)
     return app
