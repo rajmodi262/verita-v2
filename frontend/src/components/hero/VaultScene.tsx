@@ -246,7 +246,8 @@ function glyph(ch: string, color: string): THREE.CanvasTexture {
   canvas.height = 128;
   const ctx = canvas.getContext("2d");
   if (ctx) {
-    ctx.font = "600 92px 'Bodoni Moda Variable', 'Segoe UI Symbol', 'Segoe UI', 'Noto Sans', sans-serif";
+    ctx.font =
+      "600 92px 'Bodoni Moda Variable', 'Segoe UI Symbol', 'Segoe UI', 'Noto Sans', sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.shadowColor = color;
