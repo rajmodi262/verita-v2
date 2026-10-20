@@ -14,10 +14,11 @@
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -38,12 +39,12 @@
   padding: var(--space-3) var(--space-5);
   background: var(--color-border);
   color: var(--color-on-ink);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.07em;
   text-decoration: none;
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
   box-shadow: var(--shadow-desk);
 }
 
@@ -72,12 +73,12 @@
   padding: var(--space-3) var(--space-5);
   color: var(--color-ink);
   border: var(--border-width) solid var(--color-border);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.07em;
   text-decoration: none;
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
 }
 
 .measured {
@@ -95,7 +96,8 @@
 }
 
 .metricLabel {
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .metric {

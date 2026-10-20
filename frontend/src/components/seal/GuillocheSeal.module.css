@@ -1,0 +1,151 @@
+.seal,
+.sealBroken {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Engraving: every line draws itself in, layer by layer, the first time the seal appears. */
+.band path,
+.rosette path,
+.inner path {
+  fill: none;
+  stroke: var(--seal-line, var(--color-guilloche));
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: engrave 1.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.band path {
+  stroke-width: 0.45;
+  opacity: 0.7;
+}
+
+.rosette path {
+  stroke-width: 0.55;
+  opacity: 0.85;
+  animation-duration: 2s;
+}
+
+.inner path {
+  stroke-width: 0.5;
+  opacity: 0.9;
+  animation-duration: 1.2s;
+}
+
+@keyframes engrave {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.rim {
+  fill: none;
+  stroke: var(--color-guilloche);
+  stroke-width: 0.8;
+  opacity: 0.6;
+}
+
+.micro {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+  fill: var(--color-ink-muted);
+}
+
+.tick {
+  stroke: var(--color-ink);
+  stroke-width: 1.4;
+}
+
+.tickBroken {
+  stroke: var(--color-alert);
+  stroke-width: 3;
+}
+
+/* The broken exhibit: the shard is knocked out of the ring and inked red. */
+.shard {
+  /* Custom properties inherit into the <use> copy, which plain selectors cannot reach. */
+  --seal-line: var(--color-alert);
+
+  transform-origin: 200px 200px;
+  animation: knock 0.7s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+  animation-delay: 1.4s;
+}
+
+.shard path {
+  stroke-dasharray: none;
+  animation: none;
+}
+
+.shardFill {
+  fill: var(--color-alert);
+  opacity: 0.12;
+  stroke: none;
+}
+
+.crack {
+  fill: none;
+  stroke: var(--color-alert);
+  stroke-width: 1.6;
+  stroke-linejoin: bevel;
+}
+
+@keyframes knock {
+  from {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+}
+
+.medallion {
+  fill: var(--color-surface);
+  stroke-width: 3;
+}
+
+.medallionInner {
+  fill: none;
+  stroke: var(--color-guilloche);
+  stroke-width: 0.6;
+}
+
+.no {
+  font-family: var(--font-display);
+  font-style: italic;
+  text-anchor: middle;
+  fill: var(--color-ink-muted);
+}
+
+.serial {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-anchor: middle;
+  fill: var(--color-ink);
+  font-variant-numeric: lining-nums;
+}
+
+.state,
+.stateBroken {
+  font-family: var(--font-title);
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-anchor: middle;
+  fill: var(--color-verified-text);
+}
+
+.stateBroken {
+  fill: var(--color-alert-text);
+}
+
+/* Foil: the one iridescent element, as on a banknote's security patch. */
+.foil1 {
+  stop-color: var(--color-foil-1);
+}
+
+.foil2 {
+  stop-color: var(--color-foil-2);
+}
+
+.foil3 {
+  stop-color: var(--color-foil-3);
+}

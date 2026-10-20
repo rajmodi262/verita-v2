@@ -14,6 +14,7 @@ import {
   useJob,
   usePublicKeys,
   useReturn,
+  useCaseExport,
   useSignatureCheck,
   useSubmit,
   useVerify,
@@ -27,6 +28,7 @@ import {
   VerifyDropzone,
 } from "../../components/case/Panels";
 import { ErrorState } from "../../components/ErrorState";
+import { GuillocheSeal } from "../../components/seal/GuillocheSeal";
 import {
   Button,
   Dialog,
@@ -123,13 +125,22 @@ function SignedPanel({ detail }: { detail: CaseDetail }) {
   const sig = detail.signature;
   const check = useSignatureCheck(detail.id, sig !== null);
   const keys = usePublicKeys();
+  const signed = useCaseExport(detail.id, sig !== null);
   if (!sig) return null;
   return (
     <Panel title="Signed case file" label="Seal">
       <div className={styles.sealRow}>
-        <div className={styles.seal} aria-hidden="true">
-          V
-        </div>
+        {signed.data ? (
+          <GuillocheSeal
+            root={sig.merkle_root}
+            leaves={Object.keys(signed.data.leaves).sort()}
+            broken={check.data?.changed_leaves ?? []}
+            serial={String(detail.id).padStart(6, "0")}
+            size={300}
+          />
+        ) : (
+          <div className={styles.sealPending} aria-hidden="true" />
+        )}
         <dl className={styles.sigList}>
           <div>
             <dt>Merkle root</dt>

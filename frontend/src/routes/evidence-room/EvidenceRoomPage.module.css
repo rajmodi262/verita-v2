@@ -13,10 +13,11 @@
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -38,10 +39,11 @@
   color: var(--color-ink);
   border: 0;
   border-bottom: 4px solid transparent;
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -90,10 +92,11 @@
 
 .table thead th {
   background: var(--color-surface-2);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .num {
@@ -135,9 +138,10 @@
 .download {
   display: inline-block;
   margin-top: var(--space-3);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .footer {

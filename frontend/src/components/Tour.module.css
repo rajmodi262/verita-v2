@@ -15,10 +15,11 @@
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -43,8 +44,9 @@
   background: var(--color-surface);
   color: var(--color-link);
   border: 1px solid var(--color-rule);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   cursor: pointer;
 }

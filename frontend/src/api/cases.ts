@@ -5,6 +5,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
+import { parseCaseFile } from "../lib/caseFile";
+
 import { API_PREFIX, request } from "./client";
 import type { components } from "./schema";
 
@@ -210,6 +212,19 @@ export function usePublicKeys() {
     queryKey: ["keys"],
     queryFn: ({ signal }) => request("/keys", { schema: keys, signal }),
     staleTime: Infinity,
+  });
+}
+
+/** The signed export itself (for the seal: its leaves are the seal's sectors). */
+export function useCaseExport(id: number, enabled: boolean) {
+  return useQuery({
+    queryKey: ["cases", "export", id],
+    enabled,
+    queryFn: async ({ signal }) => {
+      const res = await fetch(exportUrl(id, "json"), { credentials: "same-origin", signal });
+      if (!res.ok) throw new Error(`Export failed (${String(res.status)})`);
+      return parseCaseFile(await res.text());
+    },
   });
 }
 

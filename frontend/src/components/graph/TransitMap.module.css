@@ -1,0 +1,197 @@
+.figure {
+  margin: 0;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 640px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 34px, var(--color-surface-2) 34px 35px),
+    repeating-linear-gradient(90deg, transparent 0 34px, var(--color-surface-2) 34px 35px);
+}
+
+/* Rails: other payments in ink, flagged in red, the dominant path as the thick red trunk line. */
+.branch,
+.flagged,
+.trunk {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  cursor: pointer;
+}
+
+.branch {
+  stroke: var(--color-guilloche);
+  stroke-width: 2;
+  opacity: 0.45;
+}
+
+.flagged {
+  stroke: var(--color-alert);
+  stroke-width: 3;
+  opacity: 0.8;
+}
+
+.trunk {
+  stroke: var(--color-path);
+  stroke-width: 7;
+}
+
+.arriving {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: run 0.45s ease-out forwards;
+  opacity: 1;
+}
+
+.picked {
+  stroke: var(--color-ink);
+  opacity: 1;
+}
+
+@keyframes run {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.station {
+  animation: appear 0.3s ease-out both;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+}
+
+.stop,
+.stopHot {
+  fill: var(--color-node);
+  stroke: var(--color-ink);
+  stroke-width: 2.5;
+}
+
+.stopHot {
+  stroke: var(--color-alert);
+}
+
+.interchange {
+  fill: var(--color-surface);
+  stroke: var(--color-ink);
+  stroke-width: 3;
+}
+
+.name,
+.bank {
+  text-anchor: middle;
+  fill: var(--color-ink);
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 4px;
+}
+
+.name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.bank {
+  font-family: var(--font-title);
+  fill: var(--color-ink-muted);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-rule);
+}
+
+.play {
+  min-width: 88px;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+  font-family: var(--font-title);
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.scrub {
+  flex: 1 1 220px;
+}
+
+.scrub input {
+  width: 100%;
+  accent-color: var(--color-alert);
+}
+
+.readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: baseline;
+  flex-basis: 100%;
+  min-height: 1.6em;
+  font-size: var(--fs-sm);
+}
+
+.clock {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.fires {
+  padding: 0 var(--space-2);
+  border: 3px double var(--color-alert);
+  color: var(--color-alert-text);
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.07em;
+  animation: appear 0.3s ease-out both;
+}
+
+.legend {
+  display: flex;
+  gap: var(--space-5);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-label);
+  color: var(--color-ink-muted);
+}
+
+.legendTrunk::before,
+.legendFlagged::before,
+.legendBranch::before {
+  content: "";
+  display: inline-block;
+  width: 22px;
+  margin-right: var(--space-2);
+  vertical-align: middle;
+  border-top: 7px solid var(--color-path);
+}
+
+.legendFlagged::before {
+  border-top: 3px solid var(--color-alert);
+}
+
+.legendBranch::before {
+  border-top: 2px solid var(--color-guilloche);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

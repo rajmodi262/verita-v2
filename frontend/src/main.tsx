@@ -1,8 +1,7 @@
 import "./zod-config";
-import "@fontsource-variable/fraunces";
-import "@fontsource-variable/inter";
-import "@fontsource-variable/jetbrains-mono";
-import "@fontsource-variable/space-grotesk";
+import "@fontsource-variable/bodoni-moda";
+import "@fontsource-variable/martian-mono";
+import "@fontsource-variable/schibsted-grotesk";
 import "./styles/tokens.css";
 import "./styles/globals.css";
 

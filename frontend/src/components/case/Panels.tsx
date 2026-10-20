@@ -3,8 +3,9 @@ import type { ChangeEvent } from "react";
 
 import type { CaseDetail, EvidenceItem } from "../../api/cases";
 import { parseCaseFile, verifyCaseFile } from "../../lib/caseFile";
-import type { FileCheck } from "../../lib/caseFile";
+import type { CaseExport, FileCheck } from "../../lib/caseFile";
 import { dateTime } from "../../lib/format";
+import { GuillocheSeal } from "../seal/GuillocheSeal";
 import { HashText, Stamp } from "../ui";
 
 import styles from "./Case.module.css";
@@ -177,6 +178,7 @@ export function LedgerPanel({ detail }: { detail: CaseDetail }) {
 /** Drop or choose a downloaded case file; it is verified here, in the browser. */
 export function VerifyDropzone({ publicKeyPem }: { publicKeyPem: string | undefined }) {
   const [result, setResult] = useState<FileCheck | null>(null);
+  const [file, setFile] = useState<CaseExport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [over, setOver] = useState(false);
@@ -187,6 +189,7 @@ export function VerifyDropzone({ publicKeyPem }: { publicKeyPem: string | undefi
     setError(null);
     try {
       const parsed = parseCaseFile(await file.text());
+      setFile(parsed);
       setResult(await verifyCaseFile(parsed, publicKeyPem));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not read the file.");
@@ -244,6 +247,16 @@ export function VerifyDropzone({ publicKeyPem }: { publicKeyPem: string | undefi
         {error ? <p className={styles.bad}>{error}</p> : null}
         {result ? (
           <div className={styles.verifyResult}>
+            {file ? (
+              <GuillocheSeal
+                key={`${name}-${String(result.valid)}`}
+                root={file.merkle_root}
+                leaves={Object.keys(file.leaves).sort()}
+                broken={result.changedLeaves}
+                serial={String(file.case_id).padStart(6, "0")}
+                size={220}
+              />
+            ) : null}
             <p>
               {result.valid ? (
                 <Stamp tone="verified">Valid</Stamp>

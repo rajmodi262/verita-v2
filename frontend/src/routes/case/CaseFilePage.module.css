@@ -17,10 +17,11 @@
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -31,10 +32,11 @@
 .plainState {
   padding: var(--space-1) var(--space-3);
   border: 1px solid var(--color-border);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .actions {
@@ -129,9 +131,10 @@
 }
 
 .sigList dt {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -152,10 +155,11 @@
   min-height: 44px;
   padding: var(--space-2) var(--space-4);
   border: var(--border-width) solid var(--color-border);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   text-decoration: none;
 }
 
@@ -182,4 +186,11 @@
   .grid {
     grid-template-columns: 1fr;
   }
+}
+
+.sealPending {
+  width: 300px;
+  height: 300px;
+  border: 1px dashed var(--color-rule);
+  border-radius: var(--radius-seal);
 }

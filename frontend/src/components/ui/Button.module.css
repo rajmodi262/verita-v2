@@ -7,11 +7,11 @@
   padding: var(--space-2) var(--space-4);
   border: var(--border-width) solid var(--color-border);
   border-radius: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
   cursor: pointer;
   box-shadow: var(--shadow-desk);
   transition:

@@ -17,8 +17,9 @@
   background: transparent;
   color: var(--color-link);
   border: 1px solid var(--color-rule);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   cursor: pointer;
 }

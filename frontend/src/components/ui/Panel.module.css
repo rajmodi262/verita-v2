@@ -1,7 +1,11 @@
+/* Engraved frame: an ink rule with a hairline inset, as on a banknote's border. */
 .panel {
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
-  box-shadow: var(--shadow-desk);
+  box-shadow:
+    inset 0 0 0 3px var(--color-surface),
+    inset 0 0 0 4px var(--color-rule),
+    var(--shadow-desk);
 }
 
 .header {
@@ -14,15 +18,19 @@
 }
 
 .label {
-  font-family: var(--font-mono);
+  font-family: var(--font-display);
+  font-style: italic;
   font-size: var(--fs-label);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
 .title {
   font-size: var(--fs-md);
+  font-weight: 650;
+  letter-spacing: -0.01em;
 }
 
 .actions {

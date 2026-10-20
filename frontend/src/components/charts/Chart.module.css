@@ -27,10 +27,11 @@
   background: var(--color-surface);
   color: var(--color-ink);
   border: var(--border-width) solid var(--color-border);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -64,10 +65,11 @@
 
 .axisTitle {
   fill: var(--color-ink);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .primary {
@@ -224,10 +226,11 @@
   position: sticky;
   top: 0;
   background: var(--color-surface-2);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
 }
 
 .num {
