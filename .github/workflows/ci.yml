@@ -67,6 +67,8 @@ jobs:
         run: npx vitest run --coverage
       - name: Build
         run: npm run build
+      - name: Bundle budgets (gzip, entry ≤ 135 KB, route chunks ≤ 150 KB)
+        run: npm run bundle:check
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
@@ -100,6 +102,27 @@ jobs:
         with:
           name: playwright-report
           path: frontend/playwright-report
+      - name: Lighthouse budgets (production bundle via vite preview, fixture API)
+        working-directory: frontend
+        env:
+          VERITA_DATABASE_URL: sqlite+pysqlite:///../backend/.e2e/e2e.sqlite
+          VERITA_DATASET: fixture
+          VERITA_SIGNING_KEY_PATH: ../backend/.e2e/signing.pem
+          VERITA_PUBLIC_KEY_PATH: ../backend/.e2e/pub.pem
+          VERITA_LLM_PROVIDERS: "[]"
+          VERITA_API_URL: http://localhost:8011
+          LHCI_BASE_URL: http://localhost:4173
+        run: |
+          npm run build
+          (cd ../backend && uv run --no-sync uvicorn verita.api.app:create_app --factory --port 8011 &)
+          npx vite preview --port 4173 --strictPort &
+          npx -y wait-on@8.0.3 -t 60000 http://localhost:8011/api/v1/health/live http://localhost:4173
+          npm run lighthouse
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: frontend/lighthouse-report
 
   secrets:
     runs-on: ubuntu-latest
@@ -117,7 +140,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build API image
-        run: docker build -t verita-api:ci backend
+        run: docker build -t verita-api:ci -f backend/Dockerfile .
       - name: Build web image
         run: docker build -t verita-web:ci frontend
       - name: Smoke-test the API image
@@ -125,3 +148,17 @@ jobs:
           docker run -d --name api -e VERITA_ENV=dev -e VERITA_DATABASE_URL=sqlite+pysqlite:////tmp/ci.sqlite -p 8000:8000 verita-api:ci
           for i in $(seq 1 30); do curl -fsS http://localhost:8000/api/v1/health/live && exit 0; sleep 1; done
           docker logs api; exit 1
+      - name: SBOMs (CycloneDX)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          syft verita-api:ci -o cyclonedx-json=sbom-verita-api.cdx.json
+          syft verita-web:ci -o cyclonedx-json=sbom-verita-web.cdx.json
+      - name: Vulnerability gate — fail on any fixable High/Critical (docs/SECURITY_EXCEPTIONS.md SE-3)
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          grype sbom:sbom-verita-api.cdx.json --only-fixed --fail-on high
+          grype sbom:sbom-verita-web.cdx.json --only-fixed --fail-on high
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sboms
+          path: sbom-*.cdx.json

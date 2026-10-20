@@ -17,7 +17,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from verita.db.base import utcnow
-from verita.db.case_models import GENESIS_HASH, CaseEvent
+from verita.db.case_models import GENESIS_HASH, Case, CaseEvent
 from verita.defend.canonical import canonicalize
 
 
@@ -46,12 +46,15 @@ def event_hash(
 def append(
     db: Session, case_id: int, type_: str, actor_id: int | None, payload: dict[str, Any]
 ) -> CaseEvent:
+    # Serialise appends per case by locking the case row, not the last event: it also covers a
+    # case with no events yet, and the application's database role may not lock ledger rows
+    # (row locks need UPDATE privilege, which it does not have on case_events).
+    db.execute(select(Case.id).where(Case.id == case_id).with_for_update())
     last = db.scalar(
         select(CaseEvent)
         .where(CaseEvent.case_id == case_id)
         .order_by(CaseEvent.seq.desc())
         .limit(1)
-        .with_for_update()
     )
     seq = last.seq + 1 if last else 1
     prev = last.hash if last else GENESIS_HASH

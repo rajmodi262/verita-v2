@@ -64,6 +64,24 @@ def db_upgrade(revision: str = "head") -> None:
     typer.echo(f"Database upgraded to {revision}")
 
 
+@db_app.command("app-role")
+def db_app_role(
+    role: Annotated[str, typer.Option(help="Login role the API and worker connect as.")],
+    password_file: Annotated[
+        Path | None, typer.Option(help="File holding the password (else $VERITA_APP_DB_PASSWORD).")
+    ] = None,
+) -> None:
+    """Create/refresh the least-privilege application role (PostgreSQL; run after upgrade)."""
+    from verita.db.roles import grant_app_role  # noqa: PLC0415 - Postgres-only path
+
+    if password_file is not None:
+        password = password_file.read_text(encoding="utf-8").strip()
+    else:
+        password = os.environ.get("VERITA_APP_DB_PASSWORD", "")
+    grant_app_role(make_engine(get_settings().database_url), role, password)
+    typer.echo(f"Application role {role} granted (append-only on the ledger)")
+
+
 @users_app.command("create")
 def users_create(
     username: Annotated[str, typer.Option(prompt=True)],

@@ -15,7 +15,10 @@ export default defineConfig({
     strictPort: true,
     proxy: { "/api": { target: apiUrl, changeOrigin: false } },
   },
-  build: { sourcemap: true, target: "es2022" },
+  // `vite preview` serves the production bundle the same way (Lighthouse CI audits it).
+  preview: { proxy: { "/api": { target: apiUrl, changeOrigin: false } } },
+  // assetsInlineLimit 0: no data: URIs, so the CSP keeps font-src/img-src at 'self'.
+  build: { sourcemap: true, target: "es2022", assetsInlineLimit: 0 },
   test: {
     environment: "happy-dom",
     include: ["src/**/*.test.{ts,tsx}"], // e2e/*.spec.ts belong to Playwright

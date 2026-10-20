@@ -1,0 +1,6 @@
+# TLS termination in front of the same-origin web service (certificates via ACME).
+{$VERITA_DOMAIN} {
+	encode zstd gzip
+	header Strict-Transport-Security "max-age=63072000; includeSubDomains"
+	reverse_proxy web:8080
+}
