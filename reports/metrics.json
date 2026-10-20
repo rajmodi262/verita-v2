@@ -3069,8 +3069,51 @@
           }
         },
         "llm": {
-          "reason": "not requested (run with --llm and a GEMINI_API_KEY / GROQ_API_KEY)",
-          "run": false
+          "citation_error_rate": {
+            "high": 0.0216,
+            "hits": 0,
+            "low": 0.0,
+            "total": 174,
+            "value": 0.0
+          },
+          "drafted_by": {
+            "groq/openai/gpt-oss-120b": 17
+          },
+          "drafts": 17,
+          "drafts_passing_verification": {
+            "high": 0.26982,
+            "hits": 1,
+            "low": 0.01046,
+            "total": 17,
+            "value": 0.058824
+          },
+          "failure_reasons": {
+            "gemini: quota; groq: quota": 13
+          },
+          "models": [
+            "gemini-3.5-flash",
+            "openai/gpt-oss-120b"
+          ],
+          "provider_failures": 13,
+          "providers": [
+            "gemini",
+            "groq"
+          ],
+          "run": true,
+          "seconds_waiting_for_quota": 800.0,
+          "unsupported_by_kind": {
+            "account": 1,
+            "amount": 3,
+            "count": 2,
+            "duration": 12
+          },
+          "unsupported_claim_rate": {
+            "high": 0.045788,
+            "hits": 18,
+            "low": 0.018592,
+            "total": 615,
+            "value": 0.029268
+          }
         },
         "overall_detection": {
           "high": 0.999928,
@@ -4428,8 +4471,8 @@
       ]
     }
   },
-  "generated_at": "2026-10-20T09:04:07+00:00",
-  "git_sha": "3e3e20dfb089",
+  "generated_at": "2026-10-20T13:13:26+00:00",
+  "git_sha": "bc8ffa585fa9",
   "headline": [
     {
       "dataset": "IBM AML HI-Small (synthetic)",

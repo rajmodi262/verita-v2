@@ -514,6 +514,14 @@ function DecideTab({ d }: { d: DecideSection | null }) {
 function DefendTab({ d }: { d: DefendSection | null }) {
   if (!d) return <Missing what="verifier" />;
   const faults = Object.entries(d.faults);
+  const llmRate = d.llm.run ? d.llm.unsupported_claim_rate : undefined;
+  const llmPassing = d.llm.run ? d.llm.drafts_passing_verification : undefined;
+  // Keys and providers fail over, so name the models that actually wrote the drafts.
+  const llmWriters = Object.entries(d.llm.drafted_by ?? {})
+    .map(([model, n]) => `${String(n)} by ${model}`)
+    .join(", ");
+  const failed = d.llm.provider_failures ?? 0;
+  const llmAttempts = `${String((d.llm.drafts ?? 0) + failed)} attempted, ${String(failed)} hit provider quota`;
   return (
     <div className={styles.stack}>
       <div className={styles.stats}>
@@ -549,14 +557,30 @@ function DefendTab({ d }: { d: DefendSection | null }) {
         />
         <Stat
           label="Raw LLM hallucination"
-          value={d.llm.run ? "measured" : "not run"}
-          detail={d.llm.run ? "see JSON" : (d.llm.reason ?? "")}
+          value={llmRate ? percent(llmRate.value, 1) : "not run"}
+          detail={
+            llmRate
+              ? `${integer(llmRate.hits)} of ${integer(llmRate.total)} claims unsupported · ${ci(llmRate, 1)} · ${llmWriters}`
+              : (d.llm.reason ?? "")
+          }
           provenance={{
             formula:
-              "Unsupported claims in clean LLM drafts before verification ÷ all their claims.",
-            source: "datasets.<ds>.defend.llm",
+              "Unsupported claims in LLM drafts before verification ÷ all their claims; Wilson 95% interval. The verifier gates every draft, so none of these reach a signed case.",
+            source: "datasets.<ds>.defend.llm.unsupported_claim_rate",
           }}
         />
+        {llmPassing ? (
+          <Stat
+            label="LLM drafts passing as written"
+            value={percent(llmPassing.value, 1)}
+            detail={`${integer(llmPassing.hits)} of ${integer(llmPassing.total)} drafts · ${ci(llmPassing, 1)} · ${llmAttempts}`}
+            provenance={{
+              formula:
+                "LLM drafts the verifier accepts with no edits ÷ drafts written. Attempts that hit provider quota wrote no draft and are not counted.",
+              source: "datasets.<ds>.defend.llm.drafts_passing_verification",
+            }}
+          />
+        ) : null}
       </div>
       <Figure
         title="Detection by fault type"

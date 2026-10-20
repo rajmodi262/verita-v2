@@ -61,6 +61,48 @@ it("shows the verifier's results and its misses verbatim", async () => {
   expect(screen.getByText(/claims are matched by value, not by role/)).toBeInTheDocument();
 });
 
+it("shows the raw LLM rate with who wrote the drafts and how many attempts failed", async () => {
+  const m = structuredClone(METRICS);
+  const defend = m.datasets.hi_small?.defend;
+  if (!defend) throw new Error("fixture report has no Defend section");
+  defend.llm = {
+    run: true,
+    drafts: 17,
+    provider_failures: 13,
+    drafted_by: { "groq/openai/gpt-oss-120b": 17 },
+    unsupported_claim_rate: { hits: 18, total: 615, value: 0.029268, low: 0.0186, high: 0.0458 },
+    drafts_passing_verification: { hits: 1, total: 17, value: 0.0588, low: 0.0105, high: 0.2698 },
+  };
+  mockApi({
+    "GET /me": () => json(ANALYST),
+    "GET /evidence-room/metrics": () => json({ sha256: SHA, metrics: m }),
+  });
+  renderAt("/evidence-room?tab=defend");
+  const rate = await screen.findByRole("group", { name: "Raw LLM hallucination" });
+  expect(within(rate).getByText("2.9%")).toBeInTheDocument();
+  expect(within(rate).getByText(/18 of 615 claims unsupported/)).toBeInTheDocument();
+  expect(within(rate).getByText(/17 by groq\/openai\/gpt-oss-120b/)).toBeInTheDocument();
+  const passing = screen.getByRole("group", { name: "LLM drafts passing as written" });
+  expect(within(passing).getByText(/1 of 17 drafts/)).toBeInTheDocument();
+  expect(within(passing).getByText(/30 attempted, 13 hit provider quota/)).toBeInTheDocument();
+});
+
+it("says why the raw LLM rate was not measured", async () => {
+  const m = structuredClone(METRICS);
+  const defend = m.datasets.hi_small?.defend;
+  if (!defend) throw new Error("fixture report has no Defend section");
+  defend.llm = { run: false, reason: "not requested" };
+  mockApi({
+    "GET /me": () => json(ANALYST),
+    "GET /evidence-room/metrics": () => json({ sha256: SHA, metrics: m }),
+  });
+  renderAt("/evidence-room?tab=defend");
+  const rate = await screen.findByRole("group", { name: "Raw LLM hallucination" });
+  expect(within(rate).getByText("not run")).toBeInTheDocument();
+  expect(within(rate).getByText("not requested")).toBeInTheDocument();
+  expect(screen.queryByRole("group", { name: "LLM drafts passing as written" })).toBeNull();
+});
+
 it("renders the Decide tab's reliability diagram and coverage", async () => {
   api();
   renderAt("/evidence-room?tab=decide");
