@@ -18,6 +18,7 @@ export default defineConfig({
   build: { sourcemap: true, target: "es2022" },
   test: {
     environment: "happy-dom",
+    include: ["src/**/*.test.{ts,tsx}"], // e2e/*.spec.ts belong to Playwright
     globals: true,
     setupFiles: ["./src/test/setup.ts"],
     css: { modules: { classNameStrategy: "non-scoped" } },

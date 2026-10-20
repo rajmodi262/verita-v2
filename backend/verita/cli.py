@@ -363,3 +363,7 @@ def report_scan(root: RootOpt = REPO_ROOT) -> None:
         typer.echo(f"{len(findings)} hand-typed metric(s) found", err=True)
         raise typer.Exit(1)
     typer.echo("No hand-typed metrics")
+
+
+if __name__ == "__main__":  # pragma: no cover - `python -m verita.cli`
+    app()
