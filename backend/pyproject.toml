@@ -84,6 +84,7 @@ ignore = [
 "migrations/**" = ["ANN", "N999", "UP035", "UP007", "I001"]
 # The data card template is Markdown table text; wrapping it would change the output.
 "verita/pipeline/datacard.py" = ["E501"]
+"verita/reports/docs.py" = ["E501"]
 # Pipeline SQL is assembled only from internal constants, config enums escaped as literals, and
 # our own file paths (escaped). No user input reaches it (ADR-007), so S608 is noise here.
 "verita/pipeline/*.py" = ["S608"]

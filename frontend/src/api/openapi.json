@@ -4519,6 +4519,54 @@
         ]
       }
     },
+    "/api/v1/evidence-room/headline": {
+      "get": {
+        "description": "Public: the headline figures for the landing page (no detail, no lineage).",
+        "operationId": "headline_api_v1_evidence_room_headline_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Headline Api V1 Evidence Room Headline Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Headline",
+        "tags": [
+          "evidence-room"
+        ]
+      }
+    },
+    "/api/v1/evidence-room/metrics": {
+      "get": {
+        "description": "The metrics file every number in the product comes from, plus its SHA-256.",
+        "operationId": "metrics_api_v1_evidence_room_metrics_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Metrics Api V1 Evidence Room Metrics Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Metrics",
+        "tags": [
+          "evidence-room"
+        ]
+      }
+    },
     "/api/v1/health/live": {
       "get": {
         "description": "The process is up. Never touches dependencies.",

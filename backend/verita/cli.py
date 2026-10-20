@@ -314,3 +314,52 @@ def worker(once: bool = False, poll_seconds: float = 1.0) -> None:
             return
         if job is None:
             time.sleep(poll_seconds)
+
+
+report_app = typer.Typer(help="Generated reports: metrics.json, README block, cards, honesty scan.")
+app.add_typer(report_app, name="report")
+
+
+@report_app.command("build")
+def report_build(root: RootOpt = REPO_ROOT) -> None:
+    """Collect artifacts into reports/metrics.json and regenerate every derived document."""
+    from verita.reports import docs, metrics  # noqa: PLC0415
+
+    path = metrics.write(metrics.build(root), root / "reports" / "metrics.json")
+    m = json.loads(path.read_text(encoding="utf-8"))  # render exactly what `check` will read
+    for target, text in docs.rendered(m, root).items():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(text, encoding="utf-8")
+        typer.echo(f"Wrote {target}")
+    typer.echo(f"Wrote {path} ({len(m['headline'])} headline figures)")
+
+
+@report_app.command("check")
+def report_check(root: RootOpt = REPO_ROOT) -> None:
+    """Fail if a committed document differs from what the committed metrics.json renders."""
+    from verita.reports import docs  # noqa: PLC0415
+
+    m = json.loads((root / "reports" / "metrics.json").read_text(encoding="utf-8"))
+    stale = [
+        str(t.relative_to(root))
+        for t, text in docs.rendered(m, root).items()
+        if not t.exists() or t.read_text(encoding="utf-8") != text
+    ]
+    if stale:
+        typer.echo("Out of date (run `verita report build`): " + ", ".join(stale), err=True)
+        raise typer.Exit(1)
+    typer.echo("Generated documents match reports/metrics.json")
+
+
+@report_app.command("scan")
+def report_scan(root: RootOpt = REPO_ROOT) -> None:
+    """Fail on hand-typed metrics in public docs and UI code."""
+    from verita.reports.honesty import scan  # noqa: PLC0415
+
+    findings = scan(root)
+    for f in findings:
+        typer.echo(str(f), err=True)
+    if findings:
+        typer.echo(f"{len(findings)} hand-typed metric(s) found", err=True)
+        raise typer.Exit(1)
+    typer.echo("No hand-typed metrics")

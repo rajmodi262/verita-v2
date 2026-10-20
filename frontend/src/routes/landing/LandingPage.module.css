@@ -67,3 +67,53 @@
   font-size: var(--fs-sm);
   color: var(--color-ink-muted);
 }
+
+.secondary {
+  padding: var(--space-3) var(--space-5);
+  color: var(--color-ink);
+  border: var(--border-width) solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.measured {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-rule);
+}
+
+.metricLabel,
+.source {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.08em;
+  color: var(--color-ink-muted);
+}
+
+.metricLabel {
+  text-transform: uppercase;
+}
+
+.metric {
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.context {
+  font-size: var(--fs-sm);
+}
+
+.source {
+  margin-top: var(--space-1);
+  overflow-wrap: anywhere;
+}
+
+.note p + p {
+  margin-top: var(--space-2);
+}

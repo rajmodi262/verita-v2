@@ -2,6 +2,7 @@ import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { ROLE_LABELS, useLogout } from "../../api/auth";
 import type { User } from "../../api/auth";
+import { Tour } from "../../components/Tour";
 import { Button } from "../../components/ui";
 import { cx } from "../../lib/cx";
 import { useTheme } from "../../lib/theme";
@@ -74,6 +75,7 @@ export function AppShell({ user }: { user: User }) {
         <main id="main" className={styles.content} tabIndex={-1}>
           <Outlet />
         </main>
+        {user.role === "reviewer" ? <Tour /> : null}
       </div>
     </div>
   );

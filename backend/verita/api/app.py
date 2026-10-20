@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from verita import __version__
 from verita.api.deps import CSRF_HEADER
 from verita.api.middleware import RequestContextMiddleware
-from verita.api.routers import alerts, auth, capacity, cases, health
+from verita.api.routers import alerts, auth, capacity, cases, evidence_room, health
 from verita.core.config import Settings, get_settings
 from verita.core.errors import install_error_handlers
 from verita.core.logging import configure_logging, get_logger
@@ -68,4 +68,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(alerts.router, prefix=API_PREFIX)
     app.include_router(capacity.router, prefix=API_PREFIX)
     app.include_router(cases.router, prefix=API_PREFIX)
+    app.include_router(evidence_room.router, prefix=API_PREFIX)
     return app
