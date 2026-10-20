@@ -62,6 +62,8 @@ POLICY: dict[tuple[str, str], set[str] | str] = {
     ("GET", "/api/v1/cases/{case_id}/export-tampered.json"): ALL,
     ("GET", "/api/v1/cases/{case_id}/export.pdf"): ALL,
     ("GET", "/api/v1/jobs/{job_id}"): ALL,
+    ("GET", "/api/v1/evidence-room/metrics"): ALL,
+    ("GET", "/api/v1/evidence-room/headline"): PUBLIC,
 }
 
 BODIES = {

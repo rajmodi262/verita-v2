@@ -121,3 +121,39 @@ def test_require_role_is_default_deny(app, make_user, role):
         c.post("/api/v1/auth/login", json={"username": f"user-{role.value}", "password": PASSWORD})
         expected = 200 if role is Role.MLRO else 403
         assert c.get("/api/v1/_mlro_only").status_code == expected
+
+
+def test_evidence_room_serves_the_metrics_file_with_its_hash(tmp_path):
+    import hashlib
+
+    from fastapi.testclient import TestClient
+
+    from tests.conftest import PASSWORD
+    from verita.api.app import create_app
+    from verita.core.config import Settings
+    from verita.db.base import Base
+    from verita.db.models import Role
+    from verita.services.auth import AuthService
+
+    settings = Settings(
+        env="test", database_url="sqlite+pysqlite:///:memory:", data_root=tmp_path, _env_file=None
+    )
+    app = create_app(settings)
+    Base.metadata.create_all(app.state.engine)
+    with app.state.session_factory() as db:
+        AuthService(db, settings).create_user("val", PASSWORD, Role.VALIDATOR)
+        db.commit()
+    client = TestClient(app)
+    client.post("/api/v1/auth/login", json={"username": "val", "password": PASSWORD})
+    missing = client.get("/api/v1/evidence-room/metrics")
+    assert missing.status_code == 503 and missing.json()["type"].endswith("/no-metrics")
+    (tmp_path / "reports").mkdir()
+    raw = b'{"schema_version": 1, "headline": []}'
+    (tmp_path / "reports" / "metrics.json").write_bytes(raw)
+    public = TestClient(app).get("/api/v1/evidence-room/headline").json()
+    assert public["headline"] == [] and public["sha256"] == hashlib.sha256(raw).hexdigest()
+    body = client.get("/api/v1/evidence-room/metrics").json()
+    assert body == {
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "metrics": {"schema_version": 1, "headline": []},
+    }

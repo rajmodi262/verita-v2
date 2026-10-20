@@ -240,3 +240,8 @@
   background: var(--color-surface-2);
   font-weight: 700;
 }
+
+.whiskerOnBar {
+  stroke: var(--color-surface);
+  stroke-width: 2;
+}

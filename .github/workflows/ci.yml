@@ -43,6 +43,10 @@ jobs:
         run: uv run poe check
       - name: Security (bandit + pip-audit)
         run: uv run poe security
+      - name: Honesty — generated docs match reports/metrics.json
+        run: uv run verita report check
+      - name: Honesty — no hand-typed metrics in docs or UI
+        run: uv run verita report scan
 
   frontend:
     runs-on: ubuntu-latest

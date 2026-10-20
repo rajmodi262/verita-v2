@@ -1,0 +1,4050 @@
+{
+  "datasets": {
+    "hi_small": {
+      "data": {
+        "contract_passed": true,
+        "facts": {
+          "cross_currency": 72170,
+          "exact_duplicate_rows": 9,
+          "self_transfers": 591212,
+          "zero_amount": 0
+        },
+        "files": [
+          {
+            "name": "HI-Small_Trans.csv",
+            "ok": true,
+            "sha256": "b19d39f515523373f991b689c07e11e7b0b95c17a2c27a87d91584ae16c5b040"
+          },
+          {
+            "name": "HI-Small_Patterns.txt",
+            "ok": true,
+            "sha256": "2c546b5ce6009e73851f0139af053cf845f08bf92f3bc82fe1eb937dec2ef39b"
+          }
+        ],
+        "graph": {
+          "account_days": 2480285,
+          "accounts": 515088,
+          "accounts_involved": 6357,
+          "edges": 5078345,
+          "positive_account_days": 8053,
+          "self_loops": 591212
+        },
+        "laundering": 5177,
+        "laundering_rate": 0.001019,
+        "patterns": {
+          "attempts": 370,
+          "coverage": 0.619857,
+          "laundering_attributed": 3209,
+          "laundering_unattributed": 1968
+        },
+        "patterns_by_typology": {
+          "BIPARTITE": {
+            "attempts": 49,
+            "transactions": 263
+          },
+          "CYCLE": {
+            "attempts": 54,
+            "transactions": 287
+          },
+          "FAN-IN": {
+            "attempts": 40,
+            "transactions": 318
+          },
+          "FAN-OUT": {
+            "attempts": 48,
+            "transactions": 342
+          },
+          "GATHER-SCATTER": {
+            "attempts": 51,
+            "transactions": 716
+          },
+          "RANDOM": {
+            "attempts": 41,
+            "transactions": 191
+          },
+          "SCATTER-GATHER": {
+            "attempts": 44,
+            "transactions": 626
+          },
+          "STACK": {
+            "attempts": 43,
+            "transactions": 466
+          }
+        },
+        "rows": 5078345,
+        "source": "HI-Small_Trans.csv",
+        "sparse_tail_days": [
+          "2022-09-11",
+          "2022-09-12",
+          "2022-09-13",
+          "2022-09-14",
+          "2022-09-15",
+          "2022-09-16",
+          "2022-09-17",
+          "2022-09-18"
+        ],
+        "splits": {
+          "calib": {
+            "from": "2022-09-07T14:55:00",
+            "laundering": 524,
+            "laundering_rate": 0.001032,
+            "rows": 507834,
+            "to": "2022-09-08T16:12:00"
+          },
+          "fractions": {
+            "calib": 0.1,
+            "hpo": 0.1,
+            "test": 0.2,
+            "train": 0.6
+          },
+          "hpo": {
+            "from": "2022-09-06T13:36:00",
+            "laundering": 558,
+            "laundering_rate": 0.001099,
+            "rows": 507835,
+            "to": "2022-09-07T14:55:00"
+          },
+          "method": "count",
+          "test": {
+            "from": "2022-09-08T16:12:00",
+            "laundering": 1797,
+            "laundering_rate": 0.001769,
+            "rows": 1015669,
+            "to": "2022-09-18T16:18:00"
+          },
+          "train": {
+            "from": "2022-09-01T00:00:00",
+            "laundering": 2298,
+            "laundering_rate": 0.000754,
+            "rows": 3047007,
+            "to": "2022-09-06T13:36:00"
+          }
+        },
+        "time_span": {
+          "from": "2022-09-01T00:00:00",
+          "to": "2022-09-18T16:18:00"
+        },
+        "violations": {
+          "bad_amount": 0,
+          "bad_bank": 0,
+          "bad_label": 0,
+          "bad_timestamp": 0,
+          "missing_account": 0,
+          "unknown_currency": 0,
+          "unknown_payment_format": 0
+        }
+      },
+      "decide": {
+        "bench": {
+          "plan": {
+            "cold": {
+              "max_ms": 891.2,
+              "n": 11,
+              "p50_ms": 35.1,
+              "p95_ms": 630.0
+            },
+            "days": 11,
+            "warm": {
+              "max_ms": 375.9,
+              "n": 22,
+              "p50_ms": 34.7,
+              "p95_ms": 243.3
+            }
+          },
+          "subgraph": {
+            "max_ms": 387.2,
+            "mean_edges": 99.3,
+            "mean_nodes": 25.3,
+            "n": 200,
+            "p50_ms": 180.4,
+            "p95_ms": 256.9,
+            "target_p95_ms": 500
+          }
+        },
+        "calibration": {
+          "after": {
+            "brier": 0.00335793,
+            "ece": 0.002033,
+            "reliability": [
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 0.0,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 0.0,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 0.0,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 0.0,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 0.0,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 0.0,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 0.0,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 7e-05,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 0.000341,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 0.000474,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.00059,
+                "low": 0.000201,
+                "mean_predicted": 0.000959,
+                "n": 37713,
+                "observed_rate": 0.000345
+              },
+              {
+                "high": 0.002551,
+                "low": 0.001634,
+                "mean_predicted": 0.00209,
+                "n": 37713,
+                "observed_rate": 0.002042
+              },
+              {
+                "high": 0.00302,
+                "low": 0.002014,
+                "mean_predicted": 0.003349,
+                "n": 37713,
+                "observed_rate": 0.002466
+              },
+              {
+                "high": 0.007612,
+                "low": 0.005958,
+                "mean_predicted": 0.012813,
+                "n": 37713,
+                "observed_rate": 0.006735
+              },
+              {
+                "high": 0.062934,
+                "low": 0.058122,
+                "mean_predicted": 0.082503,
+                "n": 37713,
+                "observed_rate": 0.060483
+              }
+            ]
+          },
+          "before": {
+            "brier": 0.00514983,
+            "ece": 0.011639,
+            "reliability": [
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 1.9e-05,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 3.2e-05,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 4.6e-05,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 6.4e-05,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 9.2e-05,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.000102,
+                "low": 0.0,
+                "mean_predicted": 0.000141,
+                "n": 37714,
+                "observed_rate": 0.0
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 0.000247,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 0.000435,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.000193,
+                "low": 1.5e-05,
+                "mean_predicted": 0.000679,
+                "n": 37714,
+                "observed_rate": 5.3e-05
+              },
+              {
+                "high": 0.00015,
+                "low": 5e-06,
+                "mean_predicted": 0.001071,
+                "n": 37714,
+                "observed_rate": 2.7e-05
+              },
+              {
+                "high": 0.000623,
+                "low": 0.000221,
+                "mean_predicted": 0.001709,
+                "n": 37713,
+                "observed_rate": 0.000371
+              },
+              {
+                "high": 0.002137,
+                "low": 0.001306,
+                "mean_predicted": 0.004271,
+                "n": 37713,
+                "observed_rate": 0.001671
+              },
+              {
+                "high": 0.003659,
+                "low": 0.002541,
+                "mean_predicted": 0.010254,
+                "n": 37713,
+                "observed_rate": 0.003049
+              },
+              {
+                "high": 0.007359,
+                "low": 0.005734,
+                "mean_predicted": 0.031077,
+                "n": 37713,
+                "observed_rate": 0.006496
+              },
+              {
+                "high": 0.062934,
+                "low": 0.058122,
+                "mean_predicted": 0.196655,
+                "n": 37713,
+                "observed_rate": 0.060483
+              }
+            ]
+          },
+          "evaluated_on": {
+            "alerts": 565705,
+            "positives": 2723,
+            "split": "test"
+          },
+          "fitted_on": {
+            "alerts": 235745,
+            "positives": 832,
+            "split": "calib"
+          },
+          "note": "Raw scores come from a model trained on subsampled negatives, so they are not probabilities; isotonic regression on the calibration split maps them to probabilities. Equal-mass bins."
+        },
+        "coverage": {
+          "by_alpha": {
+            "0.01": {
+              "aci_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 301,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.999415,
+                      "low": 0.981485,
+                      "value": 0.996689
+                    },
+                    "review_share": 0.252515,
+                    "reviewed": 17695
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 781,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.998698,
+                      "low": 0.988811,
+                      "value": 0.996173
+                    },
+                    "review_share": 0.355926,
+                    "reviewed": 123394
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 709,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.996149,
+                      "low": 0.981814,
+                      "value": 0.991608
+                    },
+                    "review_share": 0.194247,
+                    "reviewed": 28753
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 337,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.999478,
+                      "low": 0.983434,
+                      "value": 0.997041
+                    },
+                    "review_share": 0.99705,
+                    "reviewed": 338
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 239,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.984181,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 239
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 146,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.974363,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 146
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 95,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.961135,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 95
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2712,
+                  "gamma": 0.005,
+                  "label_delay_hours": 24,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.997743,
+                    "low": 0.992781,
+                    "value": 0.99596
+                  },
+                  "review_share": 0.301861,
+                  "reviewed": 170764,
+                  "target_recall": 0.99
+                }
+              },
+              "static_mondrian": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 301,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.999415,
+                      "low": 0.981485,
+                      "value": 0.996689
+                    },
+                    "review_share": 0.268412,
+                    "reviewed": 18809
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 779,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.997273,
+                      "low": 0.985158,
+                      "value": 0.993622
+                    },
+                    "review_share": 0.490167,
+                    "reviewed": 169933
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 715,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.994656,
+                      "value": 1.0
+                    },
+                    "review_share": 0.238753,
+                    "reviewed": 35341
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 337,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.999478,
+                      "low": 0.983434,
+                      "value": 0.997041
+                    },
+                    "review_share": 0.99705,
+                    "reviewed": 338
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 239,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.984181,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 239
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 146,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.974363,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 146
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 95,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.961135,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 95
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2716,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.998754,
+                    "low": 0.994703,
+                    "value": 0.997429
+                  },
+                  "review_share": 0.397743,
+                  "reviewed": 225005,
+                  "target_recall": 0.99
+                }
+              },
+              "static_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 301,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.999415,
+                      "low": 0.981485,
+                      "value": 0.996689
+                    },
+                    "review_share": 0.252515,
+                    "reviewed": 17695
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 781,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.998698,
+                      "low": 0.988811,
+                      "value": 0.996173
+                    },
+                    "review_share": 0.36359,
+                    "reviewed": 126051
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 715,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.994656,
+                      "value": 1.0
+                    },
+                    "review_share": 0.223276,
+                    "reviewed": 33050
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 337,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.999478,
+                      "low": 0.983434,
+                      "value": 0.997041
+                    },
+                    "review_share": 0.99705,
+                    "reviewed": 338
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 239,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.984181,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 239
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 146,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.974363,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 146
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 95,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.961135,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 95
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2718,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.999215,
+                    "low": 0.995709,
+                    "value": 0.998164
+                  },
+                  "review_share": 0.314153,
+                  "reviewed": 177718,
+                  "target_recall": 0.99
+                }
+              },
+              "static_pooled_bulk_only": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 301,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.999415,
+                      "low": 0.981485,
+                      "value": 0.996689
+                    },
+                    "review_share": 0.252515,
+                    "reviewed": 17695
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 781,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.998698,
+                      "low": 0.988811,
+                      "value": 0.996173
+                    },
+                    "review_share": 0.36359,
+                    "reviewed": 126051
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 715,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.994656,
+                      "value": 1.0
+                    },
+                    "review_share": 0.223276,
+                    "reviewed": 33050
+                  }
+                ],
+                "overall": {
+                  "alerts": 564782,
+                  "caught": 1797,
+                  "positives": 1801,
+                  "recall": {
+                    "high": 0.999136,
+                    "low": 0.994303,
+                    "value": 0.997779
+                  },
+                  "review_share": 0.313034,
+                  "reviewed": 176796,
+                  "target_recall": 0.99
+                }
+              }
+            },
+            "0.05": {
+              "aci_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 290,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.977126,
+                      "low": 0.931842,
+                      "value": 0.960265
+                    },
+                    "review_share": 0.169675,
+                    "reviewed": 11890
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 764,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.983426,
+                      "low": 0.960926,
+                      "value": 0.97449
+                    },
+                    "review_share": 0.264944,
+                    "reviewed": 91852
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 668,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.950209,
+                      "low": 0.913681,
+                      "value": 0.934266
+                    },
+                    "review_share": 0.106814,
+                    "reviewed": 15811
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 331,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.989933,
+                      "low": 0.957875,
+                      "value": 0.97929
+                    },
+                    "review_share": 0.979351,
+                    "reviewed": 332
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 234,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.991032,
+                      "low": 0.95197,
+                      "value": 0.979079
+                    },
+                    "review_share": 0.979079,
+                    "reviewed": 234
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 139,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 0.976584,
+                      "low": 0.904347,
+                      "value": 0.952055
+                    },
+                    "review_share": 0.952055,
+                    "reviewed": 139
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 95,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.961135,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 95
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2625,
+                  "gamma": 0.005,
+                  "label_delay_hours": 24,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.970378,
+                    "low": 0.956335,
+                    "value": 0.96401
+                  },
+                  "review_share": 0.212933,
+                  "reviewed": 120457,
+                  "target_recall": 0.95
+                }
+              },
+              "static_mondrian": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 295,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.988728,
+                      "low": 0.952937,
+                      "value": 0.976821
+                    },
+                    "review_share": 0.18446,
+                    "reviewed": 12926
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 772,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.991223,
+                      "low": 0.973438,
+                      "value": 0.984694
+                    },
+                    "review_share": 0.279661,
+                    "reviewed": 96954
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 709,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.996149,
+                      "low": 0.981814,
+                      "value": 0.991608
+                    },
+                    "review_share": 0.186214,
+                    "reviewed": 27564
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 333,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.993665,
+                      "low": 0.965844,
+                      "value": 0.985207
+                    },
+                    "review_share": 0.985251,
+                    "reviewed": 334
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 234,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.991032,
+                      "low": 0.95197,
+                      "value": 0.979079
+                    },
+                    "review_share": 0.979079,
+                    "reviewed": 234
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 141,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 0.985285,
+                      "low": 0.922341,
+                      "value": 0.965753
+                    },
+                    "review_share": 0.965753,
+                    "reviewed": 141
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 95,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.961135,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 95
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2683,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.989194,
+                    "low": 0.98006,
+                    "value": 0.98531
+                  },
+                  "review_share": 0.244566,
+                  "reviewed": 138352,
+                  "target_recall": 0.95
+                }
+              },
+              "static_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 290,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.977126,
+                      "low": 0.931842,
+                      "value": 0.960265
+                    },
+                    "review_share": 0.169675,
+                    "reviewed": 11890
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 767,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.986418,
+                      "low": 0.96555,
+                      "value": 0.978316
+                    },
+                    "review_share": 0.272888,
+                    "reviewed": 94606
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 701,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.988301,
+                      "low": 0.967403,
+                      "value": 0.98042
+                    },
+                    "review_share": 0.180837,
+                    "reviewed": 26768
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 337,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.999478,
+                      "low": 0.983434,
+                      "value": 0.997041
+                    },
+                    "review_share": 0.99705,
+                    "reviewed": 338
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 239,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.984181,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 239
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 146,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.974363,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 146
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 95,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.961135,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 95
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2679,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.987941,
+                    "low": 0.978378,
+                    "value": 0.983841
+                  },
+                  "review_share": 0.237201,
+                  "reviewed": 134186,
+                  "target_recall": 0.95
+                }
+              },
+              "static_pooled_bulk_only": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 290,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.977126,
+                      "low": 0.931842,
+                      "value": 0.960265
+                    },
+                    "review_share": 0.169675,
+                    "reviewed": 11890
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 767,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.986418,
+                      "low": 0.96555,
+                      "value": 0.978316
+                    },
+                    "review_share": 0.272888,
+                    "reviewed": 94606
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 701,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.988301,
+                      "low": 0.967403,
+                      "value": 0.98042
+                    },
+                    "review_share": 0.180837,
+                    "reviewed": 26768
+                  }
+                ],
+                "overall": {
+                  "alerts": 564782,
+                  "caught": 1758,
+                  "positives": 1801,
+                  "recall": {
+                    "high": 0.982227,
+                    "low": 0.967995,
+                    "value": 0.976124
+                  },
+                  "review_share": 0.235957,
+                  "reviewed": 133264,
+                  "target_recall": 0.95
+                }
+              }
+            },
+            "0.1": {
+              "aci_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 275,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.937829,
+                      "low": 0.873048,
+                      "value": 0.910596
+                    },
+                    "review_share": 0.084781,
+                    "reviewed": 5941
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 709,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.922998,
+                      "low": 0.881732,
+                      "value": 0.904337
+                    },
+                    "review_share": 0.191889,
+                    "reviewed": 66525
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 677,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.961037,
+                      "low": 0.927893,
+                      "value": 0.946853
+                    },
+                    "review_share": 0.118455,
+                    "reviewed": 17534
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 324,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.975169,
+                      "low": 0.931684,
+                      "value": 0.95858
+                    },
+                    "review_share": 0.955752,
+                    "reviewed": 324
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 210,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.914173,
+                      "low": 0.831169,
+                      "value": 0.878661
+                    },
+                    "review_share": 0.878661,
+                    "reviewed": 210
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 126,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 0.909541,
+                      "low": 0.797873,
+                      "value": 0.863014
+                    },
+                    "review_share": 0.863014,
+                    "reviewed": 126
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 91,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 0.983506,
+                      "low": 0.896691,
+                      "value": 0.957895
+                    },
+                    "review_share": 0.957895,
+                    "reviewed": 91
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 36,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 0.985446,
+                      "low": 0.827145,
+                      "value": 0.947368
+                    },
+                    "review_share": 0.947368,
+                    "reviewed": 36
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2514,
+                  "gamma": 0.005,
+                  "label_delay_hours": 24,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.932659,
+                    "low": 0.912641,
+                    "value": 0.923246
+                  },
+                  "review_share": 0.160601,
+                  "reviewed": 90853,
+                  "target_recall": 0.9
+                }
+              },
+              "static_mondrian": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 286,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.967129,
+                      "low": 0.915681,
+                      "value": 0.94702
+                    },
+                    "review_share": 0.149354,
+                    "reviewed": 10466
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 753,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.972006,
+                      "low": 0.944422,
+                      "value": 0.960459
+                    },
+                    "review_share": 0.252417,
+                    "reviewed": 87509
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 692,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.978471,
+                      "low": 0.952193,
+                      "value": 0.967832
+                    },
+                    "review_share": 0.166447,
+                    "reviewed": 24638
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 329,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.985929,
+                      "low": 0.950177,
+                      "value": 0.973373
+                    },
+                    "review_share": 0.973451,
+                    "reviewed": 330
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 230,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.980064,
+                      "low": 0.929995,
+                      "value": 0.962343
+                    },
+                    "review_share": 0.962343,
+                    "reviewed": 230
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 140,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 0.981031,
+                      "low": 0.913247,
+                      "value": 0.958904
+                    },
+                    "review_share": 0.958904,
+                    "reviewed": 140
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 92,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 0.989203,
+                      "low": 0.911229,
+                      "value": 0.968421
+                    },
+                    "review_share": 0.968421,
+                    "reviewed": 92
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2626,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.970711,
+                    "low": 0.956736,
+                    "value": 0.964378
+                  },
+                  "review_share": 0.218328,
+                  "reviewed": 123509,
+                  "target_recall": 0.9
+                }
+              },
+              "static_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 275,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.937829,
+                      "low": 0.873048,
+                      "value": 0.910596
+                    },
+                    "review_share": 0.084781,
+                    "reviewed": 5941
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 710,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.924145,
+                      "low": 0.883124,
+                      "value": 0.905612
+                    },
+                    "review_share": 0.200439,
+                    "reviewed": 69489
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 684,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.96929,
+                      "low": 0.939116,
+                      "value": 0.956643
+                    },
+                    "review_share": 0.121326,
+                    "reviewed": 17959
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 337,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.999478,
+                      "low": 0.983434,
+                      "value": 0.997041
+                    },
+                    "review_share": 0.99705,
+                    "reviewed": 338
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 238,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.999261,
+                      "low": 0.976684,
+                      "value": 0.995816
+                    },
+                    "review_share": 0.995816,
+                    "reviewed": 238
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 146,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.974363,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 146
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 95,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.961135,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 95
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2589,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.958298,
+                    "low": 0.942011,
+                    "value": 0.95079
+                  },
+                  "review_share": 0.166712,
+                  "reviewed": 94310,
+                  "target_recall": 0.9
+                }
+              },
+              "static_pooled_bulk_only": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 275,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.937829,
+                      "low": 0.873048,
+                      "value": 0.910596
+                    },
+                    "review_share": 0.084781,
+                    "reviewed": 5941
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 710,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.924145,
+                      "low": 0.883124,
+                      "value": 0.905612
+                    },
+                    "review_share": 0.200439,
+                    "reviewed": 69489
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 684,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.96929,
+                      "low": 0.939116,
+                      "value": 0.956643
+                    },
+                    "review_share": 0.121326,
+                    "reviewed": 17959
+                  }
+                ],
+                "overall": {
+                  "alerts": 564782,
+                  "caught": 1669,
+                  "positives": 1801,
+                  "recall": {
+                    "high": 0.937857,
+                    "low": 0.913741,
+                    "value": 0.926707
+                  },
+                  "review_share": 0.165354,
+                  "reviewed": 93389,
+                  "target_recall": 0.9
+                }
+              }
+            },
+            "0.2": {
+              "aci_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 245,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.851377,
+                      "low": 0.76332,
+                      "value": 0.811258
+                    },
+                    "review_share": 0.035248,
+                    "reviewed": 2470
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 618,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.815422,
+                      "low": 0.758298,
+                      "value": 0.788265
+                    },
+                    "review_share": 0.09832,
+                    "reviewed": 34086
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 651,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.92928,
+                      "low": 0.887312,
+                      "value": 0.91049
+                    },
+                    "review_share": 0.076731,
+                    "reviewed": 11358
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 286,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.880709,
+                      "low": 0.803819,
+                      "value": 0.846154
+                    },
+                    "review_share": 0.843658,
+                    "reviewed": 286
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 174,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.780508,
+                      "low": 0.668345,
+                      "value": 0.728033
+                    },
+                    "review_share": 0.728033,
+                    "reviewed": 174
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 125,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 0.903959,
+                      "low": 0.790108,
+                      "value": 0.856164
+                    },
+                    "review_share": 0.856164,
+                    "reviewed": 125
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 91,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 0.983506,
+                      "low": 0.896691,
+                      "value": 0.957895
+                    },
+                    "review_share": 0.957895,
+                    "reviewed": 91
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 35,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 0.972785,
+                      "low": 0.792006,
+                      "value": 0.921053
+                    },
+                    "review_share": 0.921053,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2291,
+                  "gamma": 0.005,
+                  "label_delay_hours": 24,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.854592,
+                    "low": 0.827149,
+                    "value": 0.841351
+                  },
+                  "review_share": 0.086071,
+                  "reviewed": 48691,
+                  "target_recall": 0.8
+                }
+              },
+              "static_mondrian": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 264,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.906938,
+                      "low": 0.832007,
+                      "value": 0.874172
+                    },
+                    "review_share": 0.077274,
+                    "reviewed": 5415
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 678,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.88696,
+                      "low": 0.839074,
+                      "value": 0.864796
+                    },
+                    "review_share": 0.188001,
+                    "reviewed": 65177
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 659,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.939195,
+                      "low": 0.899655,
+                      "value": 0.921678
+                    },
+                    "review_share": 0.117671,
+                    "reviewed": 17418
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 317,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.959007,
+                      "low": 0.906891,
+                      "value": 0.93787
+                    },
+                    "review_share": 0.938053,
+                    "reviewed": 318
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 221,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.951832,
+                      "low": 0.884104,
+                      "value": 0.924686
+                    },
+                    "review_share": 0.924686,
+                    "reviewed": 221
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 130,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 0.93141,
+                      "low": 0.829394,
+                      "value": 0.890411
+                    },
+                    "review_share": 0.890411,
+                    "reviewed": 130
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 89,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 0.970735,
+                      "low": 0.868993,
+                      "value": 0.936842
+                    },
+                    "review_share": 0.936842,
+                    "reviewed": 89
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 34,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 0.958297,
+                      "low": 0.758695,
+                      "value": 0.894737
+                    },
+                    "review_share": 0.894737,
+                    "reviewed": 34
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2458,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.913253,
+                    "low": 0.890975,
+                    "value": 0.902681
+                  },
+                  "review_share": 0.157092,
+                  "reviewed": 88868,
+                  "target_recall": 0.8
+                }
+              },
+              "static_pooled": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 245,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.851377,
+                      "low": 0.76332,
+                      "value": 0.811258
+                    },
+                    "review_share": 0.035248,
+                    "reviewed": 2470
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 620,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.817834,
+                      "low": 0.760962,
+                      "value": 0.790816
+                    },
+                    "review_share": 0.102505,
+                    "reviewed": 35537
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 618,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.887497,
+                      "low": 0.83728,
+                      "value": 0.864336
+                    },
+                    "review_share": 0.055295,
+                    "reviewed": 8185
+                  },
+                  {
+                    "alerts": 339,
+                    "caught": 327,
+                    "day": "2022-09-11",
+                    "positives": 338,
+                    "recall": {
+                      "high": 0.981732,
+                      "low": 0.942673,
+                      "value": 0.967456
+                    },
+                    "review_share": 0.967552,
+                    "reviewed": 328
+                  },
+                  {
+                    "alerts": 239,
+                    "caught": 230,
+                    "day": "2022-09-12",
+                    "positives": 239,
+                    "recall": {
+                      "high": 0.980064,
+                      "low": 0.929995,
+                      "value": 0.962343
+                    },
+                    "review_share": 0.962343,
+                    "reviewed": 230
+                  },
+                  {
+                    "alerts": 146,
+                    "caught": 139,
+                    "day": "2022-09-13",
+                    "positives": 146,
+                    "recall": {
+                      "high": 0.976584,
+                      "low": 0.904347,
+                      "value": 0.952055
+                    },
+                    "review_share": 0.952055,
+                    "reviewed": 139
+                  },
+                  {
+                    "alerts": 95,
+                    "caught": 93,
+                    "day": "2022-09-14",
+                    "positives": 95,
+                    "recall": {
+                      "high": 0.994207,
+                      "low": 0.926459,
+                      "value": 0.978947
+                    },
+                    "review_share": 0.978947,
+                    "reviewed": 93
+                  },
+                  {
+                    "alerts": 38,
+                    "caught": 38,
+                    "day": "2022-09-15",
+                    "positives": 38,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.90819,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 38
+                  },
+                  {
+                    "alerts": 35,
+                    "caught": 35,
+                    "day": "2022-09-16",
+                    "positives": 35,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.901099,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 35
+                  },
+                  {
+                    "alerts": 21,
+                    "caught": 21,
+                    "day": "2022-09-17",
+                    "positives": 21,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.845361,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 21
+                  },
+                  {
+                    "alerts": 10,
+                    "caught": 10,
+                    "day": "2022-09-18",
+                    "positives": 10,
+                    "recall": {
+                      "high": 1.0,
+                      "low": 0.722467,
+                      "value": 1.0
+                    },
+                    "review_share": 1.0,
+                    "reviewed": 10
+                  }
+                ],
+                "overall": {
+                  "alerts": 565705,
+                  "caught": 2376,
+                  "positives": 2723,
+                  "recall": {
+                    "high": 0.884569,
+                    "low": 0.859515,
+                    "value": 0.872567
+                  },
+                  "review_share": 0.083234,
+                  "reviewed": 47086,
+                  "target_recall": 0.8
+                }
+              },
+              "static_pooled_bulk_only": {
+                "by_day": [
+                  {
+                    "alerts": 70075,
+                    "caught": 245,
+                    "day": "2022-09-08",
+                    "positives": 302,
+                    "recall": {
+                      "high": 0.851377,
+                      "low": 0.76332,
+                      "value": 0.811258
+                    },
+                    "review_share": 0.035248,
+                    "reviewed": 2470
+                  },
+                  {
+                    "alerts": 346684,
+                    "caught": 620,
+                    "day": "2022-09-09",
+                    "positives": 784,
+                    "recall": {
+                      "high": 0.817834,
+                      "low": 0.760962,
+                      "value": 0.790816
+                    },
+                    "review_share": 0.102505,
+                    "reviewed": 35537
+                  },
+                  {
+                    "alerts": 148023,
+                    "caught": 618,
+                    "day": "2022-09-10",
+                    "positives": 715,
+                    "recall": {
+                      "high": 0.887497,
+                      "low": 0.83728,
+                      "value": 0.864336
+                    },
+                    "review_share": 0.055295,
+                    "reviewed": 8185
+                  }
+                ],
+                "overall": {
+                  "alerts": 564782,
+                  "caught": 1483,
+                  "positives": 1801,
+                  "recall": {
+                    "high": 0.840348,
+                    "low": 0.805138,
+                    "value": 0.823431
+                  },
+                  "review_share": 0.081787,
+                  "reviewed": 46192,
+                  "target_recall": 0.8
+                }
+              }
+            }
+          },
+          "gamma": 0.005,
+          "label_delay_sensitivity": {
+            "24": {
+              "alerts": 565705,
+              "caught": 2625,
+              "gamma": 0.005,
+              "label_delay_hours": 24,
+              "positives": 2723,
+              "recall": {
+                "high": 0.970378,
+                "low": 0.956335,
+                "value": 0.96401
+              },
+              "review_share": 0.212933,
+              "reviewed": 120457,
+              "target_recall": 0.95
+            },
+            "48": {
+              "alerts": 565705,
+              "caught": 2643,
+              "gamma": 0.005,
+              "label_delay_hours": 48,
+              "positives": 2723,
+              "recall": {
+                "high": 0.97633,
+                "low": 0.963585,
+                "value": 0.970621
+              },
+              "review_share": 0.235527,
+              "reviewed": 133239,
+              "target_recall": 0.95
+            },
+            "6": {
+              "alerts": 565705,
+              "caught": 2623,
+              "gamma": 0.005,
+              "label_delay_hours": 6,
+              "positives": 2723,
+              "recall": {
+                "high": 0.969713,
+                "low": 0.955534,
+                "value": 0.963276
+              },
+              "review_share": 0.206505,
+              "reviewed": 116821,
+              "target_recall": 0.95
+            }
+          },
+          "tail_days": [
+            "2022-09-11",
+            "2022-09-12",
+            "2022-09-13",
+            "2022-09-14",
+            "2022-09-15",
+            "2022-09-16",
+            "2022-09-17",
+            "2022-09-18"
+          ]
+        },
+        "drift": {
+          "by_day": [
+            {
+              "day": "2022-09-08",
+              "max_psi": 0.162942,
+              "recalibrate": false,
+              "rows": 151769,
+              "top": "s_payers_7d"
+            },
+            {
+              "day": "2022-09-09",
+              "max_psi": 0.567047,
+              "recalibrate": true,
+              "rows": 654467,
+              "top": "s_payers_7d"
+            },
+            {
+              "day": "2022-09-10",
+              "max_psi": 0.509283,
+              "recalibrate": true,
+              "rows": 208325,
+              "top": "s_payers_7d"
+            },
+            {
+              "day": "2022-09-11",
+              "max_psi": 12.361894,
+              "recalibrate": true,
+              "rows": 396,
+              "top": "payment_format_code"
+            },
+            {
+              "day": "2022-09-12",
+              "max_psi": 12.433805,
+              "recalibrate": true,
+              "rows": 281,
+              "top": "score"
+            },
+            {
+              "day": "2022-09-13",
+              "max_psi": 12.433805,
+              "recalibrate": true,
+              "rows": 184,
+              "top": "score"
+            },
+            {
+              "day": "2022-09-14",
+              "max_psi": 12.433805,
+              "recalibrate": true,
+              "rows": 121,
+              "top": "score"
+            },
+            {
+              "day": "2022-09-15",
+              "max_psi": 12.433805,
+              "recalibrate": true,
+              "rows": 46,
+              "top": "score"
+            },
+            {
+              "day": "2022-09-16",
+              "max_psi": 12.433805,
+              "recalibrate": true,
+              "rows": 46,
+              "top": "score"
+            },
+            {
+              "day": "2022-09-17",
+              "max_psi": 12.433805,
+              "recalibrate": true,
+              "rows": 23,
+              "top": "score"
+            },
+            {
+              "day": "2022-09-18",
+              "max_psi": 12.660277,
+              "recalibrate": true,
+              "rows": 11,
+              "top": "s_payees_7d"
+            }
+          ],
+          "excluded_time_anchored": [
+            "r_age_min",
+            "s_since_last_out_min",
+            "r_since_last_out_min",
+            "s_since_last_in_min",
+            "r_since_last_in_min",
+            "s_age_min"
+          ]
+        },
+        "forecast": {
+          "horizon_hours": 24,
+          "models": {
+            "ensemble": {
+              "coverage_80": 0.534,
+              "coverage_95": 0.6677,
+              "mase": 2.1393,
+              "pinball_10": 184.4811,
+              "pinball_50": 221.2443,
+              "pinball_90": 199.1168
+            },
+            "ets": {
+              "coverage_80": 0.6688,
+              "coverage_95": 0.8252,
+              "mase": 1.7724,
+              "pinball_10": 194.3303,
+              "pinball_50": 183.8356,
+              "pinball_90": 126.6504
+            },
+            "lgbm": {
+              "coverage_80": 0.4056,
+              "coverage_95": 0.5394,
+              "mase": 1.8464,
+              "pinball_10": 169.9063,
+              "pinball_50": 190.7621,
+              "pinball_90": 137.2328
+            },
+            "seasonal_naive": {
+              "coverage_80": 0.8242,
+              "coverage_95": 0.8598,
+              "mase": 2.9154,
+              "pinball_10": 200.8733,
+              "pinball_50": 301.1847,
+              "pinball_90": 338.8371
+            }
+          },
+          "origins": 40,
+          "step_hours": 6,
+          "workload_definition": "alerts per hour whose score clears the \u03b1=0.05 pooled conformal threshold"
+        },
+        "frontier_greedy_points": 3520,
+        "staffing": {
+          "alpha": 0.05,
+          "by_day": {
+            "2022-09-08": 401,
+            "2022-09-09": 3139,
+            "2022-09-10": 882,
+            "2022-09-11": 14,
+            "2022-09-12": 10,
+            "2022-09-13": 6,
+            "2022-09-14": 4,
+            "2022-09-15": 2,
+            "2022-09-16": 2,
+            "2022-09-17": 1,
+            "2022-09-18": 1
+          },
+          "max_analysts_needed": 3139
+        },
+        "thresholds": {
+          "0.01": {
+            "alpha": 0.01,
+            "by_group": {
+              "GATHER-SCATTER": null,
+              "SCATTER-GATHER": 0.00608768,
+              "STACK": 0.00453329,
+              "UNATTRIBUTED": 0.00075061
+            },
+            "fallback_groups": [
+              "BIPARTITE",
+              "CYCLE",
+              "FAN-IN",
+              "FAN-OUT",
+              "RANDOM"
+            ],
+            "group_sizes": {
+              "BIPARTITE": 20,
+              "CYCLE": 21,
+              "FAN-IN": 42,
+              "FAN-OUT": 11,
+              "GATHER-SCATTER": 69,
+              "RANDOM": 4,
+              "SCATTER-GATHER": 123,
+              "STACK": 174,
+              "UNATTRIBUTED": 368
+            },
+            "pooled": 0.00146456
+          },
+          "0.05": {
+            "alpha": 0.05,
+            "by_group": {
+              "GATHER-SCATTER": 0.03642157,
+              "SCATTER-GATHER": 0.03043409,
+              "STACK": 0.02394404,
+              "UNATTRIBUTED": 0.00239947
+            },
+            "fallback_groups": [
+              "BIPARTITE",
+              "CYCLE",
+              "FAN-IN",
+              "FAN-OUT",
+              "RANDOM"
+            ],
+            "group_sizes": {
+              "BIPARTITE": 20,
+              "CYCLE": 21,
+              "FAN-IN": 42,
+              "FAN-OUT": 11,
+              "GATHER-SCATTER": 69,
+              "RANDOM": 4,
+              "SCATTER-GATHER": 123,
+              "STACK": 174,
+              "UNATTRIBUTED": 368
+            },
+            "pooled": 0.00391236
+          },
+          "0.1": {
+            "alpha": 0.1,
+            "by_group": {
+              "GATHER-SCATTER": 0.08747152,
+              "SCATTER-GATHER": 0.04000492,
+              "STACK": 0.07778449,
+              "UNATTRIBUTED": 0.00360162
+            },
+            "fallback_groups": [
+              "BIPARTITE",
+              "CYCLE",
+              "FAN-IN",
+              "FAN-OUT",
+              "RANDOM"
+            ],
+            "group_sizes": {
+              "BIPARTITE": 20,
+              "CYCLE": 21,
+              "FAN-IN": 42,
+              "FAN-OUT": 11,
+              "GATHER-SCATTER": 69,
+              "RANDOM": 4,
+              "SCATTER-GATHER": 123,
+              "STACK": 174,
+              "UNATTRIBUTED": 368
+            },
+            "pooled": 0.00990927
+          },
+          "0.2": {
+            "alpha": 0.2,
+            "by_group": {
+              "GATHER-SCATTER": 0.35249058,
+              "SCATTER-GATHER": 0.1423389,
+              "STACK": 0.14571453,
+              "UNATTRIBUTED": 0.0084165
+            },
+            "fallback_groups": [
+              "BIPARTITE",
+              "CYCLE",
+              "FAN-IN",
+              "FAN-OUT",
+              "RANDOM"
+            ],
+            "group_sizes": {
+              "BIPARTITE": 20,
+              "CYCLE": 21,
+              "FAN-IN": 42,
+              "FAN-OUT": 11,
+              "GATHER-SCATTER": 69,
+              "RANDOM": 4,
+              "SCATTER-GATHER": 123,
+              "STACK": 174,
+              "UNATTRIBUTED": 368
+            },
+            "pooled": 0.04066286
+          }
+        }
+      },
+      "defend": {
+        "cases": 300,
+        "claims_checked_on_clean": 13442,
+        "clean_failures": [],
+        "clean_false_alarm": {
+          "high": 0.012643,
+          "hits": 0,
+          "low": 0.0,
+          "total": 300,
+          "value": 0.0
+        },
+        "dataset": "hi_small",
+        "faults": {
+          "amount_large": {
+            "detection": {
+              "high": 0.999409,
+              "hits": 298,
+              "low": 0.981302,
+              "total": 299,
+              "value": 0.996656
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 298,
+              "low": 0.987273,
+              "total": 298,
+              "value": 1.0
+            },
+            "misses": [
+              {
+                "alert_id": 181096,
+                "change": "4,299.75 \u2192 7,739.55",
+                "sentence": {
+                  "evidence_ids": [
+                    "EV-PATH-181096"
+                  ],
+                  "section": "how",
+                  "text": "The dominant path moves 7,739.55 Euro from account 8019C67E0 through 2 payments in 5.8 hours, ending at account 802F2EDE0 on 2022-09-10."
+                }
+              }
+            ],
+            "planted": 299
+          },
+          "amount_small": {
+            "detection": {
+              "high": 1.0,
+              "hits": 299,
+              "low": 0.987315,
+              "total": 299,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 299,
+              "low": 0.987315,
+              "total": 299,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 299
+          },
+          "invented_counterparty": {
+            "detection": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 300
+          },
+          "irrelevant_citation": {
+            "detection": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 300
+          },
+          "swapped_account": {
+            "detection": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 300
+          },
+          "uncited_sentence": {
+            "detection": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 300
+          },
+          "wrong_count": {
+            "detection": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 300
+          },
+          "wrong_date": {
+            "detection": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 300,
+              "low": 0.987357,
+              "total": 300,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 300
+          },
+          "wrong_typology": {
+            "detection": {
+              "high": 1.0,
+              "hits": 40,
+              "low": 0.912378,
+              "total": 40,
+              "value": 1.0
+            },
+            "localisation": {
+              "high": 1.0,
+              "hits": 40,
+              "low": 0.912378,
+              "total": 40,
+              "value": 1.0
+            },
+            "misses": [],
+            "planted": 40
+          }
+        },
+        "llm": {
+          "reason": "not requested (run with --llm and a GEMINI_API_KEY / GROQ_API_KEY)",
+          "run": false
+        },
+        "overall_detection": {
+          "high": 0.999928,
+          "hits": 2437,
+          "low": 0.99768,
+          "total": 2438,
+          "value": 0.99959
+        },
+        "seed": 0,
+        "typologies": {
+          "BIPARTITE": 3,
+          "CYCLE": 6,
+          "GATHER-SCATTER": 1,
+          "SCATTER-GATHER": 11,
+          "STACK": 19,
+          "UNATTRIBUTED": 260
+        },
+        "verifier_version": "1.0.0"
+      },
+      "detect": {
+        "ablation": [
+          {
+            "delta": {
+              "high": 0.389308,
+              "low": 0.279177,
+              "value": 0.355237
+            },
+            "f1": {
+              "high": 0.291425,
+              "low": 0.097472,
+              "value": 0.147462
+            },
+            "removed_group": "transaction"
+          },
+          {
+            "delta": {
+              "high": 0.048963,
+              "low": -0.004516,
+              "value": 0.03053
+            },
+            "f1": {
+              "high": 0.587899,
+              "low": 0.395368,
+              "value": 0.472169
+            },
+            "removed_group": "velocity"
+          },
+          {
+            "delta": {
+              "high": 0.123505,
+              "low": 0.070479,
+              "value": 0.094979
+            },
+            "f1": {
+              "high": 0.496991,
+              "low": 0.347792,
+              "value": 0.40772
+            },
+            "removed_group": "fan"
+          },
+          {
+            "delta": {
+              "high": 0.034576,
+              "low": -0.019897,
+              "value": 0.007117
+            },
+            "f1": {
+              "high": 0.590587,
+              "low": 0.420414,
+              "value": 0.495582
+            },
+            "removed_group": "recency"
+          },
+          {
+            "delta": {
+              "high": 0.02465,
+              "low": 0.00855,
+              "value": 0.017484
+            },
+            "f1": {
+              "high": 0.572799,
+              "low": 0.422902,
+              "value": 0.485215
+            },
+            "removed_group": "cycle"
+          }
+        ],
+        "hpo": {
+          "hpo_f1": 0.494226,
+          "params": {
+            "feature_fraction": 0.7892019515165315,
+            "lambda_l2": 8.744842866567051,
+            "learning_rate": 0.03675372180653912,
+            "min_data_in_leaf": 194,
+            "num_leaves": 23
+          },
+          "trials": 40
+        },
+        "imbalance": [
+          {
+            "f1": {
+              "high": 0.591136,
+              "low": 0.440091,
+              "value": 0.502699
+            },
+            "pr_auc": {
+              "high": 0.601853,
+              "low": 0.409302,
+              "value": 0.493872
+            },
+            "variant": "subsample_negatives_20pct (default)"
+          },
+          {
+            "f1": {
+              "high": 0.074472,
+              "low": 0.026989,
+              "value": 0.03855
+            },
+            "pr_auc": {
+              "high": 0.031429,
+              "low": 0.011455,
+              "value": 0.0175
+            },
+            "variant": "all_data_scale_pos_weight"
+          },
+          {
+            "f1": {
+              "high": 0.637384,
+              "low": 0.475596,
+              "value": 0.54331
+            },
+            "pr_auc": {
+              "high": 0.635112,
+              "low": 0.446108,
+              "value": 0.529092
+            },
+            "variant": "all_data_unweighted"
+          }
+        ],
+        "latency": {
+          "median_ms": 75.14,
+          "per_10k_rows_ms": 75.14,
+          "rows": 10000
+        },
+        "models": {
+          "lgbm_champion": {
+            "test": {
+              "base_rate": 0.001769,
+              "f1": {
+                "high": 0.591136,
+                "low": 0.440091,
+                "value": 0.502699
+              },
+              "positives": 1797,
+              "pr_auc": {
+                "high": 0.601853,
+                "low": 0.409302,
+                "value": 0.493872
+              },
+              "precision": 0.638389,
+              "recall": 0.41458,
+              "rows": 1015669
+            },
+            "test_bulk": {
+              "base_rate": 0.001126,
+              "f1": {
+                "high": 0.444585,
+                "low": 0.324759,
+                "value": 0.384977
+              },
+              "positives": 1142,
+              "pr_auc": {
+                "high": 0.418636,
+                "low": 0.280647,
+                "value": 0.345354
+              },
+              "precision": 0.476129,
+              "recall": 0.323117,
+              "rows": 1014561
+            },
+            "test_tail": {
+              "base_rate": 0.591155,
+              "f1": {
+                "high": 0.76956,
+                "low": 0.687041,
+                "value": 0.718243
+              },
+              "positives": 655,
+              "pr_auc": {
+                "high": 0.96817,
+                "low": 0.936298,
+                "value": 0.950848
+              },
+              "precision": 0.959184,
+              "recall": 0.574046,
+              "rows": 1108
+            }
+          },
+          "lgbm_transaction_only": {
+            "test": {
+              "base_rate": 0.001769,
+              "f1": {
+                "high": 0.365338,
+                "low": 0.179681,
+                "value": 0.255292
+              },
+              "positives": 1797,
+              "pr_auc": {
+                "high": 0.356998,
+                "low": 0.115728,
+                "value": 0.178283
+              },
+              "precision": 0.295322,
+              "recall": 0.224819,
+              "rows": 1015669
+            },
+            "test_bulk": {
+              "base_rate": 0.001126,
+              "f1": {
+                "high": 0.197377,
+                "low": 0.067927,
+                "value": 0.146449
+              },
+              "positives": 1142,
+              "pr_auc": {
+                "high": 0.119455,
+                "low": 0.049586,
+                "value": 0.078179
+              },
+              "precision": 0.147556,
+              "recall": 0.145359,
+              "rows": 1014561
+            },
+            "test_tail": {
+              "base_rate": 0.591155,
+              "f1": {
+                "high": 0.610742,
+                "low": 0.411452,
+                "value": 0.530067
+              },
+              "positives": 655,
+              "pr_auc": {
+                "high": 0.986582,
+                "low": 0.962331,
+                "value": 0.973348
+              },
+              "precision": 0.979424,
+              "recall": 0.363359,
+              "rows": 1108
+            }
+          },
+          "rules_incumbent": {
+            "test": {
+              "base_rate": 0.001769,
+              "f1": {
+                "high": 0.00325,
+                "low": 0.002313,
+                "value": 0.002627
+              },
+              "positives": 1797,
+              "pr_auc": {
+                "high": 0.002809,
+                "low": 0.001218,
+                "value": 0.001682
+              },
+              "precision": 0.001338,
+              "recall": 0.071786,
+              "rows": 1015669
+            },
+            "test_bulk": {
+              "base_rate": 0.001126,
+              "f1": {
+                "high": 0.002752,
+                "low": 0.002086,
+                "value": 0.00244
+              },
+              "positives": 1142,
+              "pr_auc": {
+                "high": 0.001484,
+                "low": 0.000928,
+                "value": 0.001128
+              },
+              "precision": 0.001234,
+              "recall": 0.104203,
+              "rows": 1014561
+            },
+            "test_tail": {
+              "base_rate": 0.591155,
+              "f1": {
+                "high": 0.049263,
+                "low": 0.014436,
+                "value": 0.02963
+              },
+              "positives": 655,
+              "pr_auc": {
+                "high": 0.617559,
+                "low": 0.588123,
+                "value": 0.603523
+              },
+              "precision": 0.5,
+              "recall": 0.015267,
+              "rows": 1108
+            }
+          }
+        },
+        "n_features": 44,
+        "per_typology": [
+          {
+            "detected": 23,
+            "recall": {
+              "high": 0.423386,
+              "low": 0.216908,
+              "value": 0.310811
+            },
+            "support": 74,
+            "typology": "BIPARTITE"
+          },
+          {
+            "detected": 44,
+            "recall": {
+              "high": 0.497534,
+              "low": 0.316364,
+              "value": 0.40367
+            },
+            "support": 109,
+            "typology": "CYCLE"
+          },
+          {
+            "detected": 89,
+            "recall": {
+              "high": 0.724451,
+              "low": 0.566657,
+              "value": 0.649635
+            },
+            "support": 137,
+            "typology": "FAN-IN"
+          },
+          {
+            "detected": 91,
+            "recall": {
+              "high": 0.724043,
+              "low": 0.567945,
+              "value": 0.65
+            },
+            "support": 140,
+            "typology": "FAN-OUT"
+          },
+          {
+            "detected": 268,
+            "recall": {
+              "high": 0.712622,
+              "low": 0.620842,
+              "value": 0.668329
+            },
+            "support": 401,
+            "typology": "GATHER-SCATTER"
+          },
+          {
+            "detected": 25,
+            "recall": {
+              "high": 0.393968,
+              "low": 0.205326,
+              "value": 0.290698
+            },
+            "support": 86,
+            "typology": "RANDOM"
+          },
+          {
+            "detected": 161,
+            "recall": {
+              "high": 0.695697,
+              "low": 0.57791,
+              "value": 0.638889
+            },
+            "support": 252,
+            "typology": "SCATTER-GATHER"
+          },
+          {
+            "detected": 41,
+            "recall": {
+              "high": 0.372963,
+              "low": 0.223815,
+              "value": 0.292857
+            },
+            "support": 140,
+            "typology": "STACK"
+          },
+          {
+            "detected": 3,
+            "recall": {
+              "high": 0.019079,
+              "low": 0.00223,
+              "value": 0.00655
+            },
+            "support": 458,
+            "typology": "UNATTRIBUTED"
+          }
+        ],
+        "published_baselines": {
+          "metric": "minority_class_f1_percent",
+          "rows": {
+            "GFP + LightGBM": {
+              "mean": 62.86,
+              "std": 0.25
+            },
+            "GFP + XGBoost": {
+              "mean": 63.23,
+              "std": 0.17
+            },
+            "GIN": {
+              "mean": 28.7,
+              "std": 1.13
+            },
+            "GIN + EU": {
+              "mean": 47.73,
+              "std": 7.86
+            },
+            "PNA": {
+              "mean": 56.77,
+              "std": 2.41
+            }
+          },
+          "source": "arXiv:2306.16424v3 Table 2"
+        },
+        "sanity": {
+          "label_shuffle": {
+            "base_rate": 0.001769,
+            "interpretation": "with shuffled labels PR-AUC should collapse to about the base rate",
+            "test_pr_auc": 0.002106
+          },
+          "random_split": {
+            "interpretation": "compare with the temporal test F1; the gap is the optimism a random split would have reported",
+            "random_split_test_f1": 0.507077
+          }
+        },
+        "seeds": {
+          "f1": [
+            0.502699,
+            0.512873,
+            0.509498,
+            0.505002,
+            0.51397
+          ],
+          "f1_mean": 0.508808,
+          "f1_std": 0.004885,
+          "pr_auc": [
+            0.493872,
+            0.501825,
+            0.510287,
+            0.503242,
+            0.504083
+          ],
+          "pr_auc_mean": 0.502662,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "shap_top": [
+          {
+            "feature": "payment_format_code",
+            "mean_abs_shap": 0.859175
+          },
+          {
+            "feature": "r_age_min",
+            "mean_abs_shap": 0.389878
+          },
+          {
+            "feature": "s_out_n_7d",
+            "mean_abs_shap": 0.386894
+          },
+          {
+            "feature": "s_since_last_out_min",
+            "mean_abs_shap": 0.331784
+          },
+          {
+            "feature": "r_in_n_7d",
+            "mean_abs_shap": 0.278334
+          },
+          {
+            "feature": "s_out_n_1h",
+            "mean_abs_shap": 0.243315
+          },
+          {
+            "feature": "s_payees_1h",
+            "mean_abs_shap": 0.234493
+          },
+          {
+            "feature": "s_payees_24h",
+            "mean_abs_shap": 0.213039
+          },
+          {
+            "feature": "s_payees_7d",
+            "mean_abs_shap": 0.198701
+          },
+          {
+            "feature": "r_since_last_out_min",
+            "mean_abs_shap": 0.186083
+          }
+        ],
+        "threshold": 0.6102508151862566,
+        "typology_head": {
+          "accuracy": 0.5303,
+          "macro_f1": 0.3631,
+          "majority_class_accuracy": 0.2549
+        }
+      },
+      "label": "IBM AML HI-Small (synthetic)",
+      "lineage": [
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 465.64,
+          "git_revision": "ad7123f4bc044f67e06e37c09e7362ba3d450012+dirty",
+          "inputs": {
+            "data/processed/hi_small/scores.parquet": "1df21a1fff2426fd75ef08122a9000366234ef02876cd5546085fb401a3fd482"
+          },
+          "outputs": {},
+          "stage": "alerts",
+          "started_at": "2026-10-19T21:26:53.193382+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 250.378,
+          "git_revision": "ad7123f4bc044f67e06e37c09e7362ba3d450012+dirty",
+          "inputs": {
+            "data/processed/hi_small/scores.parquet": "1df21a1fff2426fd75ef08122a9000366234ef02876cd5546085fb401a3fd482"
+          },
+          "outputs": {},
+          "stage": "decide",
+          "started_at": "2026-10-19T21:35:12.839738+00:00"
+        },
+        {
+          "config_hash": "aa643cba66e8605928c4d15ad993fba123baa4d61e06a1623ce249fcb6aced7e",
+          "duration_s": 5451.973,
+          "git_revision": "ad7123f4bc044f67e06e37c09e7362ba3d450012+dirty",
+          "inputs": {
+            "artifacts/hi_small/splits.json": "7f648637bf5ae8dbc559785a0c07a86c6f39c2a9058db77547d5dfad0d18ed3a",
+            "data/processed/hi_small/features.parquet": "44c623ae0d2d44f055a104c8f1cbfd9344b390251cf9d10a95c7f66b0d91667f",
+            "data/processed/hi_small/pattern_links.parquet": "ac699bb7917d8fe6c6c113d616e6650403b33bf7eccb959f88064b36cc971bf1"
+          },
+          "outputs": {
+            "artifacts/hi_small/detect/champion.txt": "c9974d76c45e1a017241b99a37aa4241076dd70a39cad2648eb37b931798c321",
+            "artifacts/hi_small/detect/registry.json": "a864dd14d769340169a79a7c338d9c346104c0e68bd179556c215fedcaa23ea8",
+            "artifacts/hi_small/detect/typology.txt": "bd4b64825a2eccfad63463bc646ca0fb400d876a18ea2f8e3008d3d46ce6bccf",
+            "data/processed/hi_small/scores.parquet": "1df21a1fff2426fd75ef08122a9000366234ef02876cd5546085fb401a3fd482"
+          },
+          "stage": "detect",
+          "started_at": "2026-10-19T16:47:32.351669+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 58.217,
+          "git_revision": "ad7123f4bc044f67e06e37c09e7362ba3d450012+dirty",
+          "inputs": {
+            "data/processed/hi_small/transactions.parquet": "2d07ed46b315d094380e9f21ff45bc54fd6fccc1c5dccc3af7d5a77b6e4dec68"
+          },
+          "outputs": {
+            "data/processed/hi_small/features.parquet": "44c623ae0d2d44f055a104c8f1cbfd9344b390251cf9d10a95c7f66b0d91667f"
+          },
+          "stage": "features",
+          "started_at": "2026-10-19T16:46:19.567595+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 6.806,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/processed/hi_small/pattern_links.parquet": "ac699bb7917d8fe6c6c113d616e6650403b33bf7eccb959f88064b36cc971bf1",
+            "data/processed/hi_small/transactions.parquet": "2d07ed46b315d094380e9f21ff45bc54fd6fccc1c5dccc3af7d5a77b6e4dec68"
+          },
+          "outputs": {
+            "data/processed/hi_small/account_day.parquet": "a83f99a7425311c2968a2685360f168a531e0847a6385102e2594fc7e290e60b",
+            "data/processed/hi_small/accounts.parquet": "38f76d1717665d4aa164a8d64426e30fd02638c756530b3ff5a6e9afe37d9572"
+          },
+          "stage": "graph",
+          "started_at": "2026-10-19T16:23:07.464684+00:00"
+        },
+        {
+          "config_hash": "3da8c96c7ddc5be0cfcd7ba69756edc08056afc699e38d5095e47a00e3637011",
+          "duration_s": 16.333,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/raw/ibm_aml/HI-Small_Trans.csv": "b19d39f515523373f991b689c07e11e7b0b95c17a2c27a87d91584ae16c5b040"
+          },
+          "outputs": {
+            "data/processed/hi_small/transactions.parquet": "2d07ed46b315d094380e9f21ff45bc54fd6fccc1c5dccc3af7d5a77b6e4dec68"
+          },
+          "stage": "ingest",
+          "started_at": "2026-10-19T16:22:44.440541+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 1.445,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/processed/hi_small/transactions.parquet": "2d07ed46b315d094380e9f21ff45bc54fd6fccc1c5dccc3af7d5a77b6e4dec68",
+            "data/raw/ibm_aml/HI-Small_Patterns.txt": "2c546b5ce6009e73851f0139af053cf845f08bf92f3bc82fe1eb937dec2ef39b"
+          },
+          "outputs": {
+            "data/processed/hi_small/pattern_links.parquet": "ac699bb7917d8fe6c6c113d616e6650403b33bf7eccb959f88064b36cc971bf1"
+          },
+          "stage": "link",
+          "started_at": "2026-10-19T16:23:05.956483+00:00"
+        },
+        {
+          "config_hash": "335aae67f8b5c0b42beae06dc050b783514fb7e656c5c6fa8cd33377c126be96",
+          "duration_s": 0.358,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/processed/hi_small/transactions.parquet": "2d07ed46b315d094380e9f21ff45bc54fd6fccc1c5dccc3af7d5a77b6e4dec68"
+          },
+          "outputs": {
+            "artifacts/hi_small/splits.json": "7f648637bf5ae8dbc559785a0c07a86c6f39c2a9058db77547d5dfad0d18ed3a"
+          },
+          "stage": "split",
+          "started_at": "2026-10-19T16:23:14.333140+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 0.545,
+          "git_revision": "uncommitted",
+          "inputs": {},
+          "outputs": {},
+          "stage": "verify",
+          "started_at": "2026-10-19T16:22:43.783341+00:00"
+        }
+      ]
+    },
+    "li_small": {
+      "data": {
+        "contract_passed": true,
+        "facts": {
+          "cross_currency": 98876,
+          "exact_duplicate_rows": 8,
+          "self_transfers": 804477,
+          "zero_amount": 0
+        },
+        "files": [
+          {
+            "name": "LI-Small_Trans.csv",
+            "ok": true,
+            "sha256": "f7a9940339c78b5d1476071505b5867c0f5319640b9c4279d13f531bf965319d"
+          },
+          {
+            "name": "LI-Small_Patterns.txt",
+            "ok": true,
+            "sha256": "734c15b7ff4be1a04a3529bd1524b92c1e8b62289d3ce4881423596ee47a208f"
+          }
+        ],
+        "graph": {
+          "account_days": 3387331,
+          "accounts": 705907,
+          "accounts_involved": 5304,
+          "edges": 6924049,
+          "positive_account_days": 5972,
+          "self_loops": 804477
+        },
+        "laundering": 3565,
+        "laundering_rate": 0.000515,
+        "patterns": {
+          "attempts": 117,
+          "coverage": 0.286957,
+          "laundering_attributed": 1023,
+          "laundering_unattributed": 2542
+        },
+        "patterns_by_typology": {
+          "BIPARTITE": {
+            "attempts": 16,
+            "transactions": 129
+          },
+          "CYCLE": {
+            "attempts": 12,
+            "transactions": 83
+          },
+          "FAN-IN": {
+            "attempts": 12,
+            "transactions": 73
+          },
+          "FAN-OUT": {
+            "attempts": 19,
+            "transactions": 149
+          },
+          "GATHER-SCATTER": {
+            "attempts": 12,
+            "transactions": 150
+          },
+          "RANDOM": {
+            "attempts": 15,
+            "transactions": 77
+          },
+          "SCATTER-GATHER": {
+            "attempts": 13,
+            "transactions": 182
+          },
+          "STACK": {
+            "attempts": 18,
+            "transactions": 180
+          }
+        },
+        "rows": 6924049,
+        "source": "LI-Small_Trans.csv",
+        "sparse_tail_days": [
+          "2022-09-11",
+          "2022-09-12",
+          "2022-09-13",
+          "2022-09-14",
+          "2022-09-15",
+          "2022-09-16",
+          "2022-09-17"
+        ],
+        "splits": {
+          "calib": {
+            "from": "2022-09-07T14:48:00",
+            "laundering": 409,
+            "laundering_rate": 0.000591,
+            "rows": 692405,
+            "to": "2022-09-08T16:06:00"
+          },
+          "fractions": {
+            "calib": 0.1,
+            "hpo": 0.1,
+            "test": 0.2,
+            "train": 0.6
+          },
+          "hpo": {
+            "from": "2022-09-06T13:32:00",
+            "laundering": 418,
+            "laundering_rate": 0.000604,
+            "rows": 692405,
+            "to": "2022-09-07T14:48:00"
+          },
+          "method": "count",
+          "test": {
+            "from": "2022-09-08T16:06:00",
+            "laundering": 925,
+            "laundering_rate": 0.000668,
+            "rows": 1384810,
+            "to": "2022-09-17T15:28:00"
+          },
+          "train": {
+            "from": "2022-09-01T00:00:00",
+            "laundering": 1813,
+            "laundering_rate": 0.000436,
+            "rows": 4154429,
+            "to": "2022-09-06T13:32:00"
+          }
+        },
+        "time_span": {
+          "from": "2022-09-01T00:00:00",
+          "to": "2022-09-17T15:28:00"
+        },
+        "violations": {
+          "bad_amount": 0,
+          "bad_bank": 0,
+          "bad_label": 0,
+          "bad_timestamp": 0,
+          "missing_account": 0,
+          "unknown_currency": 0,
+          "unknown_payment_format": 0
+        }
+      },
+      "decide": null,
+      "defend": null,
+      "detect": null,
+      "label": "IBM AML LI-Small (synthetic)",
+      "lineage": [
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 101.248,
+          "git_revision": "99935257aa03b5eb05bc121fd0b0859bd3af607c+dirty",
+          "inputs": {
+            "data/processed/li_small/transactions.parquet": "fe0ab98ef02696df86dcb23289bfd65b8ce2565bc329f5a31640dfa305fdba12"
+          },
+          "outputs": {
+            "data/processed/li_small/features.parquet": "b512067acab59e33d8011aebb644b79796536ad058b8aad2e90fb79b19d63bf0"
+          },
+          "stage": "features",
+          "started_at": "2026-10-20T03:11:34.377034+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 8.272,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/processed/li_small/pattern_links.parquet": "ba37a29b9417aaaac902a6cb2b4d51cd7ce113a4747134ec5ed86aec9c037620",
+            "data/processed/li_small/transactions.parquet": "fe0ab98ef02696df86dcb23289bfd65b8ce2565bc329f5a31640dfa305fdba12"
+          },
+          "outputs": {
+            "data/processed/li_small/account_day.parquet": "a85c7f2ca1b72c8bd25ad0a56ff07b08b349b8595b6cf17eca08841138591781",
+            "data/processed/li_small/accounts.parquet": "3e325951dee79a21b6d93a634b2cae3df4bbfcc4dc9a3f84ae7fa197d826f819"
+          },
+          "stage": "graph",
+          "started_at": "2026-10-19T16:23:44.322169+00:00"
+        },
+        {
+          "config_hash": "3da8c96c7ddc5be0cfcd7ba69756edc08056afc699e38d5095e47a00e3637011",
+          "duration_s": 20.757,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/raw/ibm_aml/LI-Small_Trans.csv": "f7a9940339c78b5d1476071505b5867c0f5319640b9c4279d13f531bf965319d"
+          },
+          "outputs": {
+            "data/processed/li_small/transactions.parquet": "fe0ab98ef02696df86dcb23289bfd65b8ce2565bc329f5a31640dfa305fdba12"
+          },
+          "stage": "ingest",
+          "started_at": "2026-10-19T16:23:22.112471+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 1.104,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/processed/li_small/transactions.parquet": "fe0ab98ef02696df86dcb23289bfd65b8ce2565bc329f5a31640dfa305fdba12",
+            "data/raw/ibm_aml/LI-Small_Patterns.txt": "734c15b7ff4be1a04a3529bd1524b92c1e8b62289d3ce4881423596ee47a208f"
+          },
+          "outputs": {
+            "data/processed/li_small/pattern_links.parquet": "ba37a29b9417aaaac902a6cb2b4d51cd7ce113a4747134ec5ed86aec9c037620"
+          },
+          "stage": "link",
+          "started_at": "2026-10-19T16:23:43.151389+00:00"
+        },
+        {
+          "config_hash": "335aae67f8b5c0b42beae06dc050b783514fb7e656c5c6fa8cd33377c126be96",
+          "duration_s": 0.384,
+          "git_revision": "uncommitted",
+          "inputs": {
+            "data/processed/li_small/transactions.parquet": "fe0ab98ef02696df86dcb23289bfd65b8ce2565bc329f5a31640dfa305fdba12"
+          },
+          "outputs": {
+            "artifacts/li_small/splits.json": "b6f58b9a18d960e09a17dc44c267f1a139da84d097adfb2ffa799fac4f59d5b2"
+          },
+          "stage": "split",
+          "started_at": "2026-10-19T16:23:52.667768+00:00"
+        },
+        {
+          "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+          "duration_s": 0.916,
+          "git_revision": "uncommitted",
+          "inputs": {},
+          "outputs": {},
+          "stage": "verify",
+          "started_at": "2026-10-19T16:23:21.110571+00:00"
+        }
+      ]
+    }
+  },
+  "generated_at": "2026-10-20T03:14:03+00:00",
+  "git_sha": "99935257aa03",
+  "headline": [
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "high": 0.591136,
+      "key": "detect.f1",
+      "label": "Laundering F1 (champion)",
+      "low": 0.440091,
+      "n": 1797,
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.502699
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "high": 0.601853,
+      "key": "detect.pr_auc",
+      "label": "PR-AUC (champion)",
+      "low": 0.409302,
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.493872
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "high": 0.00325,
+      "key": "detect.rules_f1",
+      "label": "Laundering F1 (rules incumbent)",
+      "low": 0.002313,
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.002627
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "key": "detect.seed_std",
+      "label": "F1 standard deviation over seeds",
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.004885
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "key": "detect.paper_gfp_lgbm",
+      "label": "Published GFP + LightGBM F1 (%)",
+      "source": "arXiv:2306.16424v3 Table 2",
+      "split": "test",
+      "value": 62.86
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "high": 0.987941,
+      "key": "decide.recall_static_pooled",
+      "label": "Realised recall at a 95% guarantee, static conformal",
+      "low": 0.978378,
+      "n": 2723,
+      "reviewed": 134186,
+      "source": "artifacts/decide/coverage.json",
+      "split": "test",
+      "value": 0.983841
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "high": 0.970378,
+      "key": "decide.recall_aci_pooled",
+      "label": "Realised recall at a 95% guarantee, adaptive conformal (ACI)",
+      "low": 0.956335,
+      "n": 2723,
+      "reviewed": 120457,
+      "source": "artifacts/decide/coverage.json",
+      "split": "test",
+      "value": 0.96401
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "key": "decide.ece_after",
+      "label": "Expected calibration error after isotonic",
+      "source": "artifacts/decide/calibration.json",
+      "split": "test",
+      "value": 0.002033
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "key": "decide.ece_before",
+      "label": "Expected calibration error before calibration",
+      "source": "artifacts/decide/calibration.json",
+      "split": "test",
+      "value": 0.011639
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "high": 0.999928,
+      "hits": 2437,
+      "key": "defend.detection",
+      "label": "Planted narrative faults caught by the verifier",
+      "low": 0.99768,
+      "source": "artifacts/defend/verifier_eval.json",
+      "split": "test",
+      "total": 2438,
+      "value": 0.99959
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "high": 0.012643,
+      "hits": 0,
+      "key": "defend.false_alarm",
+      "label": "Clean narratives wrongly rejected",
+      "low": 0.0,
+      "source": "artifacts/defend/verifier_eval.json",
+      "split": "test",
+      "total": 300,
+      "value": 0.0
+    },
+    {
+      "dataset": "IBM AML HI-Small (synthetic)",
+      "key": "perf.subgraph_p95_ms",
+      "label": "Evidence subgraph latency p95 (ms)",
+      "n": 200,
+      "source": "artifacts/bench.json",
+      "split": "test",
+      "value": 256.9
+    }
+  ],
+  "primary_dataset": "hi_small",
+  "schema_version": 1,
+  "synthetic_data_notice": "All results are on synthetic data (IBM AML, Altman et al. 2023). They do not establish performance on real bank data."
+}
