@@ -50,6 +50,10 @@ class NarrativeModel(BaseModel):
 class ProviderError(RuntimeError):
     """A provider failed (network, quota, or output that is not the required JSON)."""
 
+    def __init__(self, message: str, attempts: Sequence[Mapping[str, str]] = ()) -> None:
+        super().__init__(message)
+        self.attempts = [dict(a) for a in attempts]  # per-provider errors, all having failed
+
 
 @dataclass
 class Draft:
@@ -72,7 +76,9 @@ def prompt_hash() -> str:
 
 def evidence_block(evidence: Mapping[str, Mapping[str, Any]]) -> str:
     items = sorted(evidence.values(), key=lambda e: e["id"])
-    body = json.dumps(items, ensure_ascii=False, sort_keys=True, indent=1)
+    # Compact: providers meter prompts in tokens, and indentation is pure cost (the Groq free
+    # tier rejects any request over 8,000 tokens per minute, prompt and output budget together).
+    body = json.dumps(items, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     return f"<EVIDENCE>\n{body}\n</EVIDENCE>"
 
 
@@ -193,6 +199,9 @@ class GroqProvider:
     timeout: float = 45.0
     name: str = "groq"
     base_url: str = "https://api.groq.com/openai/v1"
+    # Groq meters prompt + *reserved* output against its per-minute limit, so cap the output.
+    max_output_tokens: int = 2000
+    reasoning_effort: str | None = "low"  # gpt-oss models; None for models without the option
 
     def __post_init__(self) -> None:
         self.pool = _as_pool(self.name, self.keys)
@@ -206,6 +215,10 @@ class GroqProvider:
                     "model": self.model,
                     "temperature": 0,
                     "response_format": {"type": "json_object"},
+                    "max_completion_tokens": self.max_output_tokens,
+                    **(
+                        {"reasoning_effort": self.reasoning_effort} if self.reasoning_effort else {}
+                    ),
                     "messages": [
                         {"role": "system", "content": system},
                         {"role": "user", "content": user},
@@ -271,7 +284,15 @@ def providers_from_settings(settings: Any) -> list[Provider]:
         if name == "gemini":
             out.append(GeminiProvider(pool_for(name, keys), settings.gemini_model, timeout))
         elif name == "groq":
-            out.append(GroqProvider(pool_for(name, keys), settings.groq_model, timeout))
+            out.append(
+                GroqProvider(
+                    pool_for(name, keys),
+                    settings.groq_model,
+                    timeout,
+                    max_output_tokens=settings.groq_max_output_tokens,
+                    reasoning_effort=settings.groq_reasoning_effort,
+                )
+            )
     return out
 
 
@@ -310,7 +331,7 @@ def draft(
                 )
         if mode == "llm":
             msg = "every LLM provider failed: " + "; ".join(a["error"] for a in attempts)
-            raise ProviderError(msg)
+            raise ProviderError(msg, attempts)
     return Draft(
         offline_sentences(evidence),
         "offline",

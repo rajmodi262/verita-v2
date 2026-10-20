@@ -36,6 +36,11 @@ from verita.services.alerts import champion
 from verita.services.evidence import AlertRef, EvidenceStore, SubgraphSource
 
 MAX_MISSES = 5
+# The LLM evaluation is a batch job: when every key of every provider is cooling down for a short
+# per-minute limit, wait for the first to free up instead of scoring a failure. (Interactive
+# drafts never wait: they fall back to the offline template at once.)
+LLM_MAX_WAIT_S = 90.0
+LLM_WAITS_PER_CASE = 3
 
 
 def _sample(db: Session, n: int, seed: int) -> list[Alert]:
@@ -161,6 +166,37 @@ def run_eval(
     return result
 
 
+def _soonest_key(providers: list[narr.Provider]) -> float | None:
+    """Seconds until any provider's next key frees up (None: no key is merely cooling down)."""
+    waits = [
+        w
+        for p in providers
+        if (pool := getattr(p, "pool", None)) is not None
+        and (w := pool.next_retry_in()) is not None
+    ]
+    return min(waits) if waits else None
+
+
+def _failure_reason(attempts: list[dict[str, str]]) -> str:
+    """Why each provider failed (its last attempt), e.g. ``gemini: quota; groq: timeout``."""
+    last = {a["provider"]: a["error"] for a in attempts}
+    return "; ".join(f"{name}: {_category(error)}" for name, error in last.items())
+
+
+def _category(error: str) -> str:
+    if "no key with quota left" in error:
+        return "quota"
+    if "timed out" in error or "Timeout" in error:
+        return "timeout"
+    if "HTTP 413" in error:
+        return "request too large"
+    if "HTTP 5" in error:
+        return "provider unavailable"
+    if "JSON shape" in error or "no text" in error:
+        return "output not the required JSON"
+    return "other"
+
+
 def _llm_eval(
     built: list[tuple[AlertInput, dict[str, Any]]], providers: list[narr.Provider]
 ) -> dict[str, Any]:
@@ -173,11 +209,25 @@ def _llm_eval(
     drafts = claims = unsupported = uncited = sentences_total = passed = fallbacks = 0
     by_kind: Counter[str] = Counter()
     drafted_by: Counter[str] = Counter()  # keys and providers fail over, so record who wrote it
+    failure_reasons: Counter[str] = Counter()
+    waited = 0.0
     for _, ev in built:
-        try:
-            d = narr.draft(ev, providers, mode="llm")
-        except narr.ProviderError:
+        d: narr.Draft | None = None
+        error = ""
+        for _ in range(LLM_WAITS_PER_CASE + 1):
+            try:
+                d = narr.draft(ev, providers, mode="llm")
+                break
+            except narr.ProviderError as exc:
+                error = _failure_reason(exc.attempts) if exc.attempts else _category(str(exc))
+                wait = _soonest_key(providers)
+                if wait is None or wait > LLM_MAX_WAIT_S:
+                    break
+                time.sleep(wait + 0.5)
+                waited += wait + 0.5
+        if d is None:
             fallbacks += 1
+            failure_reasons[error] += 1
             continue
         drafts += 1
         drafted_by[f"{d.provider}/{d.model}"] += 1
@@ -197,6 +247,8 @@ def _llm_eval(
         "models": [p.model for p in providers],
         "drafts": drafts,
         "provider_failures": fallbacks,
+        "failure_reasons": dict(failure_reasons),
+        "seconds_waiting_for_quota": round(waited, 1),
         "drafted_by": dict(drafted_by),
         "unsupported_claim_rate": _rate(unsupported, claims),
         "unsupported_by_kind": dict(by_kind),
