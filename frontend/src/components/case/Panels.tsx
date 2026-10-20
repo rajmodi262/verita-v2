@@ -51,6 +51,7 @@ export function EvidencePanel({
                 <li key={e.id}>
                   <button
                     type="button"
+                    data-ev={e.id}
                     className={styles.evButton}
                     aria-pressed={selected === e.id}
                     onClick={() => {

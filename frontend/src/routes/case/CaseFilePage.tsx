@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -27,6 +27,7 @@ import {
   VerifierPanel,
   VerifyDropzone,
 } from "../../components/case/Panels";
+import { EvidenceThreads } from "../../components/case/EvidenceThreads";
 import { ErrorState } from "../../components/ErrorState";
 import { GuillocheSeal } from "../../components/seal/GuillocheSeal";
 import {
@@ -207,6 +208,8 @@ export default function CaseFilePage() {
   const close = useClose(caseId);
   const [editing, setEditing] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
+  const [reading, setReading] = useState<number | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const [dialog, setDialog] = useState<"return" | "close" | null>(null);
   const [injected, setInjected] = useState<string | null>(null);
   const [mode, setMode] = useState<"auto" | "offline">("auto");
@@ -386,7 +389,13 @@ export default function CaseFilePage() {
       </div>
       {actionError ? <ErrorState error={actionError} /> : null}
 
-      <div className={styles.grid}>
+      <div className={styles.grid} ref={gridRef}>
+        <EvidenceThreads
+          root={gridRef}
+          sentence={reading}
+          ids={reading === null ? [] : (d.narrative?.sentences[reading]?.evidence_ids ?? [])}
+          failed={reading !== null && reports[reading]?.passed === false}
+        />
         <Panel title="Evidence" label="Exhibits">
           <EvidencePanel evidence={d.evidence} selected={selected} onSelect={setSelected} />
         </Panel>
@@ -429,6 +438,7 @@ export default function CaseFilePage() {
               reports={reports}
               selectedEvidence={selected}
               onSelectEvidence={setSelected}
+              onReadSentence={setReading}
             />
           )}
         </Panel>
