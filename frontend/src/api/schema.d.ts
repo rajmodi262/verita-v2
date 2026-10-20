@@ -402,6 +402,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/cases/{case_id}/export.goaml.xml": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Export Goaml
+         * @description The goAML suspicious transaction report, exactly as signed (a leaf of the case file).
+         */
+        get: operations["export_goaml_api_v1_cases__case_id__export_goaml_xml_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/cases/{case_id}/export.json": {
         parameters: {
             query?: never;
@@ -656,6 +676,108 @@ export interface paths {
         get: operations["me_api_v1_me_get"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Models */
+        get: operations["list_models_api_v1_models_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models/{model_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Model */
+        get: operations["get_model_api_v1_models__model_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models/{model_id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approve */
+        post: operations["approve_api_v1_models__model_id__approve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models/{model_id}/promote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Promote */
+        post: operations["promote_api_v1_models__model_id__promote_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models/{model_id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reject */
+        post: operations["reject_api_v1_models__model_id__reject_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/models/{model_id}/validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate */
+        post: operations["validate_api_v1_models__model_id__validate_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -943,6 +1065,11 @@ export interface components {
             review_share: number;
             /** Reviewed */
             reviewed: number;
+        };
+        /** DecisionIn */
+        DecisionIn: {
+            /** Note */
+            note?: string | null;
         };
         /**
          * DispositionAction
@@ -1244,6 +1371,57 @@ export interface components {
             expires_at: string;
             user: components["schemas"]["UserOut"];
         };
+        /** ModelDetail */
+        ModelDetail: {
+            /** Approved At */
+            approved_at: string | null;
+            /** Approved By Id */
+            approved_by_id: number | null;
+            /** Bypass Reason */
+            bypass_reason: string | null;
+            /** Champion Sha256 */
+            champion_sha256: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Dataset */
+            dataset: string;
+            /** Decision Note */
+            decision_note: string | null;
+            /** Git Revision */
+            git_revision: string;
+            /**
+             * Governance
+             * @description reviewed, bypassed, or not reviewed
+             */
+            governance: string;
+            /** Id */
+            id: number;
+            /** Is Champion */
+            is_champion: boolean;
+            /** Name */
+            name: string;
+            /** Promoted At */
+            promoted_at: string | null;
+            /** Promoted By Id */
+            promoted_by_id: number | null;
+            /** Proposed By */
+            proposed_by: string;
+            /**
+             * Report
+             * @description The full validation report, if any
+             */
+            report: {
+                [key: string]: unknown;
+            } | null;
+            /** Status */
+            status: string;
+            /** Threshold */
+            threshold: number;
+            validation: components["schemas"]["ValidationSummary"] | null;
+        };
         /** ModelInfo */
         ModelInfo: {
             /** Alert Floor */
@@ -1256,6 +1434,55 @@ export interface components {
             name: string;
             /** Threshold */
             threshold: number;
+        };
+        /** ModelList */
+        ModelList: {
+            /** Items */
+            items: components["schemas"]["ModelOut"][];
+        };
+        /** ModelOut */
+        ModelOut: {
+            /** Approved At */
+            approved_at: string | null;
+            /** Approved By Id */
+            approved_by_id: number | null;
+            /** Bypass Reason */
+            bypass_reason: string | null;
+            /** Champion Sha256 */
+            champion_sha256: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Dataset */
+            dataset: string;
+            /** Decision Note */
+            decision_note: string | null;
+            /** Git Revision */
+            git_revision: string;
+            /**
+             * Governance
+             * @description reviewed, bypassed, or not reviewed
+             */
+            governance: string;
+            /** Id */
+            id: number;
+            /** Is Champion */
+            is_champion: boolean;
+            /** Name */
+            name: string;
+            /** Promoted At */
+            promoted_at: string | null;
+            /** Promoted By Id */
+            promoted_by_id: number | null;
+            /** Proposed By */
+            proposed_by: string;
+            /** Status */
+            status: string;
+            /** Threshold */
+            threshold: number;
+            validation: components["schemas"]["ValidationSummary"] | null;
         };
         /** ModelScore */
         ModelScore: {
@@ -1522,6 +1749,11 @@ export interface components {
             /** Reason */
             reason: string;
         };
+        /** RejectIn */
+        RejectIn: {
+            /** Note */
+            note: string;
+        };
         /** ReliabilityBin */
         ReliabilityBin: {
             /** High */
@@ -1648,6 +1880,8 @@ export interface components {
         SignatureCheck: {
             /** Changed Leaves */
             changed_leaves: string[];
+            /** Goaml Regenerates */
+            goaml_regenerates?: boolean | null;
             ledger: components["schemas"]["LedgerCheck"];
             /** Recomputed Root */
             recomputed_root: string;
@@ -1734,6 +1968,17 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /** ValidationSummary */
+        ValidationSummary: {
+            /** Failed Gates */
+            failed_gates: string[];
+            /** Passed */
+            passed: boolean;
+            /** Policy Version */
+            policy_version: number | null;
+            /** Sha256 */
+            sha256: string | null;
         };
         /** VerificationOut */
         VerificationOut: {
@@ -1822,6 +2067,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Alert ID */
                 alert_id: number;
             };
             cookie?: never;
@@ -1853,6 +2099,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Alert ID */
                 alert_id: number;
             };
             cookie?: never;
@@ -1888,6 +2135,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Alert ID */
                 alert_id: number;
             };
             cookie?: never;
@@ -2322,6 +2570,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2353,6 +2602,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2384,6 +2634,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2419,6 +2670,39 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
+                case_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    export_goaml_api_v1_cases__case_id__export_goaml_xml_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2450,6 +2734,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2481,6 +2766,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2512,6 +2798,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2547,6 +2834,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2582,6 +2870,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2617,6 +2906,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2648,6 +2938,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2679,6 +2970,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Case ID */
                 case_id: number;
             };
             cookie?: never;
@@ -2794,6 +3086,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
+                /** @description Job ID */
                 job_id: number;
             };
             cookie?: never;
@@ -2856,6 +3149,198 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserOut"];
+                };
+            };
+        };
+    };
+    list_models_api_v1_models_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelList"];
+                };
+            };
+        };
+    };
+    get_model_api_v1_models__model_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model version ID */
+                model_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approve_api_v1_models__model_id__approve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model version ID */
+                model_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    promote_api_v1_models__model_id__promote_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model version ID */
+                model_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DecisionIn"] | null;
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reject_api_v1_models__model_id__reject_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model version ID */
+                model_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RejectIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    validate_api_v1_models__model_id__validate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Model version ID */
+                model_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModelDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

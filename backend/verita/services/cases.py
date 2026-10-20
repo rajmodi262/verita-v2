@@ -42,6 +42,7 @@ from verita.db.case_models import (
 )
 from verita.db.detect_models import Alert, AlertStatus
 from verita.db.models import Role, User
+from verita.defend import goaml
 from verita.defend import narrative as narr
 from verita.defend.canonical import canonicalize
 from verita.defend.evidence import AlertInput, build_case_evidence
@@ -456,6 +457,7 @@ def approve(db: Session, case_id: int, user: User) -> Signature:
         )
     signed_at = utcnow().replace(microsecond=0).astimezone(UTC).isoformat()
     items = _document(db, case, user, signed_at)
+    items["goaml"] = goaml.leaf(items)  # the filing itself is signed
     tree = MerkleTree.build(items)
     key = signer()
     sig = Signature(
@@ -513,6 +515,25 @@ def export_document(db: Session, case_id: int) -> dict[str, Any]:
     }
 
 
+def goaml_report(db: Session, case_id: int) -> str:
+    """The signed goAML report of a case (only cases signed with one, and only if valid)."""
+    case = get_case(db, case_id)
+    sig = db.get(Signature, case.id)
+    if sig is None:
+        raise AppError(409, "not-signed", "Only signed cases can be exported")
+    leaf = sig.document.get("goaml")
+    if not isinstance(leaf, dict):
+        raise AppError(409, "no-goaml", "This case was signed before goAML export existed")
+    if not leaf.get("schema_valid"):
+        raise AppError(
+            409,
+            "goaml-invalid",
+            "The goAML report failed schema validation",
+            detail="; ".join(leaf.get("errors", [])),
+        )
+    return str(leaf["xml"])
+
+
 def verify_export(export: dict[str, Any], public_pem: str | None = None) -> dict[str, Any]:
     """Recompute leaves and root and check the signature; name any leaf that changed."""
     items = export.get("items", {})
@@ -535,6 +556,7 @@ def verify_export(export: dict[str, Any], public_pem: str | None = None) -> dict
         "root_matches": root_ok,
         "recomputed_root": tree.root,
         "changed_leaves": changed,
+        "goaml_regenerates": goaml.regenerates(items),
     }
 
 

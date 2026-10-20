@@ -175,6 +175,16 @@ def export_tampered(case_id: CaseId, db: DbDep) -> Response:
     )
 
 
+@router.get("/cases/{case_id}/export.goaml.xml", dependencies=[READERS])
+def export_goaml(case_id: CaseId, db: DbDep) -> Response:
+    """The goAML suspicious transaction report, exactly as signed (a leaf of the case file)."""
+    return Response(
+        svc.goaml_report(db, case_id),
+        media_type="application/xml",
+        headers={"Content-Disposition": f'attachment; filename="case-{case_id}-goaml.xml"'},
+    )
+
+
 @router.get("/cases/{case_id}/export.pdf", dependencies=[READERS])
 def export_pdf(case_id: CaseId, db: DbDep) -> Response:
     return Response(
