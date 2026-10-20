@@ -10,15 +10,16 @@ from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, Field
 
 from verita.api import capacity_schemas as cs
-from verita.api.deps import CsrfSessionDep, DbDep, require_role
+from verita.api.deps import DbDep, csrf_role, require_role
 from verita.api.state import decide_artifacts
 from verita.core.errors import AppError
 from verita.db.models import Role
 from verita.services import capacity as svc
+from verita.services.auth import SessionInfo
 
 router = APIRouter(prefix="/capacity", tags=["capacity"])
 READERS = Depends(require_role(Role.ANALYST, Role.MLRO, Role.VALIDATOR, Role.REVIEWER))
-PLANNERS = require_role(Role.MLRO)
+PlannerDep = Annotated[SessionInfo, Depends(csrf_role(Role.MLRO))]
 
 Alpha = Annotated[float, Query(gt=0, lt=1)]
 Mode = Annotated[str, Query(pattern="^(pooled|mondrian)$")]
@@ -83,8 +84,7 @@ class SavePlanIn(BaseModel):
 
 
 @router.post("/plans", response_model=cs.SavedPlanOut)
-def save(body: SavePlanIn, request: Request, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
-    PLANNERS(info)
+def save(body: SavePlanIn, request: Request, db: DbDep, info: PlannerDep) -> dict[str, Any]:
     result = svc.compute_plan(
         db,
         decide_artifacts(request),

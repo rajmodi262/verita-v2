@@ -61,6 +61,23 @@ def csrf_protected(request: Request, info: SessionDep) -> SessionInfo:
 CsrfSessionDep = Annotated[SessionInfo, Depends(csrf_protected)]
 
 
+def csrf_role(*allowed: Role) -> Callable[[SessionInfo], SessionInfo]:
+    """CSRF check and role check as one dependency for mutating routes.
+
+    Dependencies resolve before FastAPI validates the request body, so an unauthorized caller
+    always gets 403 — never a 422 that describes the endpoint's input to someone who may not
+    call it (found by the authorization matrix).
+    """
+    allowed_values = {role.value for role in allowed}
+
+    def _check(info: CsrfSessionDep) -> SessionInfo:
+        if info.user.role not in allowed_values:
+            raise AppError(403, "forbidden", "Your role cannot perform this action")
+        return info
+
+    return _check
+
+
 def require_role(*allowed: Role) -> Callable[[SessionInfo], SessionInfo]:
     """Default deny: the route is reachable only by the listed roles."""
     allowed_values = {role.value for role in allowed}

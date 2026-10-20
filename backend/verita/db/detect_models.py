@@ -53,8 +53,36 @@ ESCALATE_REASONS = {
 }
 
 
+class ModelStatus(StrEnum):
+    """Model lifecycle (verita.services.models): only a champion scores the live queue."""
+
+    CANDIDATE = "candidate"  # trained and scored in shadow; awaiting validation
+    APPROVED = "approved"  # passed the policy gates and an independent validator signed off
+    CHAMPION = "champion"  # put into service by the MLRO
+    REJECTED = "rejected"
+    RETIRED = "retired"  # replaced by a newer champion
+
+
+MODEL_STATUS_CHECK = "status IN ('candidate', 'approved', 'champion', 'rejected', 'retired')"
+# A champion is either reviewed by two different people, or carries an explicit, displayed
+# bypass reason (development pipelines, the synthetic demo pack). There is no third way.
+CHAMPION_REVIEWED_CHECK = (
+    "status <> 'champion' OR bypass_reason IS NOT NULL OR "
+    "(approved_by_id IS NOT NULL AND promoted_by_id IS NOT NULL "
+    "AND approved_by_id <> promoted_by_id)"
+)
+
+
+CHAMPION_FLAG_CHECK = "is_champion = (status = 'champion')"
+
+
 class ModelVersion(Base):
     __tablename__ = "model_versions"
+    __table_args__ = (
+        CheckConstraint(MODEL_STATUS_CHECK, name="status_valid"),
+        CheckConstraint(CHAMPION_REVIEWED_CHECK, name="champion_reviewed"),
+        CheckConstraint(CHAMPION_FLAG_CHECK, name="champion_flag"),
+    )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(64))
@@ -66,6 +94,18 @@ class ModelVersion(Base):
     metrics: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
     is_champion: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(UTCDateTime(), default=utcnow)
+
+    # Governance (migration 0005). The proposer is the pipeline run that trained the model.
+    status: Mapped[str] = mapped_column(String(16), default=ModelStatus.CANDIDATE.value)
+    proposed_by: Mapped[str] = mapped_column(String(128), default="pipeline")
+    validation: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
+    validation_sha256: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    approved_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    approved_at: Mapped[datetime | None] = mapped_column(UTCDateTime(), nullable=True)
+    promoted_by_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    promoted_at: Mapped[datetime | None] = mapped_column(UTCDateTime(), nullable=True)
+    decision_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    bypass_reason: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 class Alert(Base):

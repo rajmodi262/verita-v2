@@ -3624,6 +3624,112 @@
           "majority_class_accuracy": 0.2549
         }
       },
+      "governance": {
+        "drift": {
+          "days_assessed": [
+            "2022-09-08",
+            "2022-09-09",
+            "2022-09-10"
+          ],
+          "days_below_volume_floor": [
+            {
+              "day": "2022-09-11",
+              "rows": 396
+            },
+            {
+              "day": "2022-09-12",
+              "rows": 281
+            },
+            {
+              "day": "2022-09-13",
+              "rows": 184
+            },
+            {
+              "day": "2022-09-14",
+              "rows": 121
+            },
+            {
+              "day": "2022-09-15",
+              "rows": 46
+            },
+            {
+              "day": "2022-09-16",
+              "rows": 46
+            },
+            {
+              "day": "2022-09-17",
+              "rows": 23
+            },
+            {
+              "day": "2022-09-18",
+              "rows": 11
+            }
+          ],
+          "major_drift_features": [
+            "s_payees_7d",
+            "s_payers_7d",
+            "score"
+          ]
+        },
+        "gates": [
+          {
+            "gate": "f1_ci_low",
+            "limit": 0.15,
+            "passed": true,
+            "rule": "lower bound of the test-split F1 95% interval \u2265 limit",
+            "value": 0.440091
+          },
+          {
+            "gate": "beats_incumbent",
+            "limit": true,
+            "passed": true,
+            "rule": "champion F1 interval lies entirely above the rules incumbent's",
+            "value": true
+          },
+          {
+            "gate": "seed_stability",
+            "limit": 0.03,
+            "passed": true,
+            "rule": "standard deviation of test F1 across training seeds \u2264 limit",
+            "value": 0.004885
+          },
+          {
+            "gate": "calibration",
+            "limit": 0.02,
+            "passed": true,
+            "rule": "expected calibration error after isotonic, held-out split \u2264 limit",
+            "value": 0.002033
+          },
+          {
+            "gate": "leakage_label_shuffle",
+            "limit": 3.0,
+            "passed": true,
+            "rule": "with shuffled labels, test PR-AUC \u00f7 base rate \u2264 limit (no learnable leakage)",
+            "value": 1.191
+          },
+          {
+            "gate": "drift",
+            "limit": 0.25,
+            "passed": true,
+            "rule": "share of monitored features with major PSI drift on any day of \u2265 1000 rows \u2264 limit (no assessable day fails the gate)",
+            "value": 0.231
+          },
+          {
+            "gate": "typology_coverage",
+            "limit": 0,
+            "passed": true,
+            "rule": "every typology with \u2265 20 test positives has recall measured",
+            "value": 0
+          }
+        ],
+        "governance": "bypassed",
+        "model": "lgbm_champion",
+        "model_version_id": 1,
+        "passed": true,
+        "policy_version": 1,
+        "sha256": "65836099dcbb2706ddedf85774b4acc84e6d79504128d5597f96bfad0a8701e5",
+        "status": "champion"
+      },
       "label": "IBM AML HI-Small (synthetic)",
       "lineage": [
         {
@@ -4371,6 +4477,7 @@
           "majority_class_accuracy": 0.6292
         }
       },
+      "governance": null,
       "label": "IBM AML LI-Small (synthetic)",
       "lineage": [
         {
@@ -4471,8 +4578,8 @@
       ]
     }
   },
-  "generated_at": "2026-10-20T13:13:26+00:00",
-  "git_sha": "bc8ffa585fa9",
+  "generated_at": "2026-10-20T15:27:25+00:00",
+  "git_sha": "dae79337abb2",
   "headline": [
     {
       "dataset": "IBM AML HI-Small (synthetic)",

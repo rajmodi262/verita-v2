@@ -35,7 +35,7 @@ Where it is weak: bulk-day F1 is 38.5% (32.5%–44.5%); per-typology recall rang
 the 95% recall guarantee would need 3,139 analysts on the busiest replay day. Full
 report: [reports/EVAL_REPORT.md](reports/EVAL_REPORT.md) · [MODEL_CARD.md](MODEL_CARD.md).
 
-<sub>metrics.json schema 1, built at commit `bc8ffa585fa9`.</sub>
+<sub>metrics.json schema 1, built at commit `dae79337abb2`.</sub>
 <!-- metrics:end -->
 
 The model is trained and evaluated on **synthetic** data (IBM AML, Altman et al., 2023). Results

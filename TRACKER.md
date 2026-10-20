@@ -18,6 +18,7 @@
 | M7 | Defend — Case File UX and maker-checker | 12 / 12 | Done |
 | M8 | Evidence Room, honesty pipeline, robustness | 13 / 14 | SAML-D optional, needs the dataset |
 | M9 | Harden and ship | 14 / 16 | Going live needs a VM + domain (U8); rehearsal recording (U9) |
+| M10 | Regulatory fit (PLAN_10 phase 2) | 1 / 6 | In progress |
 
 ## Blocked on you
 
@@ -316,10 +317,25 @@ Open gaps, all outside the code: the dataset licence (U7), a VM and domain (U8),
 
 ---
 
+## M10 — Regulatory fit (PLAN_10.md phase 2)
+
+Exit: a signed case can be filed (goAML), personal data has retention and role masking, and no
+model reaches the queue without independent review.
+
+- [x] M10.01 Model governance: lifecycle (candidate → approved → champion), policy gates in `configs/model_policy.yaml`, generated validation report with SHA-256, validator approves, a different MLRO promotes, DB check forbids an unreviewed champion, visible bypass for dev/demo. Found while building it: mutating routes validated the request body before checking the role (422 leaked the input shape to forbidden callers) — every mutating route now authorizes first; the drift gate needed a volume floor (tail days of 11–396 rows made every feature "drift")
+- [ ] M10.02 PII masking by role + retention policy and purge job (legal hold on open cases)
+- [ ] M10.03 Regulator audit bundle: every event for a case in one signed export
+- [ ] M10.04 goAML XML export of a signed case, validated against the official XSD
+- [ ] M10.05 DPIA document; erasure vs append-only ledger (crypto-shredding)
+- [ ] M10.06 Disposition feedback into the next training run (with leakage guards)
+
+---
+
 ## Change log
 
 | Date | Change |
 |------|--------|
+| 2026-10-20 | M10.01 model governance (validate → approve → promote, separation of duties, DB-enforced). The real HI-Small champion passes all seven gates; three features show major drift on bulk days, one of them the model's own score. |
 | 2026-10-20 | LLM key pools (priority order, instant failover on exhausted quota, cooldowns from the provider's retry time, `verita llm keys`) and the raw LLM evaluation. **Found by running on the real keys:** both default models were unusable (gemini-2.5-flash closed to new projects, Groq retired llama-3.3-70b); one Gemini key's project is denied access; every Groq request exceeded its 8,000-tokens/minute limit (prompt + reserved output), fixed with compact evidence and an output cap; the eval mislabelled Groq failures as quota (now per provider). Raw drafts: few pass the verifier as written, which is the verifier's purpose. |
 | 2026-10-20 | M9 hardening: rate limits, schemathesis (zero 5xx), k6 load + stress against the Docker stack, Prometheus/Grafana, OpenTelemetry, ZAP (0 failures), SBOM + grype gate, Lighthouse + bundle budgets, least-privilege DB role, release workflow, prod deploy config, THREAT_MODEL / RUNBOOK / DEMO_SCRIPT / ADR-008. **Bugs found by running it for real:** OOM under concurrent load; a commit-after-response race on Postgres; 64-bit path IDs crashing the driver; nginx dropping security headers and caching the API's IP (a recreated API broke the site); ledger appends locking a row the app role may not lock (and not covering a case's first event); two CSP violations on the landing page; 22 Critical OS findings in the web image (now 0 High/Critical). Backend 90.6% coverage; frontend 160 unit + 18 e2e tests. |
 | 2026-10-20 | M8 honesty pipeline, Evidence Room, live landing page, reviewer tour; Playwright suite (18 tests: demo path, keyboard triage, axe on every route in both themes, slider < 150 ms, phone width) green on a fresh fixture stack and wired into CI. Found and fixed: tables overflowing phone screens; report docs rendered from unsorted data (check/build mismatch). |

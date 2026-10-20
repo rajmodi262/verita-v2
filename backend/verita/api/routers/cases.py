@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import copy
-from typing import Any
+from typing import Annotated, Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 
 from verita.api import case_schemas as cs
-from verita.api.deps import CsrfSessionDep, DbDep, SessionDep, require_role
+from verita.api.deps import DbDep, SessionDep, csrf_role, require_role
 from verita.api.params import CaseId, JobId
 from verita.api.state import evidence_store
 from verita.db.case_models import CLOSE_REASONS, RETURN_REASONS
@@ -17,11 +17,12 @@ from verita.defend.pdf import render_pdf
 from verita.repositories.identity import AuditRepository
 from verita.services import cases as svc
 from verita.services import jobs, ledger
+from verita.services.auth import SessionInfo
 
 router = APIRouter(tags=["cases"])
 READERS = Depends(require_role(Role.ANALYST, Role.MLRO, Role.VALIDATOR, Role.REVIEWER))
-MAKERS = require_role(Role.ANALYST, Role.MLRO)
-CHECKERS = require_role(Role.MLRO)
+MakerDep = Annotated[SessionInfo, Depends(csrf_role(Role.ANALYST, Role.MLRO))]
+CheckerDep = Annotated[SessionInfo, Depends(csrf_role(Role.MLRO))]
 
 
 def _ip(request: Request) -> str | None:
@@ -52,10 +53,7 @@ def list_cases(db: DbDep) -> dict[str, Any]:
 
 
 @router.post("/cases", response_model=cs.CaseDetail, response_model_by_alias=True, status_code=201)
-def create(
-    body: cs.CreateCaseIn, request: Request, db: DbDep, info: CsrfSessionDep
-) -> dict[str, Any]:
-    MAKERS(info)
+def create(body: cs.CreateCaseIn, request: Request, db: DbDep, info: MakerDep) -> dict[str, Any]:
     case = svc.create_case(db, info.user, evidence_store(request), body.alert_ids, body.title)
     _audit(db, request, info.user.id, "case.created", case.id, alert_ids=body.alert_ids)
     return svc.case_view(db, case.id, info.user)
@@ -78,10 +76,9 @@ def draft(
     request: Request,
     background: BackgroundTasks,
     db: DbDep,
-    info: CsrfSessionDep,
+    info: MakerDep,
 ) -> dict[str, Any]:
     """Queue a narrative draft; poll ``GET /jobs/{id}``."""
-    MAKERS(info)
     job = svc.request_draft(db, case_id, info.user, body.mode)
     view = jobs.job_view(job)
     db.commit()  # the job must exist before a worker (or the inline task) looks for it
@@ -94,32 +91,28 @@ def draft(
     "/cases/{case_id}/narrative", response_model=cs.CaseDetail, response_model_by_alias=True
 )
 def edit(
-    case_id: CaseId, body: cs.EditIn, request: Request, db: DbDep, info: CsrfSessionDep
+    case_id: CaseId, body: cs.EditIn, request: Request, db: DbDep, info: MakerDep
 ) -> dict[str, Any]:
-    MAKERS(info)
     svc.save_edit(db, case_id, info.user, [s.model_dump() for s in body.sentences])
     _audit(db, request, info.user.id, "case.narrative_edited", case_id)
     return svc.case_view(db, case_id, info.user)
 
 
 @router.post("/cases/{case_id}/verify", response_model=cs.CaseDetail, response_model_by_alias=True)
-def run_verify(case_id: CaseId, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
-    MAKERS(info)
+def run_verify(case_id: CaseId, db: DbDep, info: MakerDep) -> dict[str, Any]:
     svc.run_verification(db, case_id, info.user)
     return svc.case_view(db, case_id, info.user)
 
 
 @router.post("/cases/{case_id}/submit", response_model=cs.CaseDetail, response_model_by_alias=True)
-def submit(case_id: CaseId, request: Request, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
-    MAKERS(info)
+def submit(case_id: CaseId, request: Request, db: DbDep, info: MakerDep) -> dict[str, Any]:
     svc.submit(db, case_id, info.user)
     _audit(db, request, info.user.id, "case.submitted", case_id)
     return svc.case_view(db, case_id, info.user)
 
 
 @router.post("/cases/{case_id}/approve", response_model=cs.CaseDetail, response_model_by_alias=True)
-def approve(case_id: CaseId, request: Request, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
-    CHECKERS(info)
+def approve(case_id: CaseId, request: Request, db: DbDep, info: CheckerDep) -> dict[str, Any]:
     sig = svc.approve(db, case_id, info.user)
     _audit(db, request, info.user.id, "case.signed", case_id, merkle_root=sig.merkle_root)
     return svc.case_view(db, case_id, info.user)
@@ -127,9 +120,8 @@ def approve(case_id: CaseId, request: Request, db: DbDep, info: CsrfSessionDep) 
 
 @router.post("/cases/{case_id}/return", response_model=cs.CaseDetail, response_model_by_alias=True)
 def return_case(
-    case_id: CaseId, body: cs.ReasonIn, request: Request, db: DbDep, info: CsrfSessionDep
+    case_id: CaseId, body: cs.ReasonIn, request: Request, db: DbDep, info: CheckerDep
 ) -> dict[str, Any]:
-    CHECKERS(info)
     svc.return_case(db, case_id, info.user, body.reason, body.note)
     _audit(db, request, info.user.id, "case.returned", case_id, reason=body.reason)
     return svc.case_view(db, case_id, info.user)
@@ -137,9 +129,8 @@ def return_case(
 
 @router.post("/cases/{case_id}/close", response_model=cs.CaseDetail, response_model_by_alias=True)
 def close(
-    case_id: CaseId, body: cs.ReasonIn, request: Request, db: DbDep, info: CsrfSessionDep
+    case_id: CaseId, body: cs.ReasonIn, request: Request, db: DbDep, info: MakerDep
 ) -> dict[str, Any]:
-    MAKERS(info)
     svc.close_case(db, case_id, info.user, body.reason, body.note)
     _audit(db, request, info.user.id, "case.closed", case_id, reason=body.reason)
     return svc.case_view(db, case_id, info.user)

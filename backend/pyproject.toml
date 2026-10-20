@@ -143,12 +143,13 @@ pipeline = [
 # Every evaluation for one dataset, in dependency order, then the generated reports.
 # `uv run poe eval` (HI-Small) or `uv run poe eval --dataset li_small`.
 [tool.poe.tasks.eval]
-help = "Run every evaluation (detect, alerts, decide, verifier, bench) and rebuild reports"
+help = "Run every evaluation (detect, alerts, decide, validation, verifier, bench), rebuild reports"
 sequence = [
   { cmd = "verita detect features --dataset ${dataset}" },
   { cmd = "verita detect train --dataset ${dataset}" },
   { cmd = "verita detect alerts --dataset ${dataset}" },
   { cmd = "verita decide run --dataset ${dataset}" },
+  { cmd = "verita models validate --dataset ${dataset} --no-strict" },
   { cmd = "verita defend eval --dataset ${dataset}" },
   { cmd = "verita bench --dataset ${dataset}" },
   { cmd = "verita report build" },

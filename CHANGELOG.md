@@ -7,6 +7,13 @@ versions follow [Semantic Versioning](https://semver.org/). Measured results liv
 ## [Unreleased]
 
 ### Added
+- **Model governance (model risk management):** model lifecycle (candidate → approved →
+  champion → retired/rejected), policy gates in `configs/model_policy.yaml` (discrimination,
+  beats the incumbent, seed stability, calibration, label-shuffle leakage, drift with a volume
+  floor, typology coverage), a generated validation report stored with its SHA-256, approval by a
+  validator and promotion by a different MLRO, a database check that forbids an unreviewed
+  champion, and a visible bypass for development and the demo pack. `verita models list|validate`
+  and `/api/v1/models`. The model card and eval report now state the gate results.
 - **Hardening (M9):** per-IP, per-login and per-session rate limits; schemathesis contract
   fuzzing of every operation; k6 load and stress tests whose results feed the reports;
   Prometheus metrics by route template with a provisioned Grafana dashboard; OpenTelemetry
@@ -24,6 +31,8 @@ versions follow [Semantic Versioning](https://semver.org/). Measured results liv
 - Docs: THREAT_MODEL, RUNBOOK, DEMO_SCRIPT, ADR-008, security exception SE-3.
 
 ### Fixed
+- Mutating routes validated the request body before checking the caller's role, so a forbidden
+  caller could get a 422 describing the endpoint's input; authorization now runs first everywhere.
 - Out-of-memory under concurrent load: plan cache, single-flight cache loads, bounded
   concurrent CP-SAT solves, count cache and Postgres pool sizing.
 - Commit-after-response race on PostgreSQL (function-scoped database dependency).
