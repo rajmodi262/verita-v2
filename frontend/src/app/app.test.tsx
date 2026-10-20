@@ -190,12 +190,12 @@ describe("shell actions", () => {
     const user = userEvent.setup();
     mockApi({ "GET /me": () => json(ANALYST) });
     renderAt("/evidence-room");
-    const toggle = await screen.findByRole("button", { name: "Switch to night theme" });
+    const toggle = await screen.findByRole("button", { name: "Switch to paper theme" });
     await user.click(toggle);
-    expect(document.documentElement.dataset.theme).toBe("night");
-    expect(localStorage.getItem("verita.theme")).toBe("night");
-    await user.click(screen.getByRole("button", { name: "Switch to paper theme" }));
     expect(document.documentElement.dataset.theme).toBe("paper");
+    expect(localStorage.getItem("verita.theme")).toBe("paper");
+    await user.click(screen.getByRole("button", { name: "Switch to night theme" }));
+    expect(document.documentElement.dataset.theme).toBe("night");
   });
 });
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import type { Sentence, SentenceReport } from "../../api/cases";
@@ -50,6 +50,8 @@ export interface NarrativeViewProps {
   reports: SentenceReport[];
   selectedEvidence: string | null;
   onSelectEvidence: (id: string) => void;
+  /** The sentence being read (hover or focus), for drawing its evidence threads. */
+  onReadSentence?: (index: number | null) => void;
 }
 
 export function NarrativeView({
@@ -57,9 +59,38 @@ export function NarrativeView({
   reports,
   selectedEvidence,
   onSelectEvidence,
+  onReadSentence,
 }: NarrativeViewProps) {
+  // Which sentence is being read (hover or keyboard focus), reported for the evidence threads.
+  // Native listeners on the container: the sentences themselves are not interactive elements.
+  const box = useRef<HTMLDivElement>(null);
+  const report = useRef(onReadSentence);
+  useEffect(() => {
+    report.current = onReadSentence;
+  });
+  useEffect(() => {
+    const node = box.current;
+    if (!node) return undefined;
+    const read = (ev: Event) => {
+      const li = (ev.target as Element | null)?.closest("[data-sentence]");
+      report.current?.(li ? Number(li.getAttribute("data-sentence")) : null);
+    };
+    const leave = () => {
+      report.current?.(null);
+    };
+    node.addEventListener("mouseover", read);
+    node.addEventListener("focusin", read);
+    node.addEventListener("mouseleave", leave);
+    node.addEventListener("focusout", leave);
+    return () => {
+      node.removeEventListener("mouseover", read);
+      node.removeEventListener("focusin", read);
+      node.removeEventListener("mouseleave", leave);
+      node.removeEventListener("focusout", leave);
+    };
+  }, []);
   return (
-    <div className={styles.narrative}>
+    <div className={styles.narrative} ref={box}>
       {SECTIONS.map((section) => {
         const rows = sentences
           .map((s, index) => ({ s, index }))
@@ -75,7 +106,11 @@ export function NarrativeView({
                 const report = reports[index];
                 const ok = report?.passed;
                 return (
-                  <li key={index} className={ok === false ? styles.failed : undefined}>
+                  <li
+                    key={index}
+                    data-sentence={index}
+                    className={ok === false ? styles.failed : undefined}
+                  >
                     <span
                       className={ok === false ? styles.markBad : styles.markOk}
                       aria-hidden="true"

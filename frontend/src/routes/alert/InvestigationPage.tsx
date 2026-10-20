@@ -7,7 +7,7 @@ import { useMe } from "../../api/auth";
 import { useCreateCase } from "../../api/cases";
 import { DispositionDialog } from "../../components/DispositionDialog";
 import { ErrorState } from "../../components/ErrorState";
-import { MoneyFlowGraph } from "../../components/graph/MoneyFlowGraph";
+import { TransitMap } from "../../components/graph/TransitMap";
 import { Button, Panel, Stamp } from "../../components/ui";
 import { cx } from "../../lib/cx";
 import { dateTime, money, percent, score, splitAccount, typologyLabel } from "../../lib/format";
@@ -293,11 +293,7 @@ export default function InvestigationPage() {
                 {graph.data.truncated ? " · trimmed to the riskiest" : ""}
               </p>
               {view === "graph" ? (
-                <MoneyFlowGraph
-                  graph={graph.data}
-                  selectedTxn={selected}
-                  onSelectTxn={setSelected}
-                />
+                <TransitMap graph={graph.data} selectedTxn={selected} onSelectTxn={setSelected} />
               ) : (
                 <EdgeTable
                   edges={timeline}

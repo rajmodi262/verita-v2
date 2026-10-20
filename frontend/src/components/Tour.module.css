@@ -8,17 +8,20 @@
   gap: var(--space-2);
   width: min(360px, calc(100vw - 2 * var(--space-5)));
   padding: var(--space-4);
-  background: var(--color-surface);
-  border: var(--border-width) solid var(--color-border);
+  background: var(--color-glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-edge);
   box-shadow: var(--shadow-desk);
   font-size: var(--fs-sm);
+  border-radius: 12px;
 }
 
 .kicker {
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   color: var(--color-ink-muted);
 }
 
@@ -43,8 +46,9 @@
   background: var(--color-surface);
   color: var(--color-link);
   border: 1px solid var(--color-rule);
-  font-family: var(--font-mono);
+  font-family: var(--font-title);
   font-size: var(--fs-label);
-  text-transform: uppercase;
+  font-variant-caps: all-small-caps;
+  font-weight: 600;
   cursor: pointer;
 }

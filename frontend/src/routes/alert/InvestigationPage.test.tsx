@@ -5,15 +5,6 @@ import { alertDetail, META, subgraph } from "../../test/alertFixtures";
 import { CASE_META, caseDetail } from "../../test/caseFixtures";
 import { ANALYST, json, mockApi, problem, renderAt } from "../../test/utils";
 
-const cy = {
-  on: vi.fn(),
-  destroy: vi.fn(),
-  edges: vi.fn(() => ({ unselect: vi.fn() })),
-  getElementById: vi.fn(() => ({ select: vi.fn() })),
-};
-const cytoscape = vi.fn((_config: unknown) => cy);
-vi.mock("cytoscape", () => ({ default: cytoscape }));
-
 function api(extra = {}, user: object = ANALYST) {
   return mockApi({
     "GET /me": () => json(user),
@@ -37,14 +28,12 @@ it("explains the alert with reasons, signals and evidence ids", async () => {
 it("draws the graph with the layout and lists the dominant path", async () => {
   api();
   renderAt("/alerts/7");
-  await screen.findByRole("img", { name: /Money-flow graph: 3 accounts and 2 payments/ });
-  await waitFor(() => {
-    expect(cytoscape).toHaveBeenCalled();
+  const map = await screen.findByRole("img", {
+    name: /Money-flow graph: 3 accounts and 2 payments/,
   });
-  const config = cytoscape.mock.calls[0]![0] as { elements: { data: { id: string } }[] };
-  expect(config.elements.map((e) => e.data.id)).toEqual(
-    expect.arrayContaining(["11:800000001", "1001", "1002"]),
-  );
+  // Every account is a station on the transit map; every payment is a rail.
+  expect(within(map).getByText("800000001")).toBeInTheDocument();
+  expect(map.querySelectorAll("path[pathLength]")).toHaveLength(2);
   const path = screen.getByRole("region", { name: "Dominant path" });
   expect(within(path).getByText("EV-TXN-1001")).toBeInTheDocument();
   expect(within(path).queryByText("EV-TXN-1002")).not.toBeInTheDocument();

@@ -1,0 +1,15 @@
+.glyph {
+  width: 1.15em;
+  height: 1.15em;
+  margin-right: var(--space-1);
+  vertical-align: -0.2em;
+  fill: none;
+  stroke: var(--color-ink);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.unknown {
+  stroke-dasharray: 2 2;
+}
