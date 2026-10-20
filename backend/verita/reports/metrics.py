@@ -206,6 +206,25 @@ def _defend(ds: Dataset) -> dict[str, Any] | None:
     return {k: ev[k] for k in ev if k != "seconds"}
 
 
+def _governance(ds: Dataset) -> dict[str, Any] | None:
+    """The newest model-risk validation (``verita models validate``) and the model's state."""
+    record = _read(ds.artifacts_dir / "models" / "validation.json")
+    if record is None:
+        return None
+    report = record.get("report", {})
+    return {
+        "model_version_id": record.get("model_version_id"),
+        "model": record.get("model"),
+        "status": record.get("status"),
+        "governance": record.get("governance"),
+        "sha256": record.get("sha256"),
+        "passed": report.get("passed"),
+        "policy_version": report.get("policy_version"),
+        "gates": report.get("gates", []),
+        "drift": report.get("drift", {}),
+    }
+
+
 def _lineage(ds: Dataset) -> list[dict[str, Any]]:
     out = []
     for path in sorted(ds.manifests_dir.glob("*.json")) if ds.manifests_dir.exists() else []:
@@ -388,6 +407,7 @@ def build(
             "detect": _detect(ds, baselines),
             "decide": _decide(ds),
             "defend": _defend(ds),
+            "governance": _governance(ds),
             "lineage": _lineage(ds),
         }
         if sec["data"] is None:

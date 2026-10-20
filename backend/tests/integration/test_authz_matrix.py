@@ -21,6 +21,7 @@ from verita.services.auth import AuthService
 ALL = {"analyst", "mlro", "validator", "reviewer"}
 MAKERS = {"analyst", "mlro"}
 MLRO = {"mlro"}
+VALIDATOR = {"validator"}
 PUBLIC = "public"
 
 # (method, path) -> roles allowed, or PUBLIC
@@ -64,6 +65,12 @@ POLICY: dict[tuple[str, str], set[str] | str] = {
     ("GET", "/api/v1/jobs/{job_id}"): ALL,
     ("GET", "/api/v1/evidence-room/metrics"): ALL,
     ("GET", "/api/v1/evidence-room/headline"): PUBLIC,
+    ("GET", "/api/v1/models"): ALL,
+    ("GET", "/api/v1/models/{model_id}"): ALL,
+    ("POST", "/api/v1/models/{model_id}/validate"): VALIDATOR,
+    ("POST", "/api/v1/models/{model_id}/approve"): VALIDATOR,
+    ("POST", "/api/v1/models/{model_id}/reject"): VALIDATOR,
+    ("POST", "/api/v1/models/{model_id}/promote"): MLRO,
 }
 
 BODIES = {
@@ -79,6 +86,7 @@ BODIES = {
     "/api/v1/cases/{case_id}/narrative": {"mode": "offline"},
     "/api/v1/cases/{case_id}/return": {"reason": "narrative_unclear"},
     "/api/v1/cases/{case_id}/close": {"reason": "no_suspicion"},
+    "/api/v1/models/{model_id}/reject": {"note": "not good enough"},
 }
 QUERY = {
     "/api/v1/capacity/frontier": {"date": "2022-09-08"},
@@ -110,7 +118,9 @@ def app(tmp_path_factory):
 
 
 def _call(client: TestClient, method: str, path: str, csrf: str | None):
-    url = path.replace("{alert_id}", "1").replace("{case_id}", "1").replace("{job_id}", "1")
+    url = path
+    for param in ("{alert_id}", "{case_id}", "{job_id}", "{model_id}"):
+        url = url.replace(param, "1")
     body = BODIES.get(path)
     if path.endswith("/narrative") and method == "PUT":
         body = {"sentences": [{"section": "who", "text": "x", "evidence_ids": ["EV-CASE-1"]}]}
@@ -159,3 +169,23 @@ def test_mutations_need_csrf(app):
     for (method, path), allowed in POLICY.items():
         if method != "GET" and allowed != PUBLIC:
             assert _call(client, method, path, None).status_code == 403, path
+
+
+@pytest.mark.parametrize("role", sorted(ALL))
+def test_forbidden_callers_learn_nothing_from_a_bad_body(app, role):
+    """Authorization runs before body validation: a forbidden role sending garbage gets 403,
+    never a 422 that would describe the endpoint's input."""
+    client = TestClient(app)
+    login = client.post("/api/v1/auth/login", json={"username": role, "password": PASSWORD})
+    headers = {"X-CSRF-Token": login.json()["csrf_token"]}
+    leaks = []
+    for (method, path), allowed in sorted(POLICY.items()):
+        if method == "GET" or allowed == PUBLIC or role in allowed:
+            continue
+        url = path
+        for param in ("{alert_id}", "{case_id}", "{job_id}", "{model_id}"):
+            url = url.replace(param, "1")
+        status = client.request(method, url, json={"garbage": [1, 2, 3]}, headers=headers)
+        if status.status_code != 403:
+            leaks.append(f"{method} {path}: {role} got {status.status_code}")
+    assert not leaks, "\n".join(leaks)

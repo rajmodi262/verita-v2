@@ -28,16 +28,29 @@ from pathlib import Path
 from typing import Any, cast
 
 import pandas as pd
-from sqlalchemy import delete, insert, select, update
+from sqlalchemy import delete, insert, select
 from sqlalchemy.orm import Session
 
 from verita.core.errors import AppError
 from verita.db.detect_models import Alert, AlertReason, AlertStatus, ModelVersion
 from verita.pipeline.config import REPO_ROOT, Dataset
+from verita.services import models as governance
 from verita.services.alerts import champion
 from verita.services.evidence import AlertRef, EvidenceStore
 
 FORMAT = "verita-demo-pack/1"
+NOT_FROM_PACK = {
+    "id",
+    "created_at",
+    "is_champion",
+    "status",
+    "approved_by_id",
+    "approved_at",
+    "promoted_by_id",
+    "promoted_at",
+    "decision_note",
+    "bypass_reason",
+}
 CHUNK = 10_000
 ARTIFACT_FILES = (
     "detect/registry.json",
@@ -185,17 +198,18 @@ def load_pack(db: Session, pack: Path) -> dict[str, Any]:
             "reason": "this champion is already loaded",
             "model_version_id": existing.id,
         }
-    db.execute(update(ModelVersion).values(is_champion=False))
+    # Governance does not travel: reviewers on the build machine are not users here. The
+    # validation report does travel (with its hash); the model is seated with the demo bypass.
     version = ModelVersion(
         **{
             k: v
             for k, v in meta.items()
-            if k not in ("id", "created_at") and k in ModelVersion.__table__.columns
+            if k not in NOT_FROM_PACK and k in ModelVersion.__table__.columns
         }
     )
-    version.is_champion = True
     db.add(version)
     db.flush()
+    governance.bypass(db, version, governance.DEMO_PACK, "prod")
     alerts = pd.read_parquet(pack / "alerts.parquet")
     reasons = pd.read_parquet(pack / "reasons.parquet")
     old_ids = alerts["id"].tolist()

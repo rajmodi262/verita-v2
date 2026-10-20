@@ -46,6 +46,28 @@ read its log for the file that did not match.
 * **Compromise:** rotate immediately, publish the compromised key ID as revoked, and re-sign
   nothing automatically — re-approval is a human decision recorded in the ledger.
 
+## Releasing a model (model risk)
+
+A newly trained detector never replaces the champion by itself in production: `verita detect
+alerts` loads it as a **candidate** that scores in shadow (its alerts exist but the queue keeps
+serving the champion).
+
+```bash
+cd backend
+uv run verita models list                              # status and governance of every version
+uv run verita models validate --dataset hi_small       # policy gates → report on the version
+```
+
+Then, as two different people: a **validator** reads the report and calls
+`POST /api/v1/models/{id}/approve` (refused unless every gate passed), and the **MLRO** calls
+`POST /api/v1/models/{id}/promote`, which retires the previous champion and clears the queue
+caches. Rejection (`/reject`) needs a written reason. Every step is in the audit log
+(`model.validated`, `model.approved`, `model.promoted`, `model.rejected`).
+
+Outside production, and for the synthetic demo pack, the model is seated with a recorded
+**bypass reason** that the API, the model card and the eval report display. Gate thresholds are
+changed only by editing `configs/model_policy.yaml` in a reviewed PR.
+
 ## LLM keys
 
 Narratives are drafted by Gemini, then Groq, then the offline template. Each provider holds a

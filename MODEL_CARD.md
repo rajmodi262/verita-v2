@@ -50,6 +50,25 @@ rate 0.0018. Random (leaky) split F1
 0.507 vs temporal
 0.503.
 
+## Model risk validation
+Policy version 1 (`configs/model_policy.yaml`), report SHA-256
+`65836099dcbb2706…`: **passed**.
+Model state: champion, **put into
+service without independent review** (development pipeline or demo pack; in production a model
+reaches the queue only through a validator's approval and a different MLRO's promotion).
+
+| Gate | Result | Value | Limit |
+|---|---|---|---|
+| f1_ci_low | pass | 0.440091 | 0.15 |
+| beats_incumbent | pass | True | True |
+| seed_stability | pass | 0.004885 | 0.03 |
+| calibration | pass | 0.002033 | 0.02 |
+| leakage_label_shuffle | pass | 1.191 | 3.0 |
+| drift | pass | 0.231 | 0.25 |
+| typology_coverage | pass | 0 | 0 |
+
+Features with major drift on assessed days: `s_payees_7d`, `s_payers_7d`, `score`.
+
 ## Limitations
 * Synthetic data; real typologies, base rates and adversaries differ.
 * Unattributed laundering (no typology label) is recalled at 0.7% (0.2%–1.9%).
