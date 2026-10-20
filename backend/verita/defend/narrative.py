@@ -16,7 +16,7 @@ import hashlib
 import json
 import re
 import time
-from collections.abc import Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol
 
@@ -24,6 +24,7 @@ import httpx
 from pydantic import BaseModel, Field, ValidationError
 
 from verita.defend.evidence import split_account
+from verita.defend.keypool import KeyPool, classify, pool_for
 from verita.pipeline.config import REPO_ROOT
 
 PROMPT_PATH = REPO_ROOT / "prompts" / "narrative_v1.md"
@@ -32,6 +33,8 @@ MAX_ATTEMPTS = 2
 MAX_HOPS_WRITTEN = 4
 MAX_REASONS_WRITTEN = 3
 MAX_ALERTS_WRITTEN = 3
+# A quota probe is one token; a key that cannot answer within this is reported, not waited on.
+PROBE_TIMEOUT_S = 15.0
 
 
 class SentenceModel(BaseModel):
@@ -93,80 +96,182 @@ class Provider(Protocol):
 
     def complete(self, system: str, user: str) -> str: ...
 
+    def probe(self) -> list[dict[str, Any]]: ...
+
+
+def _as_pool(name: str, keys: KeyPool | Sequence[str] | str) -> KeyPool:
+    if isinstance(keys, KeyPool):
+        return keys
+    return KeyPool(name, [keys] if isinstance(keys, str) else list(keys))
+
+
+def _with_pool(
+    pool: KeyPool,
+    send: Callable[[str], httpx.Response],
+    extract: Callable[[httpx.Response], str],
+) -> str:
+    """Send with the best available key; on quota exhaustion move to the next key at once."""
+    skipped: list[str] = []
+    for state in pool.available():
+        response = send(state.key)
+        verdict, retry_after, detail = classify(response)
+        if verdict == "ok":
+            text = extract(response)
+            pool.mark_ok(state)
+            return text
+        if verdict == "exhausted":
+            pool.mark_exhausted(state, retry_after, detail)
+        elif verdict == "invalid":
+            pool.mark_invalid(state, detail)
+        else:  # transient or a bad request: another key would not help
+            msg = f"{pool.provider} {detail} (key {state.fingerprint})"
+            raise ProviderError(msg)
+        skipped.append(f"{state.fingerprint} {detail}")
+    wait = pool.next_retry_in()
+    when = f"; next key free in {wait:.0f} s" if wait is not None else ""
+    tried = "; ".join(skipped) or "every key is cooling down or rejected"
+    msg = f"{pool.provider}: no key with quota left of {len(pool)} ({tried}){when}"
+    raise ProviderError(msg)
+
 
 @dataclass
 class GeminiProvider:
-    api_key: str
+    keys: KeyPool | Sequence[str] | str
     model: str
     timeout: float = 45.0
     name: str = "gemini"
     base_url: str = "https://generativelanguage.googleapis.com/v1beta"
 
+    def __post_init__(self) -> None:
+        self.pool = _as_pool(self.name, self.keys)
+
     def complete(self, system: str, user: str) -> str:
-        response = httpx.post(
-            f"{self.base_url}/models/{self.model}:generateContent",
-            headers={"x-goog-api-key": self.api_key},
-            json={
-                "systemInstruction": {"parts": [{"text": system}]},
-                "contents": [{"role": "user", "parts": [{"text": user}]}],
-                "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
-            },
-            timeout=self.timeout,
-        )
-        if response.status_code != 200:  # noqa: PLR2004
-            msg = f"gemini HTTP {response.status_code}"
-            raise ProviderError(msg)
-        try:
-            parts = response.json()["candidates"][0]["content"]["parts"]
-            return "".join(str(p.get("text", "")) for p in parts)
-        except (KeyError, IndexError, TypeError, ValueError) as exc:
-            msg = "gemini returned no text"
-            raise ProviderError(msg) from exc
+        def send(key: str) -> httpx.Response:
+            return httpx.post(
+                f"{self.base_url}/models/{self.model}:generateContent",
+                headers={"x-goog-api-key": key},
+                json={
+                    "systemInstruction": {"parts": [{"text": system}]},
+                    "contents": [{"role": "user", "parts": [{"text": user}]}],
+                    "generationConfig": {"temperature": 0, "responseMimeType": "application/json"},
+                },
+                timeout=self.timeout,
+            )
+
+        def extract(response: httpx.Response) -> str:
+            try:
+                parts = response.json()["candidates"][0]["content"]["parts"]
+                return "".join(str(p.get("text", "")) for p in parts)
+            except (KeyError, IndexError, TypeError, ValueError) as exc:
+                msg = "gemini returned no text"
+                raise ProviderError(msg) from exc
+
+        return _with_pool(self.pool, send, extract)
+
+    def probe(self) -> list[dict[str, Any]]:
+        """One-token request per key: is it accepted, and does it have quota left right now?
+        (The Gemini API exposes no remaining-quota figure, so this is the honest check.)"""
+
+        def send(key: str) -> httpx.Response:
+            return httpx.post(
+                f"{self.base_url}/models/{self.model}:generateContent",
+                headers={"x-goog-api-key": key},
+                json={
+                    "contents": [{"role": "user", "parts": [{"text": "ping"}]}],
+                    "generationConfig": {"maxOutputTokens": 1},
+                },
+                timeout=PROBE_TIMEOUT_S,
+            )
+
+        return self.pool.probe(send)
 
 
 @dataclass
 class GroqProvider:
-    api_key: str
+    keys: KeyPool | Sequence[str] | str
     model: str
     timeout: float = 45.0
     name: str = "groq"
     base_url: str = "https://api.groq.com/openai/v1"
 
+    def __post_init__(self) -> None:
+        self.pool = _as_pool(self.name, self.keys)
+
     def complete(self, system: str, user: str) -> str:
-        response = httpx.post(
-            f"{self.base_url}/chat/completions",
-            headers={"Authorization": f"Bearer {self.api_key}"},
-            json={
-                "model": self.model,
-                "temperature": 0,
-                "response_format": {"type": "json_object"},
-                "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ],
-            },
-            timeout=self.timeout,
-        )
-        if response.status_code != 200:  # noqa: PLR2004
-            msg = f"groq HTTP {response.status_code}"
-            raise ProviderError(msg)
-        try:
-            return str(response.json()["choices"][0]["message"]["content"])
-        except (KeyError, IndexError, TypeError, ValueError) as exc:
-            msg = "groq returned no text"
-            raise ProviderError(msg) from exc
+        def send(key: str) -> httpx.Response:
+            return httpx.post(
+                f"{self.base_url}/chat/completions",
+                headers={"Authorization": f"Bearer {key}"},
+                json={
+                    "model": self.model,
+                    "temperature": 0,
+                    "response_format": {"type": "json_object"},
+                    "messages": [
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                },
+                timeout=self.timeout,
+            )
+
+        def extract(response: httpx.Response) -> str:
+            try:
+                return str(response.json()["choices"][0]["message"]["content"])
+            except (KeyError, IndexError, TypeError, ValueError) as exc:
+                msg = "groq returned no text"
+                raise ProviderError(msg) from exc
+
+        return _with_pool(self.pool, send, extract)
+
+    def probe(self) -> list[dict[str, Any]]:
+        """One-token request per key; Groq's rate-limit headers give the quota left."""
+
+        def send(key: str) -> httpx.Response:
+            return httpx.post(
+                f"{self.base_url}/chat/completions",
+                headers={"Authorization": f"Bearer {key}"},
+                json={
+                    "model": self.model,
+                    "max_tokens": 1,
+                    "messages": [{"role": "user", "content": "ping"}],
+                },
+                timeout=PROBE_TIMEOUT_S,
+            )
+
+        def quota(response: httpx.Response) -> str:
+            h = response.headers
+            parts = []
+            if "x-ratelimit-remaining-requests" in h:
+                parts.append(
+                    f"requests {h['x-ratelimit-remaining-requests']}/"
+                    f"{h.get('x-ratelimit-limit-requests', '?')} left today"
+                )
+            if "x-ratelimit-remaining-tokens" in h:
+                parts.append(
+                    f"tokens {h['x-ratelimit-remaining-tokens']}/"
+                    f"{h.get('x-ratelimit-limit-tokens', '?')} left this minute"
+                )
+            return "; ".join(parts)
+
+        return self.pool.probe(send, quota)
 
 
 def providers_from_settings(settings: Any) -> list[Provider]:
-    """Configured providers that have a key, in the configured order."""
+    """Configured providers that have at least one key, in the configured order.
+
+    Each provider draws on the process-wide key pool for its keys, so a key found exhausted
+    by one draft is skipped by the next until its retry time.
+    """
     out: list[Provider] = []
+    timeout = settings.llm_timeout_seconds
     for name in settings.llm_providers:
-        if name == "gemini" and settings.gemini_api_key is not None:
-            key = settings.gemini_api_key.get_secret_value()
-            out.append(GeminiProvider(key, settings.gemini_model, settings.llm_timeout_seconds))
-        elif name == "groq" and settings.groq_api_key is not None:
-            key = settings.groq_api_key.get_secret_value()
-            out.append(GroqProvider(key, settings.groq_model, settings.llm_timeout_seconds))
+        keys = settings.llm_keys(name)
+        if not keys:
+            continue
+        if name == "gemini":
+            out.append(GeminiProvider(pool_for(name, keys), settings.gemini_model, timeout))
+        elif name == "groq":
+            out.append(GroqProvider(pool_for(name, keys), settings.groq_model, timeout))
     return out
 
 

@@ -46,6 +46,22 @@ read its log for the file that did not match.
 * **Compromise:** rotate immediately, publish the compromised key ID as revoked, and re-sign
   nothing automatically — re-approval is a human decision recorded in the ledger.
 
+## LLM keys
+
+Narratives are drafted by Gemini, then Groq, then the offline template. Each provider holds a
+**key pool** (`VERITA_GEMINI_API_KEYS`, `VERITA_GROQ_API_KEYS`: comma-separated, priority
+order). A draft uses the first key with quota; on HTTP 429 / `RESOURCE_EXHAUSTED` that key sits
+out until the provider's retry time and the *same* request moves straight to the next key. A
+rejected key (401/403, invalid, or a model its project cannot use) leaves rotation until restart.
+
+```bash
+cd backend && uv run verita llm keys     # one-token probe per key; fingerprints only, never keys
+```
+
+The worker runs the same check on start, so exhausted keys are skipped from the first draft.
+Keys appear everywhere as `sha256:xxxxxxxx`. Rotate by editing the pool and restarting
+`api` and `worker`; pools are per process, so each learns cooldowns on its own.
+
 ## Recovery
 
 | Symptom | Likely cause | Action |
@@ -53,6 +69,7 @@ read its log for the file that did not match.
 | API exits at startup: "demo pack failed verification" | Pack edited or partially copied | Re-copy the pack; `verita demo verify --pack …` |
 | 503 `no-model` on the queue | Alerts not loaded | `verita demo load` (or `verita detect alerts` on the build machine) |
 | 503 `no-decide` on capacity | Decide artifacts missing from the pack | Rebuild the pack after `verita decide run` |
+| Drafts say "offline" although keys are set | Every key exhausted or rejected, or `VERITA_LLM_PROVIDERS` empty | `verita llm keys` names each key's state and when the first one frees up |
 | Narrative drafts stay "queued" | Worker down, or `VERITA_INLINE_JOBS=false` without a worker | `docker compose … up -d worker`; check its log |
 | 429s for everyone behind one proxy | Rate limit keyed on the proxy IP | Make sure nginx sets `X-Forwarded-For` and the API runs with `--proxy-headers` |
 | API OOM-killed under load | Too many workers for the host, or caches disabled | `VERITA_WORKERS=1`; check `docker stats`; the plan cache and single-flight loads must be in place |

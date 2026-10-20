@@ -37,7 +37,7 @@ control works; residual risks are stated, not hidden.
 | R1 | An MLRO denies having signed | 3 | Ledger event with actor, hash chain, signature over a message binding case ID and root; audit log | `test_api_cases.py` |
 | I1 | Data exposure to a role that should not see it | 1–2 | Default-deny roles; a policy for every route; truth labels never sent to the queue | `test_authz_matrix.py` (every OpenAPI route × role) |
 | I2 | Internal metrics exposed | 1 | nginx returns 404 for `/api/metrics`; optional bearer token | `test_observability.py`, smoke test |
-| I3 | Secrets in the repository | — | `.gitignore` for keys and `.env`; gitleaks in CI; LLM keys only from the environment | CI `secrets` job |
+| I3 | Secrets in the repository or logs | — | `.gitignore` for keys and `.env`; gitleaks over the full history in CI; LLM keys only from the environment, held as `SecretStr`, and shown everywhere (errors, logs, `verita llm keys`, eval artifacts) as a SHA-256 fingerprint | CI `secrets` job; `tests/defend/test_keypool.py::test_keys_never_appear_in_errors_status_or_repr` |
 | I4 | Clickjacking, MIME sniffing, XSS impact | 1 | CSP `default-src 'self'`, `frame-ancestors 'none'`, nosniff, COOP/COEP/CORP; React escapes output; no `dangerouslySetInnerHTML` | ZAP baseline (0 failures), headers checked in `scripts/smoke.py` |
 | D1 | Request floods | 1 | Per-IP, per-login and per-session rate limits (429 + Retry-After) | `test_ratelimit.py`; k6 run that hit the limiter |
 | D2 | Expensive endpoints exhausting memory | 2–3 | Plan cache, single-flight cache loads, bounded concurrent solves, bounded subgraph size | k6 stress run (194 req/s, 0 errors, no OOM) after an OOM was found and fixed |
