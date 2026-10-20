@@ -207,7 +207,21 @@ const defend = z
         ),
       }),
     ),
-    llm: z.object({ run: z.boolean(), reason: z.string().optional() }).loose(),
+    llm: z
+      .object({
+        run: z.boolean(),
+        reason: z.string().optional(),
+        models: z.array(z.string()).optional(),
+        drafts: z.number().optional(),
+        provider_failures: z.number().optional(),
+        failure_reasons: z.record(z.string(), z.number()).optional(),
+        drafted_by: z.record(z.string(), z.number()).optional(),
+        unsupported_claim_rate: rate.optional(),
+        unsupported_by_kind: z.record(z.string(), z.number()).optional(),
+        citation_error_rate: rate.optional(),
+        drafts_passing_verification: rate.optional(),
+      })
+      .loose(),
   })
   .loose();
 

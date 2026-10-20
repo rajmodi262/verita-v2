@@ -216,7 +216,13 @@ False alarms on clean narratives: {{ d.defend.clean_false_alarm | ci }} ({{ d.de
 {% endfor %}
 
 {% if d.defend.llm.run %}
-Raw LLM unsupported-claim rate: {{ d.defend.llm.unsupported_claim_rate | ci }}.
+Raw LLM drafts, before the verifier gates them ({{ d.defend.llm.drafts }} drafts{% if d.defend.llm.drafted_by %}: {% for model, n in d.defend.llm.drafted_by.items() %}{{ n }} by `{{ model }}`{{ ", " if not loop.last }}{% endfor %}{% endif %}{% if d.defend.llm.provider_failures %}; {{ d.defend.llm.provider_failures }} further attempts wrote nothing{% if d.defend.llm.failure_reasons %} ({% for why, n in d.defend.llm.failure_reasons.items() %}{{ why }}: {{ n }}{{ ", " if not loop.last }}{% endfor %}){% endif %}{% endif %}):
+
+| Measure | Value |
+|---|---|
+| Unsupported claims | {{ d.defend.llm.unsupported_claim_rate | ci }} |
+| Sentences citing evidence outside the case | {{ d.defend.llm.citation_error_rate | ci }} |
+| Drafts passing verification as written | {{ d.defend.llm.drafts_passing_verification | ci }} |
 {% else %}
 Raw LLM unsupported-claim rate: not run — {{ d.defend.llm.reason }}.
 {% endif %}

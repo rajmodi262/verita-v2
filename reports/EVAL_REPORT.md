@@ -73,7 +73,13 @@ False alarms on clean narratives: 0.0% (0.0%–1.3%) (300 cases,
 | wrong_date | 300 | 100.0% (98.7%–100.0%) | 100.0% (98.7%–100.0%) |
 | wrong_typology | 40 | 100.0% (91.2%–100.0%) | 100.0% (91.2%–100.0%) |
 
-Raw LLM unsupported-claim rate: not run — not requested (run with --llm and a GEMINI_API_KEY / GROQ_API_KEY).
+Raw LLM drafts, before the verifier gates them (17 drafts: 17 by `groq/openai/gpt-oss-120b`; 13 further attempts wrote nothing (gemini: quota; groq: quota: 13)):
+
+| Measure | Value |
+|---|---|
+| Unsupported claims | 2.9% (1.9%–4.6%) |
+| Sentences citing evidence outside the case | 0.0% (0.0%–2.2%) |
+| Drafts passing verification as written | 5.9% (1.0%–27.0%) |
 
 ## IBM AML LI-Small (synthetic)
 

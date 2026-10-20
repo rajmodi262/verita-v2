@@ -14,7 +14,7 @@
 | M3 | Detect — Queue and Investigation UX | 18 / 18 | Done |
 | M4 | Decide — calibration, conformal, forecast, optimizer, drift | 20 / 20 | Done |
 | M5 | Decide — Capacity Planner UX | 10 / 10 | Done |
-| M6 | Defend — narratives, verifier, signing, ledger | 21 / 22 | M6.15 needs a key (U5) |
+| M6 | Defend — narratives, verifier, signing, ledger | 22 / 22 | Done |
 | M7 | Defend — Case File UX and maker-checker | 12 / 12 | Done |
 | M8 | Evidence Room, honesty pipeline, robustness | 13 / 14 | SAML-D optional, needs the dataset |
 | M9 | Harden and ship | 14 / 16 | Going live needs a VM + domain (U8); rehearsal recording (U9) |
@@ -23,8 +23,7 @@
 
 | ID | What I need | Unblocks |
 |----|-------------|----------|
-| U1 | Rotate the Groq key that is in v1's `START_BACKEND.bat`, and remove `GROQ_API_KEY` from the Windows environment if it is that key | Security hygiene; Defend calls an LLM only when you opt in |
-| U5 | Put `GEMINI_API_KEY` and `GROQ_API_KEY` in `backend/.env` when we reach M6 | M6.07 |
+| U1 | Rotate the Groq key in v1's `START_BACKEND.bat`. Separately, the Windows environment still sets an older `GROQ_API_KEY` (neither the v1 key nor the new one): remove it. v2 reads the `VERITA_*_API_KEYS` pools, so it no longer interferes | Security hygiene |
 | U7 | Confirm the IBM AML dataset license on its Kaggle page (I'll record it in `configs/datasets.yaml`) | M1.15, publishing DATA_CARD |
 | U8 | A small VM (2 vCPU, 4 GB) and a domain for the public demo; then `deploy/prod/` per ADR-008 | M9.13 going live |
 | U9 | Record the demo rehearsal following `docs/DEMO_SCRIPT.md` | M9.15 |
@@ -226,7 +225,7 @@ only 40 cases (260 of the 300 are UNATTRIBUTED).
 - [x] M6.12 Golden snapshot of verdicts on 30 fixed narratives (`tests/defend/golden/verifier_30.json`)
 - [x] M6.13 Fault injection: 9 types (the 8 planned + irrelevant citation, chosen to support none of the claims)
 - [x] M6.14 Eval with Wilson CIs, localisation and verbatim misses → `artifacts/<ds>/defend/verifier_eval.json`. **Bugs it found:** evidence rounded Bitcoin amounts to 2 decimals (0.0034 → 0.00); a range start inside the range passed (date_range claims added)
-- [!] M6.15 [!U5] Raw LLM unsupported-claim rate — harness built (`verita defend eval --llm`), not run without a valid key
+- [x] M6.15 Raw LLM unsupported-claim rate — measured on HI-Small through the key pools (`verita defend eval --llm`); the artifact names the model that wrote each draft and why failed attempts failed. This run is Groq only (Gemini's daily quotas were spent); re-run after the reset for a Gemini sample
 - [x] M6.16 RFC 8785 canonicalisation (RFC §3.2.2 vector, every double bit pattern round-trips, UTF-16 key order, exact-double integer rule)
 - [x] M6.17 RFC 6962 Merkle tree with domain separation; audit-path property tests
 - [x] M6.18 Ed25519 signing over `verita-case-v1:<case>:<root>`, key ID = SHA-256(raw key)[:16], `GET /keys` (public), key created on first use in dev (`keys/`, private key git-ignored)
@@ -305,7 +304,7 @@ Exit: every PIVOT §23 rubric check passes.
 | Security | threat model, authz matrix, append-only signed ledger, no user SQL, scanners blocking, no secrets | THREAT_MODEL; matrix over every route × role; trigger + least-privilege role; bandit, pip-audit, npm audit, gitleaks, grype blocking; ZAP 0 failures |
 | ML rigor | temporal splits, leakage tests, baselines, CIs, ablations, per-typology, robustness | EVAL_REPORT generated; LI-Small robustness in |
 | Statistics | calibration, conformal coverage over time with ACI, forecast coverage, bootstrap CIs | Evidence Room Decide tab |
-| GenAI / NLP | structured output, deterministic verifier, fault-injection eval, raw hallucination rate | Evidence Room Defend tab (LLM hallucination rate: needs U5) |
+| GenAI / NLP | structured output, deterministic verifier, fault-injection eval, raw hallucination rate | Evidence Room Defend tab, including the raw LLM rate, who wrote the drafts and failed attempts |
 | Frontend engineering | lazy routes, generated API types, zero `any`, no inline styles, bundle budgets | 0 `any`, 0 inline styles (ESLint-enforced); bundle check + Lighthouse in CI; landing bundled on purpose |
 | UX / accessibility | 6 screens, keyboard-first, axe zero, AAA contrast, ≥ 12 px, responsive, tour | 18 Playwright tests incl. axe in both themes, keyboard triage, phone width; Lighthouse accessibility 1.0 |
 | Tests | ≥ 90% backend coverage; property, golden, contract, authz, e2e, perf | 90.6% backend; hypothesis, golden case files, schemathesis, authz matrix, Playwright, k6 |
@@ -313,8 +312,7 @@ Exit: every PIVOT §23 rubric check passes.
 | Honesty | every metric generated; CI check; limitations up front | `report check` + `report scan` pass; DEMO_SCRIPT quotes no numbers |
 | Repo hygiene | clean tree, conventional commits, CHANGELOG, LICENSE, CONTRIBUTING | all present; CHANGELOG added |
 
-Open gaps, all outside the code: LLM keys for the raw
-hallucination rate (U5), the dataset licence (U7), a VM and domain (U8), the recording (U9).
+Open gaps, all outside the code: the dataset licence (U7), a VM and domain (U8), the recording (U9).
 
 ---
 
@@ -322,6 +320,7 @@ hallucination rate (U5), the dataset licence (U7), a VM and domain (U8), the rec
 
 | Date | Change |
 |------|--------|
+| 2026-10-20 | LLM key pools (priority order, instant failover on exhausted quota, cooldowns from the provider's retry time, `verita llm keys`) and the raw LLM evaluation. **Found by running on the real keys:** both default models were unusable (gemini-2.5-flash closed to new projects, Groq retired llama-3.3-70b); one Gemini key's project is denied access; every Groq request exceeded its 8,000-tokens/minute limit (prompt + reserved output), fixed with compact evidence and an output cap; the eval mislabelled Groq failures as quota (now per provider). Raw drafts: few pass the verifier as written, which is the verifier's purpose. |
 | 2026-10-20 | M9 hardening: rate limits, schemathesis (zero 5xx), k6 load + stress against the Docker stack, Prometheus/Grafana, OpenTelemetry, ZAP (0 failures), SBOM + grype gate, Lighthouse + bundle budgets, least-privilege DB role, release workflow, prod deploy config, THREAT_MODEL / RUNBOOK / DEMO_SCRIPT / ADR-008. **Bugs found by running it for real:** OOM under concurrent load; a commit-after-response race on Postgres; 64-bit path IDs crashing the driver; nginx dropping security headers and caching the API's IP (a recreated API broke the site); ledger appends locking a row the app role may not lock (and not covering a case's first event); two CSP violations on the landing page; 22 Critical OS findings in the web image (now 0 High/Critical). Backend 90.6% coverage; frontend 160 unit + 18 e2e tests. |
 | 2026-10-20 | M8 honesty pipeline, Evidence Room, live landing page, reviewer tour; Playwright suite (18 tests: demo path, keyboard triage, axe on every route in both themes, slider < 150 ms, phone width) green on a fresh fixture stack and wired into CI. Found and fixed: tables overflowing phone screens; report docs rendered from unsorted data (check/build mismatch). |
 | 2026-10-20 | M6–M7 built and run on HI-Small. Verifier: 0/300 false alarms, 2,437/2,438 faults caught. Full demo path live: draft → fault caught → submit → maker-checker sign → browser and CLI verification agree. Found and fixed: Bitcoin amounts rounded to 0.00 in evidence; date-range starts not checked; a no-op fault injector; ESLint autofix inverted a null check. **Security note (U1):** a `GROQ_API_KEY` is present in the machine environment; 30 eval calls to Groq failed — LLM use is now opt-in. Backend 307+ tests, 93% coverage; frontend 151 tests. |
