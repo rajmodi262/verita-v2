@@ -219,6 +219,17 @@ def detect_train(
     _run_stage(lambda ds: stages.stage_detect(ds, quick=quick), dataset, root)
 
 
+@detect_app.command("rules")
+def detect_rules(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
+    """Re-tune the rules incumbent on train and re-score it on test (champion untouched)."""
+    from verita.ml.detect import refit_incumbent  # noqa: PLC0415
+
+    ds = get_dataset(dataset, root=root)
+    result = refit_incumbent(ds)
+    enabled = [r["rule"] for r in result["rules"]["rules"] if r["enabled"]]
+    typer.echo(f"{ds.name}: rules incumbent re-tuned on train; enabled: {', '.join(enabled)}")
+
+
 @detect_app.command("alerts")
 def detect_alerts(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
     """Build the evidence store and load test-window alerts into the database."""

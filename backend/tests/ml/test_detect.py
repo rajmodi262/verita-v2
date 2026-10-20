@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 
 import lightgbm as lgb
+import numpy as np
 import pandas as pd
 import pytest
 from typer.testing import CliRunner
@@ -15,11 +16,12 @@ from verita.ml.detect import (
     TYPOLOGY_CLASSES,
     DetectConfig,
     load_frame,
-    rules_score,
+    refit_incumbent,
     run_detect,
     score_count,
 )
-from verita.ml.features import ALL_FEATURES
+from verita.ml.features import ALL_FEATURES, CURRENCIES
+from verita.ml.rules import RULES, amount_usd, fit_rules
 from verita.pipeline.config import PipelineError, get_dataset
 
 
@@ -89,10 +91,42 @@ def test_metrics_file_is_written(detected, fx_dataset):
     assert metrics["dataset"] == "fixture" and metrics["threshold"] == detected.threshold
 
 
-def test_rules_score_counts_fired_rules(detected, fx_dataset):
+def test_rules_are_tuned_on_train_only(detected, fx_dataset):
     frame = load_frame(fx_dataset)
-    total, info = rules_score(frame, frame[frame["split"] == "train"])
-    assert total.min() >= 0 and total.max() <= 6 and len(info["rules"]) == 6
+    train = frame[frame["split"] == "train"]
+    ruleset = fit_rules(train)
+    assert {r.rule.name for r in ruleset.rules} == {r.name for r in RULES}
+    # Tuning sees only train: changing every non-train label leaves the rule set unchanged.
+    flipped = frame.copy()
+    rest = flipped["split"] != "train"
+    flipped.loc[rest, "is_laundering"] = ~flipped.loc[rest, "is_laundering"]
+    again = fit_rules(flipped[flipped["split"] == "train"])
+    assert again.to_dict() == ruleset.to_dict()
+    scores = ruleset.score(frame)
+    assert scores.min() >= 0 and ruleset.threshold > 0
+
+
+def test_structuring_is_measured_in_usd():
+    frame = pd.DataFrame(
+        {
+            "log_amount_paid": np.log1p([9_500.0, 9_500.0, 9_500.0 / 0.012]),
+            "currency_paid_code": [CURRENCIES.index("US Dollar")] * 2 + [CURRENCIES.index("Rupee")],
+            "s_out_n_24h": [3, 0, 3],
+        }
+    )
+    rule = next(r for r in RULES if r.name == "structuring")
+    fired = rule.fires(frame, amount_usd(frame), (0.9, 2))
+    assert fired.tolist() == [True, False, True]
+
+
+def test_refit_incumbent_keeps_the_champion(detected, fx_dataset):
+    path = fx_dataset.artifacts_dir / "detect" / "metrics.json"
+    before = json.loads(path.read_text())
+    inc = refit_incumbent(fx_dataset)
+    after = json.loads(path.read_text())
+    champ = [m for m in before["models"] if m["model"] != "rules_incumbent"]
+    assert [m for m in after["models"] if m["model"] != "rules_incumbent"] == champ
+    assert inc["rules"]["tuned_on"] == "train" and "rule_hits_test" in inc
 
 
 def test_detect_requires_features(tmp_path):
