@@ -248,3 +248,39 @@
   stroke: var(--color-surface);
   stroke-width: 2;
 }
+
+/* Staffing frontier: the region where the recall guarantee cannot hold is engraved with a hatch. */
+.hatch {
+  opacity: 0.5;
+}
+
+.hatchLine {
+  stroke: var(--color-alert);
+  stroke-width: 1;
+}
+
+.hatchText {
+  font-family: var(--font-title);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  fill: var(--color-alert-text);
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 3px;
+}
+
+.markerText {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  fill: var(--color-ink);
+  paint-order: stroke;
+  stroke: var(--color-surface);
+  stroke-width: 4px;
+}
+
+.dragSurface {
+  fill: transparent;
+  cursor: ew-resize;
+  touch-action: none;
+}

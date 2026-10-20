@@ -451,6 +451,10 @@ export default function CapacityPage() {
           <FrontierChart
             points={frontier.data.points}
             analysts={analysts}
+            onAnalystsChange={(v) => {
+              setAnalysts(v);
+              set("analysts", String(v));
+            }}
             targetRecall={targetRecall}
           />
         ) : frontier.isError ? (
