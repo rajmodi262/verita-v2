@@ -20,7 +20,7 @@ Synthetic data only: All results are on synthetic data (IBM AML, Altman et al. 2
 | Result | Value (95% CI) | Data |
 |---|---|---|
 | Laundering F1, champion | 50.3% (44.0%–59.1%) | IBM AML HI-Small (synthetic), test split, 1,797 laundering payments |
-| Laundering F1, rules incumbent | 0.26% (0.23%–0.33%) | same |
+| Laundering F1, rules incumbent | 7.31% (6.34%–8.90%) | same |
 | Published GFP + LightGBM (Altman et al. 2023, Table 2) | 62.86% ± 0.25 | same split definition |
 | Realised recall at a 95% guarantee — static conformal | 98.4% (97.8%–98.8%) | 134,186 account-days reviewed |
 | Realised recall at a 95% guarantee — adaptive (ACI) | 96.4% (95.6%–97.0%) | 120,457 account-days reviewed |
@@ -35,7 +35,7 @@ Where it is weak: bulk-day F1 is 38.5% (32.5%–44.5%); per-typology recall rang
 the 95% recall guarantee would need 3,139 analysts on the busiest replay day. Full
 report: [reports/EVAL_REPORT.md](reports/EVAL_REPORT.md) · [MODEL_CARD.md](MODEL_CARD.md).
 
-<sub>metrics.json schema 1, built at commit `dae79337abb2`.</sub>
+<sub>metrics.json schema 1, built at commit `599a5bd7b396`.</sub>
 <!-- metrics:end -->
 
 The model is trained and evaluated on **synthetic** data (IBM AML, Altman et al., 2023). Results

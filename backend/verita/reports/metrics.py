@@ -111,7 +111,25 @@ def _detect(ds: Dataset, baselines: dict[str, Any]) -> dict[str, Any] | None:
         return out
 
     registry = _read(ds.artifacts_dir / "detect" / "registry.json") or {}
+    incumbent: dict[str, Any] = next(
+        (r for r in m["models"] if r["model"] == "rules_incumbent"), {}
+    )
+    hits = {h["rule"]: h for h in incumbent.get("rule_hits_test", [])}
+    rules = incumbent.get("rules")
     return {
+        "rules": None
+        if not isinstance(rules, dict)
+        else {
+            "tuned_on": rules["tuned_on"],
+            "rules": [
+                {
+                    **r,
+                    "test_alerts": hits.get(r["rule"], {}).get("alerts"),
+                    "test_laundering": hits.get(r["rule"], {}).get("laundering"),
+                }
+                for r in rules["rules"]
+            ],
+        },
         "n_features": len(registry.get("features", [])),
         "threshold": m["threshold"],
         "hpo": m["hpo"],

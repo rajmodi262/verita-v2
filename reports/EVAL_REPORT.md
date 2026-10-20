@@ -17,7 +17,20 @@ passed. Sparse tail days:
 |---|---|---|---|---|
 | lgbm_champion | 50.3% (44.0%–59.1%) | 38.5% (32.5%–44.5%) | 71.8% (68.7%–77.0%) | 49.4% (40.9%–60.2%) |
 | lgbm_transaction_only | 25.5% (18.0%–36.5%) | 14.6% (6.8%–19.7%) | 53.0% (41.1%–61.1%) | 17.8% (11.6%–35.7%) |
-| rules_incumbent | 0.3% (0.2%–0.3%) | 0.2% (0.2%–0.3%) | 3.0% (1.4%–4.9%) | 0.2% (0.1%–0.3%) |
+| rules_incumbent | 7.3% (6.3%–8.9%) | 6.4% (5.7%–7.2%) | 10.7% (6.9%–14.3%) | 1.5% (1.1%–2.3%) |
+
+Rules incumbent — typology rules, every threshold tuned on the train split only
+(`backend/verita/ml/rules.py`); a fired rule adds its train lift to the alert score:
+
+| Rule | Typology | Tuned condition | Weight | Test alerts | Test laundering hit |
+|---|---|---|---|---|---|
+| structuring | STRUCTURING | USD amount in [90% of 10k, 10k) and the payer already sent ≥ 1 payments in 24h | 0.99 | 8,112 | 33 |
+| velocity | VELOCITY | payer sent ≥ 500 payments in the past hour | 0.72 | 42,904 | 71 |
+| fan_out | FAN-OUT | payer paid ≥ 20 distinct payees in 24h | 0.65 | 96,097 | 129 |
+| fan_in | FAN-IN | payee was paid by ≥ 5 distinct payers in 24h | 1.97 | 14,781 | 154 |
+| rapid_pass_through | PASS-THROUGH | payer received money < 4320 min ago and sends ≥ $5,000 | 0.68 | 190,367 | 901 |
+| round_tripping | CYCLE | the payment closes a time-ordered cycle of ≤ 3 payments back to the payer | 4.65 | 1,595 | 124 |
+| high_value | HIGH-VALUE | USD amount ≥ $57,209,889 (top of the training distribution) | 1.88 | 691 | 2 |
 
 Published baselines (arXiv:2306.16424v3 Table 2, minority-class F1 %):
 GFP + LightGBM 62.86; GFP + XGBoost 63.23; GIN 28.70; GIN + EU 47.73; PNA 56.77.
@@ -94,7 +107,20 @@ passed. Sparse tail days:
 |---|---|---|---|---|
 | lgbm_champion | 17.3% (13.5%–23.5%) | 12.2% (9.1%–15.3%) | 52.2% (41.7%–63.4%) | 10.2% (7.4%–16.4%) |
 | lgbm_transaction_only | 10.6% (7.4%–20.0%) | 5.8% (0.9%–7.1%) | 64.3% (48.9%–73.9%) | 3.2% (2.2%–10.4%) |
-| rules_incumbent | 0.2% (0.2%–0.2%) | 0.2% (0.2%–0.2%) | 2.9% (0.0%–7.8%) | 0.1% (0.1%–0.1%) |
+| rules_incumbent | 3.4% (2.7%–4.0%) | 3.3% (2.7%–3.8%) | 5.8% (0.0%–11.6%) | 0.3% (0.2%–0.3%) |
+
+Rules incumbent — typology rules, every threshold tuned on the train split only
+(`backend/verita/ml/rules.py`); a fired rule adds its train lift to the alert score:
+
+| Rule | Typology | Tuned condition | Weight | Test alerts | Test laundering hit |
+|---|---|---|---|---|---|
+| structuring | STRUCTURING | USD amount in [85% of 10k, 10k) and the payer already sent ≥ 2 payments in 24h | 0.71 | 15,328 | 23 |
+| velocity | VELOCITY | payer sent ≥ 500 payments in the past hour | 1.17 | 61,911 | 88 |
+| fan_out | FAN-OUT | payer paid ≥ 20 distinct payees in 24h | 1.16 | 130,776 | 184 |
+| fan_in | FAN-IN | payee was paid by ≥ 5 distinct payers in 24h | 1.92 | 19,240 | 71 |
+| rapid_pass_through | PASS-THROUGH | payer received money < 4320 min ago and sends ≥ $1,000 | 0.50 | 507,738 | 511 |
+| round_tripping | CYCLE | the payment closes a time-ordered cycle of ≤ 3 payments back to the payer | 4.13 | 1,925 | 50 |
+| high_value | HIGH-VALUE | USD amount ≥ $58,206,770 (top of the training distribution) | 1.60 | 915 | 4 |
 
 Published baselines (arXiv:2306.16424v3 Table 2, minority-class F1 %):
 GFP + LightGBM 20.83; GFP + XGBoost 27.30; GIN 7.90; GIN + EU 20.62; PNA 16.45.

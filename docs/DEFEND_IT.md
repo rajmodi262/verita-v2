@@ -32,7 +32,7 @@ put the entire test set inside that tail.
 
 **Q3. Can you show me what a random split would have claimed?**
 Yes — the pipeline trains the same model on a random split and reports the gap
-(`_random_split_check`, `backend/verita/ml/detect.py:456`). The temporal-vs-random comparison
+(`_random_split_check`, `backend/verita/ml/detect.py:466`). The temporal-vs-random comparison
 is in the Evidence Room under the sanity checks.
 
 **Q4. How do you know no feature peeks into the future?**
@@ -45,7 +45,7 @@ are appended and the features of every earlier transaction must not change
 
 **Q5. What is the label-shuffle test?**
 Train the champion on shuffled labels; its test PR-AUC must collapse to roughly the base rate
-(`backend/verita/ml/detect.py:405`). If it does not, something other than the label is carrying
+(`backend/verita/ml/detect.py:387`). If it does not, something other than the label is carrying
 signal — leakage. The model-risk policy turns this into a gate
 (`configs/model_policy.yaml`, `max_shuffled_pr_auc_over_base_rate`).
 
@@ -64,13 +64,17 @@ challenger, not the champion, until it beats LightGBM under the same temporal sp
 the same gates. Reasoning in `docs/adr/ADR-004-lightgbm-champion.md`.
 
 **Q8. What is the incumbent you compare against?**
-A rules engine of classic transaction-monitoring typologies (`rules_score`,
-`backend/verita/ml/detect.py:200`), with its alert threshold chosen on the hpo split
-(`:349`). The champion has to beat it outright — its interval must sit above the incumbent's —
-before a validator may approve it (`configs/model_policy.yaml`, `beats_incumbent`).
+A rules engine of the kind banks run: structuring just under the USD 10k reporting threshold,
+velocity, fan-out, fan-in, rapid pass-through, round-tripping (a closed time-ordered cycle) and
+high value (`RULES`, `backend/verita/ml/rules.py:62`). Every threshold — and the alert threshold
+on the combined score — is tuned on the **train split only** (`fit_rules`, `:176`), the way a
+monitoring team tunes on investigated history; a test checks that relabelling every non-train
+row leaves the rule set unchanged (`backend/tests/ml/test_detect.py`). The tuned conditions are
+listed in the eval report. The champion must beat it outright — its interval above the
+incumbent's — before a validator may approve it (`configs/model_policy.yaml`, `beats_incumbent`).
 
 **Q9. How were hyper-parameters chosen without touching the test set?**
-Optuna searches on train → hpo only (`tune`, `backend/verita/ml/detect.py:169`); the decision
+Optuna searches on train → hpo only (`tune`, `backend/verita/ml/detect.py:170`); the decision
 threshold is the best-F1 point on hpo (`backend/verita/ml/evaluation.py:49`). The test split is
 read only by the evaluation stage.
 
@@ -82,17 +86,17 @@ intervals that are too narrow.
 
 **Q11. Is the result a lucky seed?**
 The champion is retrained over several seeds and the spread is reported
-(`backend/verita/ml/detect.py:362`); the policy caps the allowed spread
+(`backend/verita/ml/detect.py:344`); the policy caps the allowed spread
 (`max_f1_std_over_seeds`).
 
 **Q12. Which features matter, and how do you know a group earns its place?**
-Global TreeSHAP ranks features (`backend/verita/ml/detect.py:423`). Each feature group is also
+Global TreeSHAP ranks features (`backend/verita/ml/detect.py:405`). Each feature group is also
 ablated and the paired bootstrap difference against the champion is reported
-(`:377`, `bootstrap_paired_delta_f1` at `backend/verita/ml/evaluation.py:104`).
+(`:359`, `bootstrap_paired_delta_f1` at `backend/verita/ml/evaluation.py:104`).
 
 **Q13. How do you handle the class imbalance?**
 Negatives are subsampled for training, and the pipeline reports the alternatives side by side —
-all data with `scale_pos_weight`, and all data unweighted (`backend/verita/ml/detect.py:392`).
+all data with `scale_pos_weight`, and all data unweighted (`backend/verita/ml/detect.py:374`).
 Imbalance handling is an empirical choice, so the evidence is shown rather than asserted.
 
 **Q14. How does an analyst see *why* an alert fired?**

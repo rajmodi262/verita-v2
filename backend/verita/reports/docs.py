@@ -183,6 +183,17 @@ EVAL_REPORT = """\
 | {{ mname }} | {{ r.test.f1 | ci }} | {{ r.test_bulk.f1 | ci if r.test_bulk else "—" }} | {{ r.test_tail.f1 | ci if r.test_tail else "—" }} | {{ r.test.pr_auc | ci }} |
 {% endfor %}
 
+{% if d.detect.rules is defined and d.detect.rules %}
+Rules incumbent — typology rules, every threshold tuned on the {{ d.detect.rules.tuned_on }} split only
+(`backend/verita/ml/rules.py`); a fired rule adds its train lift to the alert score:
+
+| Rule | Typology | Tuned condition | Weight | Test alerts | Test laundering hit |
+|---|---|---|---|---|---|
+{% for r in d.detect.rules.rules %}
+| {{ r.rule }} | {{ r.typology }} | {{ r.description }} | {{ r.weight | num(2) if r.enabled else "disabled" }} | {{ r.test_alerts | count }} | {{ r.test_laundering | count }} |
+{% endfor %}
+{% endif %}
+
 Published baselines ({{ d.detect.published_baselines.source }}, minority-class F1 %):
 {% for b, v in d.detect.published_baselines.rows.items() %}{{ b }} {{ "%.2f" | format(v.mean) }}{{ "; " if not loop.last }}{% endfor %}.
 
