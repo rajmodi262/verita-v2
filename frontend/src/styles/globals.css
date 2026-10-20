@@ -92,3 +92,16 @@ samp {
 table {
   font-variant-numeric: tabular-nums;
 }
+
+/* The landing stage is a single composed screen: no scrollbars on show (scrolling still works). */
+html:has(main[data-landing]) {
+  scrollbar-width: none;
+}
+
+html:has(main[data-landing])::-webkit-scrollbar {
+  display: none;
+}
+
+body:has(main[data-landing]) {
+  overflow-x: hidden;
+}

@@ -1,7 +1,9 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 
 import { useHeadline } from "../../api/evidence";
+import { applyStageSignal } from "../../components/hero/stageSignal";
+import type { StageSignal } from "../../components/hero/VaultScene";
 import { GuillocheSeal } from "../../components/seal/GuillocheSeal";
 import type { Headline, HeadlineResponse } from "../../api/evidence";
 import { percent } from "../../lib/format";
@@ -87,11 +89,17 @@ export default function LandingPage() {
   const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   // The 3D stage is for wide screens with WebGL; phones get the engraved 2D seal (no 3D download).
   const cinematic = window.matchMedia("(min-width: 900px)").matches && hasWebGL();
+  // The scene reports, every frame, how squarely the coin faces the viewer and which laundering
+  // pattern the money is performing; written straight to the DOM (no re-render per frame).
+  const stage = useRef<HTMLElement>(null);
+  const caption = useRef<HTMLParagraphElement>(null);
+  const onSignal = useCallback((signal: StageSignal) => {
+    applyStageSignal(stage.current, caption.current, signal);
+  }, []);
   return (
-    <main id="main" className={styles.page}>
-      <header className={styles.stage}>
+    <main id="main" className={styles.page} data-landing>
+      <header className={styles.stage} ref={stage}>
         <nav className={styles.nav} aria-label="Site">
-          <span className={styles.brand}>Verita</span>
           <span className={styles.navLinks}>
             <a href="#measured">Detect</a>
             <a href="#measured">Decide</a>
@@ -101,16 +109,18 @@ export default function LandingPage() {
             Sign in
           </Link>
         </nav>
-        <p className={styles.wordTop} aria-hidden="true">
+        {/* The words flank the coin and glint in only while its face catches the light. */}
+        <p className={styles.wordLeft} aria-hidden="true">
           Follow
         </p>
-        <p className={styles.wordBottom} aria-hidden="true">
-          the money
+        <p className={styles.wordRight} aria-hidden="true">
+          <span className={styles.wordSmall}>the</span>
+          money
         </p>
         <div className={styles.scene} aria-hidden="true">
           {cinematic ? (
             <Suspense fallback={null}>
-              <VaultScene still={still} />
+              <VaultScene still={still} onSignal={onSignal} />
             </Suspense>
           ) : (
             <div className={styles.flatSeal}>
@@ -118,19 +128,21 @@ export default function LandingPage() {
             </div>
           )}
         </div>
+        <p className={styles.caption} ref={caption} aria-hidden="true" />
         <div className={styles.band}>
           <h1 className={styles.headline}>
             Every alert explained · Every miss quantified · Every report provable
           </h1>
         </div>
         <div className={styles.cta}>
-          <Link to="/login" className={styles.primary}>
-            Open the case files
+          <Link to="/login" className={styles.enter}>
+            Enter the case room <span className={styles.arrow}>→</span>
           </Link>
-          <a href="#measured" className={styles.secondary}>
-            See the measurements
+          <a href="#measured" className={styles.evidence}>
+            See the evidence ↓
           </a>
         </div>
+        <span className={styles.scrollCue} aria-hidden="true" />
       </header>
       <section id="measured" aria-labelledby="pillars" className={styles.pillars}>
         <h2 id="pillars" className="srOnly">

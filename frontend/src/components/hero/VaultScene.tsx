@@ -175,34 +175,59 @@ function reeding(line: string): THREE.CanvasTexture {
   return texture;
 }
 
-const COIN_R = 1.22;
-const COIN_T = 0.3; // thick: a struck coin, not a disc
+const COIN_R = 1.5;
+const COIN_T = 0.36; // thick: a struck coin, not a disc
 
-function Medallion({ line, ground, metal }: { line: string; ground: string; metal: string }) {
+/** What the scene tells the page each frame: how squarely the coin faces the viewer, and any
+ * pattern being performed (for the caption). */
+export interface StageSignal {
+  face: number;
+  caption: string | null;
+}
+
+function Medallion({
+  line,
+  ground,
+  metal,
+  onFace,
+}: {
+  line: string;
+  ground: string;
+  metal: string;
+  onFace: (face: number) => void;
+}) {
   const group = useRef<THREE.Group>(null);
   const face = useMemo(() => engraving(line, ground), [line, ground]);
   const edge = useMemo(() => reeding(line), [line]);
+  const material = useRef<THREE.MeshPhysicalMaterial>(null);
+  const back = useRef<THREE.MeshPhysicalMaterial>(null);
   useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
-    g.rotation.y += delta * 0.55; // a full, unhurried turn
-    const tilt = -state.pointer.y * 0.2 + Math.sin(state.clock.elapsedTime * 0.3) * 0.08;
+    g.rotation.y += delta * 0.5; // a full, unhurried turn
+    const tilt = -state.pointer.y * 0.15 + Math.sin(state.clock.elapsedTime * 0.3) * 0.06;
     g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, tilt, 0.06);
+    onFace(Math.abs(Math.cos(g.rotation.y)));
+    // the coin glints when a pattern is caught (same script clock as the money stream)
+    const phase = phaseAt(state.clock.elapsedTime);
+    const since = phase.local - 1.3;
+    const flash = phase.name !== "ORBIT" && since > 0 ? Math.max(0, 1 - since) : 0;
+    const glow = 0.5 + flash * 1.1;
+    if (material.current) material.current.emissiveIntensity = glow;
+    if (back.current) back.current.emissiveIntensity = glow;
   });
-  const faceMaterial = (
-    <meshPhysicalMaterial
-      map={face}
-      bumpMap={face}
-      bumpScale={3}
-      emissiveMap={face}
-      emissive={line}
-      emissiveIntensity={0.55}
-      color={metal}
-      metalness={1}
-      roughness={0.38}
-      clearcoat={0.4}
-    />
-  );
+  const faceProps = {
+    map: face,
+    bumpMap: face,
+    bumpScale: 3,
+    emissiveMap: face,
+    emissive: line,
+    emissiveIntensity: 0.5,
+    color: metal,
+    metalness: 1,
+    roughness: 0.38,
+    clearcoat: 0.4,
+  };
   return (
     <group ref={group}>
       {/* the milled edge */}
@@ -220,16 +245,16 @@ function Medallion({ line, ground, metal }: { line: string; ground: string; meta
       {/* the same struck face on both sides; the back disc is turned to read correctly */}
       <mesh position={[0, 0, COIN_T / 2]}>
         <circleGeometry args={[COIN_R, 192]} />
-        {faceMaterial}
+        <meshPhysicalMaterial ref={material} {...faceProps} />
       </mesh>
       <mesh position={[0, 0, -COIN_T / 2]} rotation={[0, Math.PI, 0]}>
         <circleGeometry args={[COIN_R, 192]} />
-        {faceMaterial}
+        <meshPhysicalMaterial ref={back} {...faceProps} />
       </mesh>
       {/* raised rims with a bevel that catches the light */}
       {[COIN_T / 2, -COIN_T / 2].map((z) => (
         <mesh key={z} position={[0, 0, z]}>
-          <torusGeometry args={[COIN_R - 0.045, 0.05, 24, 192]} />
+          <torusGeometry args={[COIN_R - 0.05, 0.06, 24, 192]} />
           <meshPhysicalMaterial color={metal} metalness={1} roughness={0.2} clearcoat={0.8} />
         </mesh>
       ))}
@@ -239,21 +264,24 @@ function Medallion({ line, ground, metal }: { line: string; ground: string; meta
 
 const CURRENCIES = ["$", "€", "£", "¥", "₹", "₿", "₽", "₩"];
 
-/** One currency symbol as a glowing sprite texture. */
+/** One currency symbol, engraved: a dark keyline under a solid fill, with a soft glow. */
 function glyph(ch: string, color: string): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
-  canvas.width = 128;
-  canvas.height = 128;
+  canvas.width = 160;
+  canvas.height = 160;
   const ctx = canvas.getContext("2d");
   if (ctx) {
     ctx.font =
-      "600 92px 'Bodoni Moda Variable', 'Segoe UI Symbol', 'Segoe UI', 'Noto Sans', sans-serif";
+      "700 112px 'Bodoni Moda Variable', 'Segoe UI Symbol', 'Segoe UI', 'Noto Sans', sans-serif";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.shadowColor = color;
-    ctx.shadowBlur = 18;
+    ctx.shadowBlur = 22;
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = "#0a0618";
+    ctx.strokeText(ch, 80, 88);
     ctx.fillStyle = color;
-    ctx.fillText(ch, 64, 70);
+    ctx.fillText(ch, 80, 88);
   }
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -278,69 +306,157 @@ function glow(color: string): THREE.CanvasTexture {
   return texture;
 }
 
-const RADIUS = 2.45;
-const STREAM = 30; // symbols on the ring
-const TAIL = 6; // fading echoes behind each symbol
+const RADIUS = 2.75;
+const STREAM = 24; // symbols in orbit
+const ACTORS = 7; // how many of them perform each pattern
+const TAIL = 5; // fading glow dots behind each symbol
+const TILT = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.36, 0, -0.24));
 const BEHIND = -Math.PI / 2; // the point on the orbit hidden behind the coin
 
 /**
- * The money trail: currency symbols stream round the ring, each with a comet tail. Every time a
- * symbol passes behind the coin it comes out as a different currency — layering, the way
- * laundered money moves through currencies to lose its origin. One in six is flagged (gold).
+ * The script the money performs: calm orbit, then the laundering typologies Verita detects —
+ * fan-in, a cycle (round-tripping through currencies), scatter-gather — each caught and named.
  */
-function Orbit({ neon, flag, pale }: { neon: string; flag: string; pale: string }) {
+const SCRIPT = [
+  { name: "ORBIT", dur: 5, caption: null },
+  { name: "FAN-IN", dur: 4.6, caption: "Pattern detected · FAN-IN — many accounts pay into one" },
+  { name: "ORBIT", dur: 3, caption: null },
+  { name: "CYCLE", dur: 5.2, caption: "Pattern detected · CYCLE — the money comes back changed" },
+  { name: "ORBIT", dur: 3, caption: null },
+  {
+    name: "SCATTER-GATHER",
+    dur: 4.8,
+    caption: "Pattern detected · SCATTER-GATHER — split apart, gathered again",
+  },
+] as const;
+const SCRIPT_LENGTH = SCRIPT.reduce((sum, p) => sum + p.dur, 0);
+
+function phaseAt(t: number) {
+  let local = t % SCRIPT_LENGTH;
+  for (const [index, phase] of SCRIPT.entries()) {
+    if (local < phase.dur) return { ...phase, local, index };
+    local -= phase.dur;
+  }
+  return { ...SCRIPT[0], local: 0, index: 0 };
+}
+
+const smooth = (x: number) => {
+  const c = Math.min(Math.max(x, 0), 1);
+  return c * c * (3 - 2 * c);
+};
+
+function Stream({
+  silver,
+  gold,
+  onCaption,
+}: {
+  silver: string;
+  gold: string;
+  onCaption: (caption: string | null) => void;
+}) {
   const textures = useMemo(
     () => ({
-      pale: CURRENCIES.map((ch) => glyph(ch, pale)),
-      gold: CURRENCIES.map((ch) => glyph(ch, flag)),
-      paleTail: glow(pale),
-      goldTail: glow(flag),
+      silver: CURRENCIES.map((ch) => glyph(ch, silver)),
+      gold: CURRENCIES.map((ch) => glyph(ch, gold)),
+      silverTail: glow(silver),
+      goldTail: glow(gold),
     }),
-    [pale, flag],
+    [silver, gold],
   );
   const sprites = useRef<(THREE.Sprite | null)[]>([]);
+  const history = useMemo(
+    () =>
+      Array.from({ length: STREAM }, () =>
+        Array.from({ length: TAIL * 3 }, () => new THREE.Vector3()),
+      ),
+    [],
+  );
   const stream = useMemo(
     () =>
       Array.from({ length: STREAM }, (_, i) => ({
-        offset: (i / STREAM) * TAU,
+        offset: (i / STREAM) * Math.PI * 2,
         base: (i * 3) % CURRENCIES.length,
         flagged: i % 6 === 0,
       })),
     [],
   );
+  const target = useMemo(() => new THREE.Vector3(), []);
   useFrame((state) => {
     const t = state.clock.elapsedTime;
+    const phase = phaseAt(t);
+    const pattern = phase.name !== "ORBIT";
+    // blend in and out of the formation
+    const blend = pattern ? smooth(phase.local / 1.1) * smooth((phase.dur - phase.local) / 0.9) : 0;
+    const caught = pattern && phase.local > 1.3 && phase.local < phase.dur - 0.6;
+    onCaption(caught ? phase.caption : null);
+    // which symbols perform this pattern: the ones nearest the front of the orbit
+    const firstActor = Math.floor((((t * 0.18) / (Math.PI * 2)) * STREAM + STREAM * 0.2) % STREAM);
+    const n = CURRENCIES.length;
+
     stream.forEach((s, i) => {
-      const front = s.offset + t * 0.2;
-      const lap = Math.floor((front - BEHIND) / TAU);
-      const n = CURRENCIES.length;
-      const which = (((s.base + lap) % n) + n) % n;
-      const head = (s.flagged ? textures.gold : textures.pale)[which];
-      const tail = s.flagged ? textures.goldTail : textures.paleTail;
+      const a = s.offset + t * 0.18;
+      const orbit = new THREE.Vector3(
+        Math.cos(a) * RADIUS,
+        0,
+        Math.sin(a) * RADIUS,
+      ).applyQuaternion(TILT);
+      const k = (i - firstActor + STREAM) % STREAM; // 0..ACTORS-1 for performers
+      const acting = pattern && k < ACTORS;
+      let which = (((s.base + Math.floor((a - BEHIND) / (Math.PI * 2))) % n) + n) % n;
+      const pos = orbit.clone();
+      if (acting) {
+        const u = k / (ACTORS - 1); // 0..1 across the performers
+        if (phase.name === "FAN-IN") {
+          // many senders converge on one account: the coin
+          const arrive = smooth((phase.local - 0.3 - k * 0.18) / 1.4);
+          target.set(0, 0, 0.7);
+          pos.lerp(target, arrive);
+        } else if (phase.name === "CYCLE") {
+          // a closed loop in front of the coin, changing currency at every hop
+          const ang = phase.local * 1.5 + (k / ACTORS) * Math.PI * 2;
+          target.set(Math.cos(ang) * 1.05, Math.sin(ang) * 1.05, 1.5);
+          pos.lerp(target, blend);
+          which = (s.base + Math.floor(phase.local * 2 + k)) % n;
+        } else {
+          // one source scatters into parallel lanes, then gathers into one destination
+          const p = smooth((phase.local - 0.6) / (phase.dur - 1.5));
+          const lane = (u - 0.5) * 2.2 * Math.sin(p * Math.PI);
+          target.set(-2.4 + 4.8 * p, -0.15 + lane, 1.4);
+          pos.lerp(target, blend);
+        }
+      }
+      const h = history[i];
+      if (h) {
+        h.pop();
+        h.unshift(pos.clone());
+      }
+      const golden = s.flagged || (acting && blend > 0.25);
       for (let j = 0; j <= TAIL; j += 1) {
         const sprite = sprites.current[i * (TAIL + 1) + j];
         if (!sprite) continue;
-        const a = front - j * 0.03;
-        const map = j === 0 ? head : tail;
-        sprite.position.set(Math.cos(a) * RADIUS, 0, Math.sin(a) * RADIUS);
+        const at = j === 0 ? pos : (h?.[j * 3] ?? pos);
+        sprite.position.copy(at);
+        const map =
+          j === 0
+            ? (golden ? textures.gold : textures.silver)[which]
+            : golden
+              ? textures.goldTail
+              : textures.silverTail;
         const material = sprite.material;
         if (material.map !== map) {
           material.map = map ?? null;
           material.needsUpdate = true;
         }
         const fade = 1 - j / (TAIL + 1);
-        const size = j === 0 ? (s.flagged ? 0.26 : 0.18) : (s.flagged ? 0.12 : 0.08) * fade;
+        const head = golden ? 0.44 : 0.34;
+        const size = j === 0 ? head : 0.14 * fade;
         sprite.scale.set(size, size, 1);
-        material.opacity = j === 0 ? 1 : 0.7 * fade;
+        material.opacity = j === 0 ? 1 : 0.6 * fade;
       }
     });
   });
   return (
-    <group rotation={[0.32, 0, -0.28]}>
-      <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[RADIUS, 0.01, 16, 256]} />
-        <meshBasicMaterial color={neon} toneMapped={false} />
-      </mesh>
+    <group>
       {Array.from({ length: STREAM * (TAIL + 1) }, (_, k) => (
         <sprite
           key={k}
@@ -355,20 +471,27 @@ function Orbit({ neon, flag, pale }: { neon: string; flag: string; pale: string 
   );
 }
 
-export default function VaultScene({ still = false }: { still?: boolean }) {
+export default function VaultScene({
+  still = false,
+  onSignal,
+}: {
+  still?: boolean;
+  /** Called every frame with what the page should show around the scene. */
+  onSignal?: (signal: StageSignal) => void;
+}) {
   const colors = useMemo(
     () => ({
       line: token("--hero-engrave", "#e9dcff"),
-      ground: token("--hero-coin", "#2a1650"),
+      ground: token("--hero-coin", "#1a0f33"),
       metal: token("--hero-metal", "#4a3d6e"),
-      neon: token("--hero-neon", "#ff4fd8"),
-      flag: token("--hero-flag", "#ffd27a"),
-      pale: token("--hero-particle", "#d8c8ff"),
+      gold: token("--hero-flag", "#f3d08a"),
+      silver: token("--hero-particle", "#eef0ff"),
       key: token("--hero-key", "#ff8be9"),
       fill: token("--hero-fill", "#6b7bff"),
     }),
     [],
   );
+  const signal = useRef<StageSignal>({ face: 1, caption: null });
   return (
     <Canvas
       camera={{ position: [0, 0, 6.2], fov: 42 }}
@@ -387,13 +510,27 @@ export default function VaultScene({ still = false }: { still?: boolean }) {
       <pointLight position={[4, 3, 4]} intensity={60} color={colors.key} />
       <pointLight position={[-4, -2, 3]} intensity={45} color={colors.fill} />
       <spotLight position={[0, 6, 2]} intensity={40} angle={0.5} penumbra={1} />
-      <Stars radius={60} depth={40} count={2200} factor={3} saturation={0} fade speed={0.4} />
-      <Medallion line={colors.line} ground={colors.ground} metal={colors.metal} />
-      <Orbit neon={colors.neon} flag={colors.flag} pale={colors.pale} />
+      <Stars radius={60} depth={40} count={1600} factor={3} saturation={0} fade speed={0.4} />
+      <Medallion
+        line={colors.line}
+        ground={colors.ground}
+        metal={colors.metal}
+        onFace={(face) => {
+          signal.current = { ...signal.current, face };
+          onSignal?.(signal.current);
+        }}
+      />
+      <Stream
+        silver={colors.silver}
+        gold={colors.gold}
+        onCaption={(caption) => {
+          if (signal.current.caption !== caption) signal.current = { ...signal.current, caption };
+        }}
+      />
       <EffectComposer>
-        <Bloom intensity={1.5} luminanceThreshold={0.32} luminanceSmoothing={0.3} mipmapBlur />
-        <Noise opacity={0.06} />
-        <Vignette offset={0.2} darkness={0.75} />
+        <Bloom intensity={1.4} luminanceThreshold={0.35} luminanceSmoothing={0.3} mipmapBlur />
+        <Noise opacity={0.05} />
+        <Vignette offset={0.25} darkness={0.85} />
       </EffectComposer>
     </Canvas>
   );

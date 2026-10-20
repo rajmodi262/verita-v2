@@ -100,13 +100,15 @@
   --fs-xl: 2rem;
   --fs-display: clamp(2.25rem, 5vw, 3.5rem);
   --fs-poster: clamp(6rem, 21vw, 22rem);
+  --fs-poster-side: clamp(4rem, 11vw, 14rem);
+  --fs-poster-small: 0.42em;
   --font-poster: "Big Shoulders Display", "Bodoni Moda Variable", sans-serif;
   --fs-page-title: clamp(2.6rem, 4.6vw, 4.4rem);
 
   /* Landing stage: always night — a violet sky of transactions (decorative, large type only) */
-  --hero-sky-1: #07031a;
-  --hero-sky-2: #1e0b4b;
-  --hero-sky-3: #3b1477;
+  --hero-sky-1: #030108;
+  --hero-sky-2: #0d0526;
+  --hero-sky-3: #2a0f5a;
   --hero-band: #6b2bd9b3;
   --hero-type-1: #f3ecff;
   --hero-type-2: #b9a3ff;
@@ -114,8 +116,10 @@
   --hero-coin: #1a0f33;
   --hero-metal: #4a3d6e;
   --hero-neon: #ff4fd8;
-  --hero-flag: #ffd27a;
-  --hero-particle: #d8c8ff;
+  --hero-flag: #f3d08a;
+  --hero-gold-glass: #f3d08a1f;
+  --hero-glint: #fff;
+  --hero-particle: #eef0ff;
   --hero-key: #ff8be9;
   --hero-fill: #6b7bff;
 

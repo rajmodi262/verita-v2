@@ -109,20 +109,22 @@
   margin-top: var(--space-2);
 }
 
-/* ── The stage: a night of transactions, the seal in front of the words ───────────────────── */
+/* ── The stage: near-black, the coin at the centre, the words flanking it ─────────────────── */
 .stage {
+  --face: 1;
+
   position: relative;
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto auto auto;
   justify-items: center;
-  width: 100vw;
+  width: 100vw; /* full-bleed; the landing hides scrollbars, so 100vw is the viewport */
   min-height: 100svh;
   margin: calc(-1 * var(--space-8)) 0 0 calc(50% - 50vw);
   overflow: hidden;
   color: var(--hero-type-1);
   background:
-    radial-gradient(ellipse 70% 55% at 50% 58%, var(--hero-sky-3), transparent 70%),
-    radial-gradient(ellipse 120% 80% at 50% 110%, var(--hero-sky-2), transparent 70%),
+    radial-gradient(ellipse 34% 42% at 50% 47%, var(--hero-sky-3), transparent 72%),
+    radial-gradient(ellipse 90% 60% at 50% 115%, var(--hero-sky-2), transparent 70%),
     var(--hero-sky-1);
 }
 
@@ -141,13 +143,6 @@
   text-transform: uppercase;
 }
 
-.brand {
-  font-family: var(--font-display);
-  font-size: var(--fs-md);
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-
 .navLinks {
   display: flex;
   gap: var(--space-6);
@@ -157,6 +152,7 @@
 .navCta {
   color: var(--hero-type-2);
   text-decoration: none;
+  transition: color var(--duration-fast);
 }
 
 .navCta {
@@ -170,43 +166,51 @@
   color: var(--hero-type-1);
 }
 
-.wordTop,
-.wordBottom {
+/* The words: they only appear while the coin's face is toward you, and a glint sweeps
+   across them as it turns (--face is written by the scene every frame). */
+.wordLeft,
+.wordRight {
   position: absolute;
-  z-index: 1;
-  left: 50%;
+  top: 50%;
+  z-index: 3;
   max-width: none;
   margin: 0;
   font-family: var(--font-poster);
-  font-size: var(--fs-poster);
+  font-size: var(--fs-poster-side);
   font-weight: 300;
   line-height: 0.82;
-  letter-spacing: 0.02em;
   text-transform: uppercase;
   white-space: nowrap;
-  background: linear-gradient(180deg, var(--hero-type-1) 15%, var(--hero-type-2) 85%);
+  background: linear-gradient(
+    100deg,
+    var(--hero-type-2) 0%,
+    var(--hero-type-1) 42%,
+    var(--hero-glint) 50%,
+    var(--hero-type-1) 58%,
+    var(--hero-type-2) 100%
+  );
+  background-size: 320% 100%;
+  background-position: calc((1 - var(--face)) * 100%) 0;
   background-clip: text;
   color: transparent;
-  transform: translateX(-50%);
-  animation: rise 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  opacity: calc(var(--face) * var(--face) * var(--face));
+  filter: blur(calc((1 - var(--face)) * 5px));
+  transform: translateY(-50%);
 }
 
-.wordTop {
-  top: 11%;
+.wordLeft {
+  left: 3vw;
 }
 
-.wordBottom {
-  top: 52%;
-  opacity: 0.55;
-  animation-delay: 0.15s;
+.wordRight {
+  right: 3vw;
+  text-align: right;
 }
 
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 8%);
-    filter: blur(8px);
-  }
+.wordSmall {
+  display: block;
+  font-size: var(--fs-poster-small);
+  letter-spacing: 0.08em;
 }
 
 .scene {
@@ -215,49 +219,139 @@
   z-index: 2;
 }
 
-.band {
+/* The pattern caption under the coin: appears when the money performs a typology. */
+.caption {
   position: relative;
   z-index: 3;
   grid-row: 3;
-  width: 100%;
-  padding: var(--space-3) var(--space-5);
-  background: linear-gradient(90deg, transparent, var(--hero-band), transparent);
-  text-align: center;
-  animation: rise-band 1s ease-out 0.6s both;
+  min-height: 1.6em;
+  max-width: none;
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-title);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hero-flag);
+  text-shadow: 0 0 18px var(--hero-flag);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
 }
 
-@keyframes rise-band {
-  from {
-    opacity: 0;
-  }
+.caption[data-on="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+.band {
+  position: relative;
+  z-index: 3;
+  grid-row: 4;
+  width: 100%;
+  padding: var(--space-2) var(--space-5);
+  text-align: center;
 }
 
 .headline {
   max-width: none;
   margin: 0;
   font-family: var(--font-title);
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
   font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--hero-type-1);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--hero-type-2);
 }
 
+/* The call to action: one glowing pill, one quiet link. */
 .stage .cta {
   position: relative;
   z-index: 3;
-  grid-row: 4;
-  padding: var(--space-6) 0 var(--space-7);
+  grid-row: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0 var(--space-8);
 }
 
-.stage .primary {
-  border-color: var(--hero-type-1);
-  background: var(--hero-type-1);
-  color: var(--hero-sky-1);
-}
-
-.stage .secondary {
-  border-color: var(--hero-type-2);
+.enter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--hero-flag);
+  border-radius: 999px;
+  background: var(--hero-gold-glass);
   color: var(--hero-type-1);
+  font-family: var(--font-title);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  box-shadow: 0 0 34px -8px var(--hero-flag);
+  backdrop-filter: blur(10px);
+  transition:
+    box-shadow var(--duration-base),
+    transform var(--duration-base);
+}
+
+.enter:hover {
+  box-shadow: 0 0 46px -4px var(--hero-flag);
+  transform: translateY(-1px);
+}
+
+.arrow {
+  transition: transform var(--duration-base);
+}
+
+.enter:hover .arrow {
+  transform: translateX(4px);
+}
+
+.evidence {
+  padding-bottom: 2px;
+  color: var(--hero-type-2);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  background: linear-gradient(var(--hero-type-1), var(--hero-type-1)) no-repeat 50% 100% / 0 1px;
+  transition:
+    background-size var(--duration-base),
+    color var(--duration-base);
+}
+
+.evidence:hover {
+  color: var(--hero-type-1);
+  background-size: 100% 1px;
+}
+
+.scrollCue {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 50%;
+  z-index: 3;
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(var(--hero-type-2), transparent);
+  transform: translateX(-50%);
+  animation: cue 2.2s ease-in-out infinite;
+}
+
+@keyframes cue {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translate(-50%, -6px);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, 0);
+  }
 }
 
 .flatSeal {
