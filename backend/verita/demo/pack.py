@@ -22,6 +22,7 @@ import gzip
 import hashlib
 import json
 import shutil
+import threading
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, cast
@@ -227,8 +228,13 @@ class PackEvidenceStore:
     def __init__(self, pack: Path) -> None:
         self.pack = pack
         self._index: dict[int, dict[str, Any]] | None = None
+        self._lock = threading.Lock()
 
     def _load(self) -> dict[int, dict[str, Any]]:
+        with self._lock:
+            return self._load_locked()
+
+    def _load_locked(self) -> dict[int, dict[str, Any]]:
         if self._index is None:
             index = {}
             with gzip.open(self.pack / "subgraphs.jsonl.gz", "rt", encoding="utf-8") as f:

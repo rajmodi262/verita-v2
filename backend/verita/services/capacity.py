@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import copy
 import json
 import math
+import threading
+from collections import OrderedDict
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -25,6 +28,8 @@ from verita.services.alerts import champion
 
 MODES = ("pooled", "mondrian")
 MAX_CACHED_DAYS = 16
+MAX_CACHED_PLANS = 512
+_SOLVES = threading.BoundedSemaphore(2)
 
 
 class DecideArtifacts:
@@ -34,8 +39,34 @@ class DecideArtifacts:
         self.root = root
         self._cache: dict[str, Any] = {}
         self._frames: dict[str, Any] = {}
+        self._plans: OrderedDict[tuple[Any, ...], dict[str, Any]] = OrderedDict()
+        self._lock = threading.Lock()
+        self._key_locks: dict[str, threading.Lock] = {}
+
+    def key_lock(self, key: str) -> threading.Lock:
+        """One lock per cache key: concurrent requests for a cold entry wait for one load
+        instead of each building their own copy (the load test OOM-killed the API that way)."""
+        with self._lock:
+            return self._key_locks.setdefault(key, threading.Lock())
+
+    def plan(self, key: tuple[Any, ...]) -> dict[str, Any] | None:
+        with self._lock:
+            hit = self._plans.get(key)
+            if hit is not None:
+                self._plans.move_to_end(key)
+        return copy.deepcopy(hit) if hit is not None else None
+
+    def store_plan(self, key: tuple[Any, ...], plan: dict[str, Any]) -> None:
+        with self._lock:
+            self._plans[key] = copy.deepcopy(plan)
+            while len(self._plans) > MAX_CACHED_PLANS:
+                self._plans.popitem(last=False)
 
     def json(self, name: str) -> Any:
+        with self.key_lock(f"json:{name}"):
+            return self._json(name)
+
+    def _json(self, name: str) -> Any:
         if name not in self._cache:
             path = self.root / f"{name}.json"
             if not path.exists():
@@ -57,6 +88,10 @@ class DecideArtifacts:
         self._frames[key] = value
 
     def isotonic(self) -> Any:
+        with self.key_lock("isotonic"):
+            return self._isotonic()
+
+    def _isotonic(self) -> Any:
         if "isotonic" not in self._cache:
             path = self.root / "isotonic.joblib"
             if not path.exists():
@@ -151,9 +186,16 @@ def _day_alerts(db: Session, art: DecideArtifacts, day: date) -> pd.DataFrame:
     a reload is a new model version)."""
     version = champion(db)
     key = f"alerts:{version.id}:{day.isoformat()}"
-    cached: pd.DataFrame | None = art.cached(key)
-    if cached is not None:
-        return cached
+    with art.key_lock(key):
+        cached: pd.DataFrame | None = art.cached(key)
+        if cached is not None:
+            return cached
+        return _load_day(db, art, key, version.id, day)
+
+
+def _load_day(
+    db: Session, art: DecideArtifacts, key: str, version_id: int, day: date
+) -> pd.DataFrame:
     stmt = select(
         Alert.id,
         Alert.score,
@@ -161,7 +203,7 @@ def _day_alerts(db: Session, art: DecideArtifacts, day: date) -> pd.DataFrame:
         Alert.typology_pred,
         Alert.top_amount,
         Alert.top_currency,
-    ).where(Alert.model_version_id == version.id, Alert.alert_date == day)
+    ).where(Alert.model_version_id == version_id, Alert.alert_date == day)
     frame = pd.DataFrame([tuple(r) for r in db.execute(stmt)], columns=_COLUMNS)
     art.store(key, frame)
     return frame
@@ -184,6 +226,39 @@ def compute_plan(
             "bad-analysts",
             f"analysts must be between {ops.min_analysts} and {ops.max_analysts}",
         )
+    # A plan is a pure function of these inputs while the champion's alerts are unchanged.
+    key = (
+        champion(db).id,
+        day.isoformat(),
+        analysts,
+        round(alpha, 6),
+        mode,
+        objective,
+        tuple(sorted((k, v) for k, v in (overrides or {}).items() if v is not None)),
+    )
+    cached = art.plan(key)
+    if cached is not None:
+        return cached
+    with _SOLVES:  # bound concurrent solves: each holds a day's alerts and a CP-SAT model
+        cached = art.plan(key)
+        if cached is not None:
+            return cached
+        plan = _solve(db, art, day, analysts, alpha, mode, ops, overridden, objective)
+    art.store_plan(key, plan)
+    return plan
+
+
+def _solve(
+    db: Session,
+    art: DecideArtifacts,
+    day: date,
+    analysts: int,
+    alpha: float,
+    mode: str,
+    ops: Operations,
+    overridden: list[str],
+    objective: str,
+) -> dict[str, Any]:
     alerts = _day_alerts(db, art, day).copy()
     if alerts.empty:
         raise AppError(404, "no-alerts", "No alerts on that day")

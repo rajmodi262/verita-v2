@@ -3837,9 +3837,517 @@
       },
       "decide": null,
       "defend": null,
-      "detect": null,
+      "detect": {
+        "ablation": [
+          {
+            "delta": {
+              "high": 0.192956,
+              "low": 0.107256,
+              "value": 0.143413
+            },
+            "f1": {
+              "high": 0.057245,
+              "low": 0.021754,
+              "value": 0.029837
+            },
+            "removed_group": "transaction"
+          },
+          {
+            "delta": {
+              "high": 0.042903,
+              "low": -0.01871,
+              "value": 0.010943
+            },
+            "f1": {
+              "high": 0.222661,
+              "low": 0.116912,
+              "value": 0.162307
+            },
+            "removed_group": "velocity"
+          },
+          {
+            "delta": {
+              "high": 0.042961,
+              "low": -0.008118,
+              "value": 0.016881
+            },
+            "f1": {
+              "high": 0.20649,
+              "low": 0.125445,
+              "value": 0.15637
+            },
+            "removed_group": "fan"
+          },
+          {
+            "delta": {
+              "high": 0.000709,
+              "low": -0.063002,
+              "value": -0.026911
+            },
+            "f1": {
+              "high": 0.286847,
+              "low": 0.147945,
+              "value": 0.200161
+            },
+            "removed_group": "recency"
+          },
+          {
+            "delta": {
+              "high": 0.020798,
+              "low": -0.014486,
+              "value": 0.003009
+            },
+            "f1": {
+              "high": 0.22814,
+              "low": 0.134619,
+              "value": 0.170241
+            },
+            "removed_group": "cycle"
+          }
+        ],
+        "hpo": {
+          "hpo_f1": 0.233677,
+          "params": {
+            "feature_fraction": 0.7551468623369483,
+            "lambda_l2": 15.723639849567242,
+            "learning_rate": 0.06229961564163355,
+            "min_data_in_leaf": 299,
+            "num_leaves": 29
+          },
+          "trials": 40
+        },
+        "imbalance": [
+          {
+            "f1": {
+              "high": 0.235161,
+              "low": 0.134543,
+              "value": 0.17325
+            },
+            "pr_auc": {
+              "high": 0.163788,
+              "low": 0.07369,
+              "value": 0.101609
+            },
+            "variant": "subsample_negatives_20pct (default)"
+          },
+          {
+            "f1": {
+              "high": 0.013481,
+              "low": 0.006858,
+              "value": 0.008952
+            },
+            "pr_auc": {
+              "high": 0.005389,
+              "low": 0.003262,
+              "value": 0.004028
+            },
+            "variant": "all_data_scale_pos_weight"
+          },
+          {
+            "f1": {
+              "high": 0.255467,
+              "low": 0.14678,
+              "value": 0.190476
+            },
+            "pr_auc": {
+              "high": 0.184215,
+              "low": 0.094042,
+              "value": 0.124591
+            },
+            "variant": "all_data_unweighted"
+          }
+        ],
+        "latency": {
+          "median_ms": 47.25,
+          "per_10k_rows_ms": 47.25,
+          "rows": 10000
+        },
+        "models": {
+          "lgbm_champion": {
+            "test": {
+              "base_rate": 0.000668,
+              "f1": {
+                "high": 0.235161,
+                "low": 0.134543,
+                "value": 0.17325
+              },
+              "positives": 925,
+              "pr_auc": {
+                "high": 0.163788,
+                "low": 0.07369,
+                "value": 0.101609
+              },
+              "precision": 0.241313,
+              "recall": 0.135135,
+              "rows": 1384810
+            },
+            "test_bulk": {
+              "base_rate": 0.000571,
+              "f1": {
+                "high": 0.153364,
+                "low": 0.091479,
+                "value": 0.122319
+              },
+              "positives": 791,
+              "pr_auc": {
+                "high": 0.092359,
+                "low": 0.037285,
+                "value": 0.064263
+              },
+              "precision": 0.16453,
+              "recall": 0.097345,
+              "rows": 1384587
+            },
+            "test_tail": {
+              "base_rate": 0.600897,
+              "f1": {
+                "high": 0.633895,
+                "low": 0.417373,
+                "value": 0.521739
+              },
+              "positives": 134,
+              "pr_auc": {
+                "high": 0.977582,
+                "low": 0.896844,
+                "value": 0.933486
+              },
+              "precision": 0.96,
+              "recall": 0.358209,
+              "rows": 223
+            }
+          },
+          "lgbm_transaction_only": {
+            "test": {
+              "base_rate": 0.000668,
+              "f1": {
+                "high": 0.199651,
+                "low": 0.074436,
+                "value": 0.105824
+              },
+              "positives": 925,
+              "pr_auc": {
+                "high": 0.103846,
+                "low": 0.021838,
+                "value": 0.032341
+              },
+              "precision": 0.085261,
+              "recall": 0.139459,
+              "rows": 1384810
+            },
+            "test_bulk": {
+              "base_rate": 0.000571,
+              "f1": {
+                "high": 0.071094,
+                "low": 0.008876,
+                "value": 0.058062
+              },
+              "positives": 791,
+              "pr_auc": {
+                "high": 0.03019,
+                "low": 0.008891,
+                "value": 0.017717
+              },
+              "precision": 0.04489,
+              "recall": 0.082174,
+              "rows": 1384587
+            },
+            "test_tail": {
+              "base_rate": 0.600897,
+              "f1": {
+                "high": 0.73934,
+                "low": 0.489477,
+                "value": 0.643216
+              },
+              "positives": 134,
+              "pr_auc": {
+                "high": 0.995335,
+                "low": 0.956223,
+                "value": 0.976916
+              },
+              "precision": 0.984615,
+              "recall": 0.477612,
+              "rows": 223
+            }
+          },
+          "rules_incumbent": {
+            "test": {
+              "base_rate": 0.000668,
+              "f1": {
+                "high": 0.002416,
+                "low": 0.001638,
+                "value": 0.001953
+              },
+              "positives": 925,
+              "pr_auc": {
+                "high": 0.000915,
+                "low": 0.000616,
+                "value": 0.000721
+              },
+              "precision": 0.000983,
+              "recall": 0.143784,
+              "rows": 1384810
+            },
+            "test_bulk": {
+              "base_rate": 0.000571,
+              "f1": {
+                "high": 0.002345,
+                "low": 0.001611,
+                "value": 0.001925
+              },
+              "positives": 791,
+              "pr_auc": {
+                "high": 0.000807,
+                "low": 0.000567,
+                "value": 0.000656
+              },
+              "precision": 0.000968,
+              "recall": 0.165613,
+              "rows": 1384587
+            },
+            "test_tail": {
+              "base_rate": 0.600897,
+              "f1": {
+                "high": 0.077535,
+                "low": 0.0,
+                "value": 0.029197
+              },
+              "positives": 134,
+              "pr_auc": {
+                "high": 0.658428,
+                "low": 0.595978,
+                "value": 0.622332
+              },
+              "precision": 0.666667,
+              "recall": 0.014925,
+              "rows": 223
+            }
+          }
+        },
+        "n_features": 44,
+        "per_typology": [
+          {
+            "detected": 13,
+            "recall": {
+              "high": 0.433685,
+              "low": 0.177301,
+              "value": 0.288889
+            },
+            "support": 45,
+            "typology": "BIPARTITE"
+          },
+          {
+            "detected": 17,
+            "recall": {
+              "high": 0.544209,
+              "low": 0.263653,
+              "value": 0.395349
+            },
+            "support": 43,
+            "typology": "CYCLE"
+          },
+          {
+            "detected": 8,
+            "recall": {
+              "high": 0.751905,
+              "low": 0.30117,
+              "value": 0.533333
+            },
+            "support": 15,
+            "typology": "FAN-IN"
+          },
+          {
+            "detected": 12,
+            "recall": {
+              "high": 0.374127,
+              "low": 0.142974,
+              "value": 0.24
+            },
+            "support": 50,
+            "typology": "FAN-OUT"
+          },
+          {
+            "detected": 31,
+            "recall": {
+              "high": 0.520214,
+              "low": 0.304438,
+              "value": 0.407895
+            },
+            "support": 76,
+            "typology": "GATHER-SCATTER"
+          },
+          {
+            "detected": 7,
+            "recall": {
+              "high": 0.491677,
+              "low": 0.149146,
+              "value": 0.291667
+            },
+            "support": 24,
+            "typology": "RANDOM"
+          },
+          {
+            "detected": 22,
+            "recall": {
+              "high": 0.465964,
+              "low": 0.239231,
+              "value": 0.34375
+            },
+            "support": 64,
+            "typology": "SCATTER-GATHER"
+          },
+          {
+            "detected": 7,
+            "recall": {
+              "high": 0.46083,
+              "low": 0.137044,
+              "value": 0.269231
+            },
+            "support": 26,
+            "typology": "STACK"
+          },
+          {
+            "detected": 8,
+            "recall": {
+              "high": 0.026887,
+              "low": 0.006981,
+              "value": 0.013746
+            },
+            "support": 582,
+            "typology": "UNATTRIBUTED"
+          }
+        ],
+        "published_baselines": {
+          "metric": "minority_class_f1_percent",
+          "rows": {
+            "GFP + LightGBM": {
+              "mean": 20.83,
+              "std": 1.5
+            },
+            "GFP + XGBoost": {
+              "mean": 27.3,
+              "std": 0.33
+            },
+            "GIN": {
+              "mean": 7.9,
+              "std": 2.78
+            },
+            "GIN + EU": {
+              "mean": 20.62,
+              "std": 2.41
+            },
+            "PNA": {
+              "mean": 16.45,
+              "std": 1.46
+            }
+          },
+          "source": "arXiv:2306.16424v3 Table 2"
+        },
+        "sanity": {
+          "label_shuffle": {
+            "base_rate": 0.000668,
+            "interpretation": "with shuffled labels PR-AUC should collapse to about the base rate",
+            "test_pr_auc": 0.00071
+          },
+          "random_split": {
+            "interpretation": "compare with the temporal test F1; the gap is the optimism a random split would have reported",
+            "random_split_test_f1": 0.25239
+          }
+        },
+        "seeds": {
+          "f1": [
+            0.17325,
+            0.185504,
+            0.174746,
+            0.175131,
+            0.158694
+          ],
+          "f1_mean": 0.173465,
+          "f1_std": 0.009586,
+          "pr_auc": [
+            0.101609,
+            0.122428,
+            0.110011,
+            0.104853,
+            0.100863
+          ],
+          "pr_auc_mean": 0.107953,
+          "seeds": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        },
+        "shap_top": [
+          {
+            "feature": "payment_format_code",
+            "mean_abs_shap": 0.787553
+          },
+          {
+            "feature": "s_age_min",
+            "mean_abs_shap": 0.550055
+          },
+          {
+            "feature": "r_in_n_7d",
+            "mean_abs_shap": 0.439063
+          },
+          {
+            "feature": "s_out_n_1h",
+            "mean_abs_shap": 0.36806
+          },
+          {
+            "feature": "s_out_n_7d",
+            "mean_abs_shap": 0.267508
+          },
+          {
+            "feature": "s_since_last_out_min",
+            "mean_abs_shap": 0.251358
+          },
+          {
+            "feature": "self_transfer",
+            "mean_abs_shap": 0.198435
+          },
+          {
+            "feature": "s_payees_7d",
+            "mean_abs_shap": 0.156343
+          },
+          {
+            "feature": "log_amount_received",
+            "mean_abs_shap": 0.143432
+          },
+          {
+            "feature": "log_amount_paid",
+            "mean_abs_shap": 0.137388
+          }
+        ],
+        "threshold": 0.41050250285226475,
+        "typology_head": {
+          "accuracy": 0.6584,
+          "macro_f1": 0.1877,
+          "majority_class_accuracy": 0.6292
+        }
+      },
       "label": "IBM AML LI-Small (synthetic)",
       "lineage": [
+        {
+          "config_hash": "aa643cba66e8605928c4d15ad993fba123baa4d61e06a1623ce249fcb6aced7e",
+          "duration_s": 19662.638,
+          "git_revision": "3e3e20dfb089d51b19c135e13e118091b55a1894+dirty",
+          "inputs": {
+            "artifacts/li_small/splits.json": "b6f58b9a18d960e09a17dc44c267f1a139da84d097adfb2ffa799fac4f59d5b2",
+            "data/processed/li_small/features.parquet": "b512067acab59e33d8011aebb644b79796536ad058b8aad2e90fb79b19d63bf0",
+            "data/processed/li_small/pattern_links.parquet": "ba37a29b9417aaaac902a6cb2b4d51cd7ce113a4747134ec5ed86aec9c037620"
+          },
+          "outputs": {
+            "artifacts/li_small/detect/champion.txt": "8cb447bd3009d6f912e53eda99fc6109f291d3750b8f3162b1333d8b23b89221",
+            "artifacts/li_small/detect/registry.json": "72db614e17761ad2805bb41f0776fe61e87d342cce7f94454a0a86a80b91155b",
+            "artifacts/li_small/detect/typology.txt": "a8683954f89335fda713b15d5d1a2e8665069ef5800da479302d85abbd9ec1bf",
+            "data/processed/li_small/scores.parquet": "1a5697c25e42d1b2bdfa1e013b2d534c617a35611d399524e3b863d5e68eff73"
+          },
+          "stage": "detect",
+          "started_at": "2026-10-20T03:13:26.054063+00:00"
+        },
         {
           "config_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
           "duration_s": 101.248,
@@ -3920,8 +4428,8 @@
       ]
     }
   },
-  "generated_at": "2026-10-20T03:14:03+00:00",
-  "git_sha": "99935257aa03",
+  "generated_at": "2026-10-20T09:04:07+00:00",
+  "git_sha": "3e3e20dfb089",
   "headline": [
     {
       "dataset": "IBM AML HI-Small (synthetic)",
@@ -4042,8 +4550,71 @@
       "source": "artifacts/bench.json",
       "split": "test",
       "value": 256.9
+    },
+    {
+      "dataset": "IBM AML LI-Small (synthetic)",
+      "high": 0.235161,
+      "key": "detect.f1",
+      "label": "Laundering F1 (champion)",
+      "low": 0.134543,
+      "n": 925,
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.17325
+    },
+    {
+      "dataset": "IBM AML LI-Small (synthetic)",
+      "high": 0.163788,
+      "key": "detect.pr_auc",
+      "label": "PR-AUC (champion)",
+      "low": 0.07369,
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.101609
+    },
+    {
+      "dataset": "IBM AML LI-Small (synthetic)",
+      "high": 0.002416,
+      "key": "detect.rules_f1",
+      "label": "Laundering F1 (rules incumbent)",
+      "low": 0.001638,
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.001953
+    },
+    {
+      "dataset": "IBM AML LI-Small (synthetic)",
+      "key": "detect.seed_std",
+      "label": "F1 standard deviation over seeds",
+      "source": "artifacts/detect/metrics.json",
+      "split": "test",
+      "value": 0.009586
+    },
+    {
+      "dataset": "IBM AML LI-Small (synthetic)",
+      "key": "detect.paper_gfp_lgbm",
+      "label": "Published GFP + LightGBM F1 (%)",
+      "source": "arXiv:2306.16424v3 Table 2",
+      "split": "test",
+      "value": 20.83
     }
   ],
+  "perf": {
+    "analysts": {
+      "error_rate": 0,
+      "p50_ms": 20.0,
+      "p95_ms": 47.8,
+      "requests": 1872,
+      "requests_per_second": 20.7
+    },
+    "stress": {
+      "error_rate": 0,
+      "p50_ms": 226.2,
+      "p95_ms": 372.0,
+      "requests": 16539,
+      "requests_per_second": 194.1
+    }
+  },
   "primary_dataset": "hi_small",
   "schema_version": 1,
   "synthetic_data_notice": "All results are on synthetic data (IBM AML, Altman et al. 2023). They do not establish performance on real bank data."

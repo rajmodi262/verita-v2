@@ -27,13 +27,15 @@ Synthetic data only: All results are on synthetic data (IBM AML, Altman et al. 2
 | Calibration error (ECE), before → after isotonic | 0.0116 → 0.0020 | test split |
 | Planted narrative faults caught by the verifier | 99.96% (99.77%–99.99%) | 2,438 faults in 300 cases |
 | Clean narratives wrongly rejected | 0.0% (0.0%–1.3%) | 300 cases |
+| Robustness: laundering F1 on IBM AML LI-Small (synthetic) | 17.3% (13.5%–23.5%) | published GFP + XGBoost 27.30% |
+| Latency p95, 50 analysts working (k6, through nginx) | 47.8 ms | 1,872 requests, 0.0% errors |
 
 Where it is weak: bulk-day F1 is 38.5% (32.5%–44.5%); per-typology recall ranges from
 29.1% (20.5%–39.4%) (RANDOM) to 66.8% (62.1%–71.3%) (GATHER-SCATTER);
 the 95% recall guarantee would need 3,139 analysts on the busiest replay day. Full
 report: [reports/EVAL_REPORT.md](reports/EVAL_REPORT.md) · [MODEL_CARD.md](MODEL_CARD.md).
 
-<sub>metrics.json schema 1, built at commit `99935257aa03`.</sub>
+<sub>metrics.json schema 1, built at commit `3e3e20dfb089`.</sub>
 <!-- metrics:end -->
 
 The model is trained and evaluated on **synthetic** data (IBM AML, Altman et al., 2023). Results

@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, Field
 
 from verita.api.deps import CsrfSessionDep, DbDep, require_role
+from verita.api.params import AlertId
 from verita.api.schemas import AlertDetail, AlertList, QueueMeta, Subgraph
 from verita.api.state import evidence_store
 from verita.db.detect_models import DispositionAction
@@ -44,7 +45,7 @@ def meta(db: DbDep) -> dict[str, Any]:
 
 
 @router.get("/{alert_id}", dependencies=[READERS], response_model=AlertDetail)
-def detail(alert_id: int, db: DbDep) -> dict[str, Any]:
+def detail(alert_id: AlertId, db: DbDep) -> dict[str, Any]:
     return svc.alert_detail(db, alert_id)
 
 
@@ -54,7 +55,7 @@ def detail(alert_id: int, db: DbDep) -> dict[str, Any]:
     response_model=Subgraph,
     response_model_by_alias=True,
 )
-def subgraph(alert_id: int, db: DbDep, request: Request) -> dict[str, Any]:
+def subgraph(alert_id: AlertId, db: DbDep, request: Request) -> dict[str, Any]:
     alert = svc.get_alert(db, alert_id)
     version = svc.champion(db)
     ref = AlertRef(
@@ -71,7 +72,7 @@ class DispositionIn(BaseModel):
 
 @router.post("/{alert_id}/disposition", response_model=AlertDetail)
 def disposition(
-    alert_id: int, body: DispositionIn, db: DbDep, info: CsrfSessionDep, request: Request
+    alert_id: AlertId, body: DispositionIn, db: DbDep, info: CsrfSessionDep, request: Request
 ) -> dict[str, Any]:
     DECIDERS(info)
     ip = request.client.host if request.client else None

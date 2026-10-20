@@ -40,7 +40,7 @@ def main(base: str) -> int:
     headline = httpx.get(f"{api}/evidence-room/headline").json()
     check("public headline", len(headline["headline"]) > 0, f"{len(headline['headline'])} figures")
     web = httpx.get(base)
-    check("SPA served", web.status_code == 200 and "<div id=\"root\"" in web.text)
+    check("SPA served", web.status_code == 200 and '<div id="root"' in web.text)
     check("CSP header", "default-src 'self'" in web.headers.get("content-security-policy", ""))
 
     analyst, a_csrf = session("analyst")
@@ -48,15 +48,23 @@ def main(base: str) -> int:
     check("queue", queue["total"] > 0, f"{queue['total']} alerts")
     top = queue["items"][0]["id"]
     graph = analyst.get(f"{api}/alerts/{top}/subgraph")
-    check("evidence subgraph (from pack)", graph.status_code == 200, f"{len(graph.json()['edges'])} edges")
+    check(
+        "evidence subgraph (from pack)",
+        graph.status_code == 200,
+        f"{len(graph.json()['edges'])} edges",
+    )
     meta = analyst.get(f"{api}/capacity/meta").json()
     plan = analyst.get(f"{api}/capacity/plan", params={"date": meta["days"][0], "analysts": 6})
     check("capacity plan", plan.status_code == 200, plan.json().get("solver"))
 
     case = analyst.post(f"{api}/cases", json={"alert_ids": [top]}, headers=a_csrf)
-    check("case created", case.status_code == 201, case.text[:120] if case.status_code != 201 else "")
+    check(
+        "case created", case.status_code == 201, case.text[:120] if case.status_code != 201 else ""
+    )
     case_id = case.json()["id"]
-    job = analyst.post(f"{api}/cases/{case_id}/narrative", json={"mode": "offline"}, headers=a_csrf).json()
+    job = analyst.post(
+        f"{api}/cases/{case_id}/narrative", json={"mode": "offline"}, headers=a_csrf
+    ).json()
     for _ in range(60):
         status = analyst.get(f"{api}/jobs/{job['id']}").json()
         if status["status"] in ("done", "failed"):
@@ -65,7 +73,10 @@ def main(base: str) -> int:
     check("narrative drafted by the worker", status["status"] == "done", status.get("error") or "")
     detail = analyst.get(f"{api}/cases/{case_id}").json()
     check("verified", detail["state"] == "verified", detail["state"])
-    check("submitted", analyst.post(f"{api}/cases/{case_id}/submit", headers=a_csrf).status_code == 200)
+    check(
+        "submitted",
+        analyst.post(f"{api}/cases/{case_id}/submit", headers=a_csrf).status_code == 200,
+    )
 
     mlro, m_csrf = session("mlro")
     signed = mlro.post(f"{api}/cases/{case_id}/approve", headers=m_csrf)

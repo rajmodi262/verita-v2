@@ -1,0 +1,8 @@
+# Scrapes the API directly on the compose network (nginx refuses /api/metrics publicly).
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: verita-api
+    metrics_path: /api/metrics
+    static_configs:
+      - targets: ["api:8000"]

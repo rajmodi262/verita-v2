@@ -84,4 +84,35 @@ passed. Sparse tail days:
 2022-09-11, 2022-09-12, 2022-09-13, 2022-09-14, 2022-09-15, 2022-09-16, 2022-09-17.
 
 ### Detect
-Not evaluated on this dataset yet.
+| Model | Test F1 | Bulk-day F1 | Tail F1 | PR-AUC |
+|---|---|---|---|---|
+| lgbm_champion | 17.3% (13.5%–23.5%) | 12.2% (9.1%–15.3%) | 52.2% (41.7%–63.4%) | 10.2% (7.4%–16.4%) |
+| lgbm_transaction_only | 10.6% (7.4%–20.0%) | 5.8% (0.9%–7.1%) | 64.3% (48.9%–73.9%) | 3.2% (2.2%–10.4%) |
+| rules_incumbent | 0.2% (0.2%–0.2%) | 0.2% (0.2%–0.2%) | 2.9% (0.0%–7.8%) | 0.1% (0.1%–0.1%) |
+
+Published baselines (arXiv:2306.16424v3 Table 2, minority-class F1 %):
+GFP + LightGBM 20.83; GFP + XGBoost 27.30; GIN 7.90; GIN + EU 20.62; PNA 16.45.
+
+Feature-group ablation (paired bootstrap Δ F1, champion minus ablated):
+* without transaction: 3.0% (2.2%–5.7%); Δ 0.143 (0.107–0.193)
+* without velocity: 16.2% (11.7%–22.3%); Δ 0.011 (-0.019–0.043)
+* without fan: 15.6% (12.5%–20.6%); Δ 0.017 (-0.008–0.043)
+* without recency: 20.0% (14.8%–28.7%); Δ -0.027 (-0.063–0.001)
+* without cycle: 17.0% (13.5%–22.8%); Δ 0.003 (-0.014–0.021)
+
+Imbalance handling:
+* subsample_negatives_20pct (default): F1 17.3% (13.5%–23.5%)
+* all_data_scale_pos_weight: F1 0.9% (0.7%–1.3%)
+* all_data_unweighted: F1 19.0% (14.7%–25.5%)
+
+Typology head accuracy 65.8% vs majority class
+62.9% (macro-F1 0.188).
+
+## Load (k6 through nginx, demo stack)
+| Scenario | Requests/s | p50 | p95 | Errors |
+|---|---|---|---|---|
+| analysts | 20.7 | 20.0 ms | 47.8 ms | 0.0% |
+| stress | 194.1 | 226.2 ms | 372.0 ms | 0.0% |
+
+"analysts": 50 users pausing 1–3 s between actions (acceptance p95 < 300 ms). "stress": the same
+users with no pauses — the saturation throughput, reported without a latency target.

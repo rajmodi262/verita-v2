@@ -9,6 +9,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response
 
 from verita.api import case_schemas as cs
 from verita.api.deps import CsrfSessionDep, DbDep, SessionDep, require_role
+from verita.api.params import CaseId, JobId
 from verita.api.state import evidence_store
 from verita.db.case_models import CLOSE_REASONS, RETURN_REASONS
 from verita.db.models import Role
@@ -70,13 +71,13 @@ def create(
     response_model=cs.CaseDetail,
     response_model_by_alias=True,
 )
-def detail(case_id: int, db: DbDep, info: SessionDep) -> dict[str, Any]:
+def detail(case_id: CaseId, db: DbDep, info: SessionDep) -> dict[str, Any]:
     return svc.case_view(db, case_id, info.user)
 
 
 @router.post("/cases/{case_id}/narrative", response_model=cs.JobOut, status_code=202)
 def draft(
-    case_id: int,
+    case_id: CaseId,
     body: cs.DraftIn,
     request: Request,
     background: BackgroundTasks,
@@ -97,7 +98,7 @@ def draft(
     "/cases/{case_id}/narrative", response_model=cs.CaseDetail, response_model_by_alias=True
 )
 def edit(
-    case_id: int, body: cs.EditIn, request: Request, db: DbDep, info: CsrfSessionDep
+    case_id: CaseId, body: cs.EditIn, request: Request, db: DbDep, info: CsrfSessionDep
 ) -> dict[str, Any]:
     MAKERS(info)
     svc.save_edit(db, case_id, info.user, [s.model_dump() for s in body.sentences])
@@ -106,14 +107,14 @@ def edit(
 
 
 @router.post("/cases/{case_id}/verify", response_model=cs.CaseDetail, response_model_by_alias=True)
-def run_verify(case_id: int, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
+def run_verify(case_id: CaseId, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
     MAKERS(info)
     svc.run_verification(db, case_id, info.user)
     return svc.case_view(db, case_id, info.user)
 
 
 @router.post("/cases/{case_id}/submit", response_model=cs.CaseDetail, response_model_by_alias=True)
-def submit(case_id: int, request: Request, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
+def submit(case_id: CaseId, request: Request, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
     MAKERS(info)
     svc.submit(db, case_id, info.user)
     _audit(db, request, info.user.id, "case.submitted", case_id)
@@ -121,7 +122,7 @@ def submit(case_id: int, request: Request, db: DbDep, info: CsrfSessionDep) -> d
 
 
 @router.post("/cases/{case_id}/approve", response_model=cs.CaseDetail, response_model_by_alias=True)
-def approve(case_id: int, request: Request, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
+def approve(case_id: CaseId, request: Request, db: DbDep, info: CsrfSessionDep) -> dict[str, Any]:
     CHECKERS(info)
     sig = svc.approve(db, case_id, info.user)
     _audit(db, request, info.user.id, "case.signed", case_id, merkle_root=sig.merkle_root)
@@ -130,7 +131,7 @@ def approve(case_id: int, request: Request, db: DbDep, info: CsrfSessionDep) -> 
 
 @router.post("/cases/{case_id}/return", response_model=cs.CaseDetail, response_model_by_alias=True)
 def return_case(
-    case_id: int, body: cs.ReasonIn, request: Request, db: DbDep, info: CsrfSessionDep
+    case_id: CaseId, body: cs.ReasonIn, request: Request, db: DbDep, info: CsrfSessionDep
 ) -> dict[str, Any]:
     CHECKERS(info)
     svc.return_case(db, case_id, info.user, body.reason, body.note)
@@ -140,7 +141,7 @@ def return_case(
 
 @router.post("/cases/{case_id}/close", response_model=cs.CaseDetail, response_model_by_alias=True)
 def close(
-    case_id: int, body: cs.ReasonIn, request: Request, db: DbDep, info: CsrfSessionDep
+    case_id: CaseId, body: cs.ReasonIn, request: Request, db: DbDep, info: CsrfSessionDep
 ) -> dict[str, Any]:
     MAKERS(info)
     svc.close_case(db, case_id, info.user, body.reason, body.note)
@@ -151,14 +152,14 @@ def close(
 @router.get(
     "/cases/{case_id}/verify-signature", dependencies=[READERS], response_model=cs.SignatureCheck
 )
-def verify_signature(case_id: int, db: DbDep) -> dict[str, Any]:
+def verify_signature(case_id: CaseId, db: DbDep) -> dict[str, Any]:
     """Server-side check of the signed export and the ledger (the CLI does the same offline)."""
     result = svc.verify_export(svc.export_document(db, case_id))
     return {**result, "ledger": ledger.verify_chain(ledger.events(db, case_id))}
 
 
 @router.get("/cases/{case_id}/export.json", dependencies=[READERS])
-def export_json(case_id: int, db: DbDep) -> Response:
+def export_json(case_id: CaseId, db: DbDep) -> Response:
     from verita.defend.canonical import canonicalize  # noqa: PLC0415
 
     body = canonicalize(svc.export_document(db, case_id))
@@ -170,7 +171,7 @@ def export_json(case_id: int, db: DbDep) -> Response:
 
 
 @router.get("/cases/{case_id}/export-tampered.json", dependencies=[READERS])
-def export_tampered(case_id: int, db: DbDep) -> Response:
+def export_tampered(case_id: CaseId, db: DbDep) -> Response:
     """Demo: the signed export with one payment amount changed, to show verification failing."""
     from verita.defend.canonical import canonicalize  # noqa: PLC0415
 
@@ -188,7 +189,7 @@ def export_tampered(case_id: int, db: DbDep) -> Response:
 
 
 @router.get("/cases/{case_id}/export.pdf", dependencies=[READERS])
-def export_pdf(case_id: int, db: DbDep) -> Response:
+def export_pdf(case_id: CaseId, db: DbDep) -> Response:
     return Response(
         render_pdf(svc.export_document(db, case_id)),
         media_type="application/pdf",
@@ -197,7 +198,7 @@ def export_pdf(case_id: int, db: DbDep) -> Response:
 
 
 @router.get("/jobs/{job_id}", dependencies=[READERS], response_model=cs.JobOut)
-def job(job_id: int, db: DbDep) -> dict[str, Any]:
+def job(job_id: JobId, db: DbDep) -> dict[str, Any]:
     return jobs.job_view(jobs.get_job(db, job_id))
 
 

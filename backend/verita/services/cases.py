@@ -23,6 +23,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from verita.api.observability import SIGNATURES, VERIFICATIONS
 from verita.core.config import Settings
 from verita.core.errors import AppError
 from verita.db.base import utcnow
@@ -48,7 +49,7 @@ from verita.defend.merkle import MerkleTree, changed_leaves, leaf_hash
 from verita.defend.signing import Signer, load_public_pem, verify_signature
 from verita.defend.verifier import verify
 from verita.services import jobs, ledger
-from verita.services.alerts import champion, get_alert
+from verita.services.alerts import champion, clear_counts, get_alert
 from verita.services.evidence import AlertRef, SubgraphSource
 
 MAX_ALERTS_PER_CASE = 10
@@ -196,6 +197,7 @@ def create_case(
     for a in alerts:
         db.add(CaseAlert(case_id=case.id, alert_id=a.id))
         a.status = AlertStatus.IN_CASE.value
+    clear_counts()
     ledger.append(
         db,
         case.id,
@@ -229,6 +231,7 @@ def _record_verification(db: Session, case: Case, nar: Narrative, user_id: int) 
     )
     db.add(ver)
     db.flush()
+    VERIFICATIONS.labels(str(ver.passed).lower()).inc()
     _set_state(case, CaseState.VERIFIED if ver.passed else CaseState.DRAFT)
     ledger.append(
         db,
@@ -466,6 +469,7 @@ def approve(db: Session, case_id: int, user: User) -> Signature:
     db.add(sig)
     _set_state(case, CaseState.SIGNED)
     db.flush()
+    SIGNATURES.inc()
     ledger.append(
         db,
         case.id,
