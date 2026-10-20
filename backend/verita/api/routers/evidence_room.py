@@ -9,6 +9,7 @@ from typing import Any
 from fastapi import APIRouter, Depends, Request
 
 from verita.api.deps import require_role
+from verita.api.state import metrics_path
 from verita.core.errors import AppError
 from verita.db.models import Role
 
@@ -19,7 +20,7 @@ READERS = Depends(require_role(Role.ANALYST, Role.MLRO, Role.VALIDATOR, Role.REV
 @router.get("/metrics", dependencies=[READERS])
 def metrics(request: Request) -> dict[str, Any]:
     """The metrics file every number in the product comes from, plus its SHA-256."""
-    path = request.app.state.settings.data_root / "reports" / "metrics.json"
+    path = metrics_path(request.app.state.settings)
     if not path.exists():
         raise AppError(
             503, "no-metrics", "No evaluation report yet", detail="Run `verita report build`."

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -11,7 +12,9 @@ from typing import Any
 
 import yaml
 
-REPO_ROOT = Path(__file__).resolve().parents[3]
+# The repository root (configs/, prompts/, reports/, data/, artifacts/). Derived from the source
+# tree in development; containers install the package elsewhere and set VERITA_REPO_ROOT.
+REPO_ROOT = Path(os.environ.get("VERITA_REPO_ROOT") or Path(__file__).resolve().parents[3])
 CONFIG_DIR = REPO_ROOT / "configs"
 
 

@@ -20,7 +20,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Protocol, cast
 
 import duckdb
 import pandas as pd
@@ -47,6 +47,12 @@ class AlertRef:
     alert_date: date
     top_txn_id: int
     threshold: float
+
+
+class SubgraphSource(Protocol):
+    """Where an alert's evidence subgraph comes from (the full store, or a demo pack)."""
+
+    def subgraph(self, alert: AlertRef) -> dict[str, Any]: ...
 
 
 class EvidenceStore:

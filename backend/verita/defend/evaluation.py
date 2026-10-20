@@ -33,7 +33,7 @@ from verita.defend.verifier import VERIFIER_VERSION, verify
 from verita.ml.evaluation import wilson
 from verita.pipeline.config import Dataset
 from verita.services.alerts import champion
-from verita.services.evidence import AlertRef, EvidenceStore
+from verita.services.evidence import AlertRef, EvidenceStore, SubgraphSource
 
 MAX_MISSES = 5
 
@@ -47,7 +47,7 @@ def _sample(db: Session, n: int, seed: int) -> list[Alert]:
     return list(db.scalars(stmt))
 
 
-def _inputs(db: Session, store: EvidenceStore, alerts: list[Alert]) -> list[AlertInput]:
+def _inputs(db: Session, store: SubgraphSource, alerts: list[Alert]) -> list[AlertInput]:
     threshold = champion(db).threshold
     out = []
     for a in alerts:
