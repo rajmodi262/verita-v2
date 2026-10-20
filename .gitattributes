@@ -3,3 +3,4 @@
 *.jpg binary
 *.pdf binary
 *.parquet binary
+backend/verita/defend/schemas/*.xsd -text
