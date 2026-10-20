@@ -41,7 +41,7 @@ MAX_MISSES = 5
 def _sample(db: Session, n: int, seed: int) -> list[Alert]:
     version = champion(db)
     ids = list(db.scalars(select(Alert.id).where(Alert.model_version_id == version.id)))
-    rng = random.Random(seed)  # noqa: S311 - sampling, not crypto
+    rng = random.Random(seed)  # noqa: S311  # nosec B311 - sampling, not crypto
     picked = sorted(rng.sample(ids, min(n, len(ids))))
     stmt = select(Alert).where(Alert.id.in_(picked)).options(selectinload(Alert.reasons))
     return list(db.scalars(stmt))

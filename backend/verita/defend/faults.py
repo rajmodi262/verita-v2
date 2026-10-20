@@ -223,7 +223,7 @@ def inject(
 ) -> Variant | None:
     """One variant with exactly one ``fault``, or None when the narrative offers no target."""
     copy_ = [dict(copy.deepcopy(dict(s))) for s in sentences]
-    rng = random.Random(f"{seed}:{fault}")  # noqa: S311 - reproducible test data, not crypto
+    rng = random.Random(f"{seed}:{fault}")  # noqa: S311  # nosec B311 - reproducible, not crypto
     ctx = {"evidence": evidence, "foreign_accounts": foreign_accounts}
     planted = _INJECTORS[fault](copy_, rng, ctx)
     if planted is None:
