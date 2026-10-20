@@ -234,6 +234,82 @@ def detect_alerts(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
     _run_stage(run, dataset, root)
 
 
+models_app = typer.Typer(
+    no_args_is_help=True, help="Model governance: list, validate (policy gates) and show models."
+)
+app.add_typer(models_app, name="models")
+
+
+@models_app.command("list")
+def models_list() -> None:
+    """Every model version with its lifecycle status and governance state."""
+    from verita.services import models as governance  # noqa: PLC0415
+
+    factory = make_session_factory(make_engine(get_settings().database_url))
+    with factory() as db:
+        for m in governance.list_models(db):
+            gates = m["validation"]
+            verdict = "-" if gates is None else ("passed" if gates["passed"] else "FAILED")
+            typer.echo(
+                f"#{m['id']:<4} {m['dataset']:<9} {m['name']:<16} {m['status']:<10} "
+                f"validation {verdict:<7} governance {m['governance']}"
+            )
+
+
+@models_app.command("validate")
+def models_validate(
+    dataset: DatasetOpt,
+    model_id: Annotated[int | None, typer.Option(help="Model version (default: newest)")] = None,
+    root: RootOpt = REPO_ROOT,
+    strict: Annotated[
+        bool, typer.Option(help="Exit 1 when a gate fails (pipelines pass --no-strict)")
+    ] = True,
+) -> None:
+    """Evaluate configs/model_policy.yaml's gates; store the report on the model version.
+
+    Writes artifacts/<dataset>/models/validation.json (read by `verita report build`) and a
+    Markdown copy. A failed gate means the model cannot be approved.
+    """
+    from verita.db.detect_models import ModelVersion  # noqa: PLC0415
+    from verita.ml.validation import render_markdown  # noqa: PLC0415
+    from verita.services import models as governance  # noqa: PLC0415
+
+    ds = get_dataset(dataset, root=root)
+    factory = make_session_factory(make_engine(get_settings().database_url))
+    with transaction(factory) as db:
+        if model_id is None:
+            from sqlalchemy import select  # noqa: PLC0415
+
+            model_id = db.scalar(
+                select(ModelVersion.id)
+                .where(ModelVersion.dataset == ds.name)
+                .order_by(ModelVersion.id.desc())
+            )
+            if model_id is None:
+                typer.echo(f"No model versions for {ds.name}; run `verita detect alerts` first.")
+                raise typer.Exit(1)
+        version = governance.validate(db, ds, model_id)
+        report = version.validation or {}
+        out = ds.artifacts_dir / "models" / f"validation-{version.id}.md"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(render_markdown(report, version.name), encoding="utf-8")
+        record = {
+            "model_version_id": version.id,
+            "model": version.name,
+            "status": version.status,
+            "governance": "bypassed" if version.bypass_reason else version.status,
+            "sha256": version.validation_sha256,
+            "report": report,
+        }
+        (out.parent / "validation.json").write_text(
+            json.dumps(record, indent=2, default=str) + "\n", encoding="utf-8"
+        )
+        passed = bool(report.get("passed"))
+    typer.echo(f"Model {model_id}: validation {'passed' if passed else 'FAILED'}; report: {out}")
+    if strict and not passed:
+        raise typer.Exit(1)
+
+
 @app.command("openapi")
 def export_openapi(
     out: Annotated[Path, typer.Option(help="Where to write the schema")] = REPO_ROOT

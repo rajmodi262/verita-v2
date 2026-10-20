@@ -133,6 +133,25 @@ rate {{ d.detect.sanity.label_shuffle.base_rate | num(4) }}. Random (leaky) spli
 {{ d.detect.sanity.random_split.random_split_test_f1 | num }} vs temporal
 {{ champ.f1.value | num }}.
 
+{% if d.governance %}
+## Model risk validation
+Policy version {{ d.governance.policy_version }} (`configs/model_policy.yaml`), report SHA-256
+`{{ d.governance.sha256[:16] }}…`: **{{ "passed" if d.governance.passed else "failed" }}**.
+Model state: {{ d.governance.status }}{% if d.governance.governance == "bypassed" %}, **put into
+service without independent review** (development pipeline or demo pack; in production a model
+reaches the queue only through a validator's approval and a different MLRO's promotion){% endif %}.
+
+| Gate | Result | Value | Limit |
+|---|---|---|---|
+{% for g in d.governance.gates %}
+| {{ g.gate }} | {{ "pass" if g.passed else "**fail**" }} | {{ g.value }} | {{ g.limit }} |
+{% endfor %}
+{% if d.governance.drift.major_drift_features %}
+
+Features with major drift on assessed days: {% for f in d.governance.drift.major_drift_features %}`{{ f }}`{{ ", " if not loop.last }}{% endfor %}.
+{% endif %}
+{% endif %}
+
 ## Limitations
 * Synthetic data; real typologies, base rates and adversaries differ.
 * Unattributed laundering (no typology label) is recalled at {{ unattributed.recall | ci }}.

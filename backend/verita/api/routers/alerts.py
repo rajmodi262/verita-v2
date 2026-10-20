@@ -8,19 +8,20 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Query, Request
 from pydantic import BaseModel, Field
 
-from verita.api.deps import CsrfSessionDep, DbDep, require_role
+from verita.api.deps import DbDep, csrf_role, require_role
 from verita.api.params import AlertId
 from verita.api.schemas import AlertDetail, AlertList, QueueMeta, Subgraph
 from verita.api.state import evidence_store
 from verita.db.detect_models import DispositionAction
 from verita.db.models import Role
 from verita.services import alerts as svc
+from verita.services.auth import SessionInfo
 from verita.services.evidence import AlertRef
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
 
 READERS = Depends(require_role(Role.ANALYST, Role.MLRO, Role.VALIDATOR, Role.REVIEWER))
-DECIDERS = require_role(Role.ANALYST, Role.MLRO)
+DeciderDep = Annotated[SessionInfo, Depends(csrf_role(Role.ANALYST, Role.MLRO))]
 
 
 @router.get("", dependencies=[READERS], response_model=AlertList, response_model_by_alias=True)
@@ -72,8 +73,7 @@ class DispositionIn(BaseModel):
 
 @router.post("/{alert_id}/disposition", response_model=AlertDetail)
 def disposition(
-    alert_id: AlertId, body: DispositionIn, db: DbDep, info: CsrfSessionDep, request: Request
+    alert_id: AlertId, body: DispositionIn, db: DbDep, info: DeciderDep, request: Request
 ) -> dict[str, Any]:
-    DECIDERS(info)
     ip = request.client.host if request.client else None
     return svc.dispose(db, info.user, alert_id, body.action, body.reason_code, body.note, ip)

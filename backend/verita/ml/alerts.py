@@ -152,6 +152,23 @@ def reasons_for(
     return out
 
 
+def _seat(db: Session, version: ModelVersion) -> None:
+    """Model governance at load time (verita.services.models).
+
+    Production: a new model stays a candidate and scores in shadow; the queue keeps serving the
+    reviewed champion until a validator approves and the MLRO promotes the new one. Elsewhere the
+    pipeline seats it with a recorded, displayed bypass reason.
+    """
+    from verita.core.config import get_settings  # noqa: PLC0415 - settings only at call time
+    from verita.services import models as governance  # noqa: PLC0415 - avoids an import cycle
+
+    if version.is_champion:
+        return
+    env = get_settings().env
+    if env != "prod":
+        governance.bypass(db, version, governance.DEV_PIPELINE, env)
+
+
 def write_alerts(dataset: Dataset, db: Session) -> AlertReport:
     registry = _registry(dataset)
     metrics_path = dataset.artifacts_dir / "detect" / "metrics.json"
@@ -195,8 +212,7 @@ def write_alerts(dataset: Dataset, db: Session) -> AlertReport:
             )
             raise PipelineError(msg)
         db.execute(delete(Alert).where(Alert.model_version_id == version.id))
-    for other in db.scalars(select(ModelVersion).where(ModelVersion.dataset == dataset.name)):
-        other.is_champion = other.id == version.id
+    _seat(db, version)
 
     booster = lgb.Booster(model_file=str(dataset.artifacts_dir / "detect" / "champion.txt"))
     reasons = reasons_for(dataset, booster, frame["top_txn_id"].astype(int).unique().tolist())

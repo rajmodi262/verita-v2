@@ -1,0 +1,36 @@
+# Model risk policy (SR 11-7 style): gates a detector must pass before a validator may approve
+# it, and the separation of duties for putting it into service. Owned by model risk, not by
+# the people who train models; changes to this file are themselves reviewed.
+#
+# Every gate reads a figure the pipeline already produced (artifacts/<dataset>/...), so the
+# validation report is reproducible from the same files the Evidence Room shows.
+version: 1
+
+gates:
+  # Discrimination: the lower bound of the test-split F1 interval, not the point estimate.
+  min_f1_ci_low: 0.15
+  # The champion must beat the rules incumbent outright: its F1 interval sits above the
+  # incumbent's.
+  beats_incumbent: true
+  # Stability across training seeds.
+  max_f1_std_over_seeds: 0.03
+  # Calibration after isotonic: expected calibration error on the held-out split.
+  max_ece_after_calibration: 0.02
+  # Leakage sanity check: with shuffled labels, test PR-AUC must collapse to near the base rate
+  # (ratio of shuffled PR-AUC to the base rate).
+  max_shuffled_pr_auc_over_base_rate: 3.0
+  # Drift: share of monitored features with major PSI drift (severity "major") on any replay day
+  # with enough volume for PSI to mean something. PSI uses 10 equal-mass bins; at least ~100
+  # expected rows per bin gives the floor below. Days under it are listed in the report, not gated
+  # (the HI-Small tail has days of 11-396 rows, mostly laundering, where every feature "drifts").
+  max_major_drift_share: 0.25
+  min_rows_for_drift: 1000
+  # Coverage: every typology with at least this many test positives must have recall measured.
+  min_typology_support_reported: 20
+
+duties:
+  # The validator who approves a model and the MLRO who puts it into service must be different
+  # people; neither may be the proposer.
+  approver_role: validator
+  promoter_role: mlro
+  approver_differs_from_promoter: true

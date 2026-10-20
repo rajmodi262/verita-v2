@@ -43,6 +43,7 @@ control works; residual risks are stated, not hidden.
 | D2 | Expensive endpoints exhausting memory | 2–3 | Plan cache, single-flight cache loads, bounded concurrent solves, bounded subgraph size | k6 stress run (194 req/s, 0 errors, no OOM) after an OOM was found and fixed |
 | D3 | Malformed input crashing the API | 1–2 | Typed request models, bounded path IDs | schemathesis fuzzing: 39 operations, zero 5xx |
 | E1 | Analyst approving their own case | 2 | Maker-checker in the service: approver ≠ creator ≠ submitter; MLRO role only | `test_api_cases.py::test_maker_checker_blocks_self_approval`, e2e |
+| E3 | A model put into service without independent review (or by the person who validated it) | 3 | Lifecycle candidate → approved → champion: policy gates (`configs/model_policy.yaml`) must pass; a **validator** approves, a different **MLRO** promotes; a DB check rejects any champion without two distinct reviewers unless it carries a displayed bypass reason, and the pipeline never bypasses in production | `test_model_governance.py` (incl. `test_the_database_refuses_an_unreviewed_champion`), `tests/unit/test_validation.py` |
 | E2 | Container escape impact | 3 | Non-root user, read-only root filesystem, tmpfs `/tmp`, no shell needed at runtime | `deploy/docker-compose.yml` |
 
 ## Residual risks
