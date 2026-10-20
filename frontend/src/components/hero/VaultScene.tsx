@@ -4,6 +4,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 /**
  * The landing hero: the case seal as an engraved coin that sways toward the viewer, circled by a
@@ -153,8 +154,6 @@ function engraving(line: string, ground: string): THREE.CanvasTexture {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.anisotropy = 16;
-  texture.center.set(0.5, 0.5);
-  texture.rotation = Math.PI / 2; // cylinder caps map u/v a quarter turn round
   return texture;
 }
 
@@ -176,106 +175,181 @@ function reeding(line: string): THREE.CanvasTexture {
   return texture;
 }
 
-function Medallion({ line, ground, rim }: { line: string; ground: string; rim: string }) {
+const COIN_R = 1.22;
+const COIN_T = 0.3; // thick: a struck coin, not a disc
+
+function Medallion({ line, ground, metal }: { line: string; ground: string; metal: string }) {
   const group = useRef<THREE.Group>(null);
   const face = useMemo(() => engraving(line, ground), [line, ground]);
   const edge = useMemo(() => reeding(line), [line]);
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
-    const t = state.clock.elapsedTime;
-    // sway, never edge-on: the face always turns toward the viewer; lean toward the pointer
-    const sway = Math.sin(t * 0.45) * 0.5 + state.pointer.x * 0.25;
-    g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, sway, 0.06);
-    const tilt = -state.pointer.y * 0.2 + Math.sin(t * 0.3) * 0.06;
+    g.rotation.y += delta * 0.55; // a full, unhurried turn
+    const tilt = -state.pointer.y * 0.2 + Math.sin(state.clock.elapsedTime * 0.3) * 0.08;
     g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, tilt, 0.06);
   });
+  const faceMaterial = (
+    <meshPhysicalMaterial
+      map={face}
+      bumpMap={face}
+      bumpScale={3}
+      emissiveMap={face}
+      emissive={line}
+      emissiveIntensity={0.55}
+      color={metal}
+      metalness={1}
+      roughness={0.38}
+      clearcoat={0.4}
+    />
+  );
   return (
     <group ref={group}>
+      {/* the milled edge */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[1.22, 1.22, 0.14, 160]} />
-        <meshStandardMaterial
-          attach="material-0"
-          color={rim}
+        <cylinderGeometry args={[COIN_R, COIN_R, COIN_T, 192, 1, true]} />
+        <meshPhysicalMaterial
+          color={metal}
           bumpMap={edge}
-          bumpScale={2}
-          emissiveMap={edge}
-          emissive={rim}
-          emissiveIntensity={0.6}
+          bumpScale={3}
           metalness={1}
-          roughness={0.22}
+          roughness={0.25}
+          clearcoat={0.6}
         />
-        {[1, 2].map((slot) => (
-          <meshStandardMaterial
-            key={slot}
-            attach={`material-${String(slot)}`}
-            map={face}
-            bumpMap={face}
-            bumpScale={1.6}
-            emissiveMap={face}
-            emissive={line}
-            emissiveIntensity={1.1}
-            metalness={0.9}
-            roughness={0.3}
-          />
-        ))}
       </mesh>
-      {/* a soft halo behind the coin so it glows against the night */}
-      <mesh position={[0, 0, -0.2]}>
-        <circleGeometry args={[1.55, 64]} />
-        <meshBasicMaterial color={line} transparent opacity={0.035} toneMapped={false} />
+      {/* the same struck face on both sides; the back disc is turned to read correctly */}
+      <mesh position={[0, 0, COIN_T / 2]}>
+        <circleGeometry args={[COIN_R, 192]} />
+        {faceMaterial}
       </mesh>
+      <mesh position={[0, 0, -COIN_T / 2]} rotation={[0, Math.PI, 0]}>
+        <circleGeometry args={[COIN_R, 192]} />
+        {faceMaterial}
+      </mesh>
+      {/* raised rims with a bevel that catches the light */}
+      {[COIN_T / 2, -COIN_T / 2].map((z) => (
+        <mesh key={z} position={[0, 0, z]}>
+          <torusGeometry args={[COIN_R - 0.045, 0.05, 24, 192]} />
+          <meshPhysicalMaterial color={metal} metalness={1} roughness={0.2} clearcoat={0.8} />
+        </mesh>
+      ))}
     </group>
   );
 }
 
-/** The orbit: a neon ring with payments travelling along it; one in eight is flagged (gold). */
+const CURRENCIES = ["$", "€", "£", "¥", "₹", "₿", "₽", "₩"];
+
+/** One currency symbol as a glowing sprite texture. */
+function glyph(ch: string, color: string): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 128;
+  canvas.height = 128;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    ctx.font = "600 92px 'Bodoni Moda Variable', 'Segoe UI Symbol', 'Segoe UI', 'Noto Sans', sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = color;
+    ctx.fillText(ch, 64, 70);
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+/** A soft round glow for the comet tails. */
+function glow(color: string): THREE.CanvasTexture {
+  const canvas = document.createElement("canvas");
+  canvas.width = 64;
+  canvas.height = 64;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, color);
+    g.addColorStop(1, "#00000000");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 64, 64);
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
+
+const RADIUS = 2.45;
+const STREAM = 30; // symbols on the ring
+const TAIL = 6; // fading echoes behind each symbol
+const BEHIND = -Math.PI / 2; // the point on the orbit hidden behind the coin
+
+/**
+ * The money trail: currency symbols stream round the ring, each with a comet tail. Every time a
+ * symbol passes behind the coin it comes out as a different currency — layering, the way
+ * laundered money moves through currencies to lose its origin. One in six is flagged (gold).
+ */
 function Orbit({ neon, flag, pale }: { neon: string; flag: string; pale: string }) {
-  const dots = useRef<THREE.InstancedMesh>(null);
-  const count = 140;
-  const seeds = useMemo(
+  const textures = useMemo(
+    () => ({
+      pale: CURRENCIES.map((ch) => glyph(ch, pale)),
+      gold: CURRENCIES.map((ch) => glyph(ch, flag)),
+      paleTail: glow(pale),
+      goldTail: glow(flag),
+    }),
+    [pale, flag],
+  );
+  const sprites = useRef<(THREE.Sprite | null)[]>([]);
+  const stream = useMemo(
     () =>
-      Array.from({ length: count }, (_, i) => ({
-        offset: (i / count) * TAU + Math.sin(i * 12.9898) * 0.08,
-        speed: 0.18 + ((i * 7) % 11) * 0.012,
-        lift: Math.sin(i * 78.233) * 0.05,
+      Array.from({ length: STREAM }, (_, i) => ({
+        offset: (i / STREAM) * TAU,
+        base: (i * 3) % CURRENCIES.length,
+        flagged: i % 6 === 0,
       })),
     [],
   );
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const colored = useRef(false);
   useFrame((state) => {
-    const mesh = dots.current;
-    if (!mesh) return;
-    if (!colored.current) {
-      const pc = new THREE.Color(pale);
-      const fc = new THREE.Color(flag);
-      seeds.forEach((_, i) => {
-        mesh.setColorAt(i, i % 8 === 0 ? fc : pc);
-      });
-      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-      colored.current = true;
-    }
     const t = state.clock.elapsedTime;
-    seeds.forEach((s, i) => {
-      const a = s.offset + t * s.speed;
-      dummy.position.set(Math.cos(a) * 2.45, s.lift, Math.sin(a) * 2.45);
-      dummy.scale.setScalar(i % 8 === 0 ? 1.7 : 1);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
+    stream.forEach((s, i) => {
+      const front = s.offset + t * 0.2;
+      const lap = Math.floor((front - BEHIND) / TAU);
+      const n = CURRENCIES.length;
+      const which = (((s.base + lap) % n) + n) % n;
+      const head = (s.flagged ? textures.gold : textures.pale)[which];
+      const tail = s.flagged ? textures.goldTail : textures.paleTail;
+      for (let j = 0; j <= TAIL; j += 1) {
+        const sprite = sprites.current[i * (TAIL + 1) + j];
+        if (!sprite) continue;
+        const a = front - j * 0.03;
+        const map = j === 0 ? head : tail;
+        sprite.position.set(Math.cos(a) * RADIUS, 0, Math.sin(a) * RADIUS);
+        const material = sprite.material;
+        if (material.map !== map) {
+          material.map = map ?? null;
+          material.needsUpdate = true;
+        }
+        const fade = 1 - j / (TAIL + 1);
+        const size = j === 0 ? (s.flagged ? 0.26 : 0.18) : (s.flagged ? 0.12 : 0.08) * fade;
+        sprite.scale.set(size, size, 1);
+        material.opacity = j === 0 ? 1 : 0.7 * fade;
+      }
     });
-    mesh.instanceMatrix.needsUpdate = true;
   });
   return (
     <group rotation={[0.32, 0, -0.28]}>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[2.45, 0.014, 16, 256]} />
+        <torusGeometry args={[RADIUS, 0.01, 16, 256]} />
         <meshBasicMaterial color={neon} toneMapped={false} />
       </mesh>
-      <instancedMesh ref={dots} args={[undefined, undefined, count]}>
-        <sphereGeometry args={[0.022, 12, 12]} />
-        <meshBasicMaterial toneMapped={false} />
-      </instancedMesh>
+      {Array.from({ length: STREAM * (TAIL + 1) }, (_, k) => (
+        <sprite
+          key={k}
+          ref={(el) => {
+            sprites.current[k] = el;
+          }}
+        >
+          <spriteMaterial transparent depthWrite={false} toneMapped={false} />
+        </sprite>
+      ))}
     </group>
   );
 }
@@ -285,7 +359,7 @@ export default function VaultScene({ still = false }: { still?: boolean }) {
     () => ({
       line: token("--hero-engrave", "#e9dcff"),
       ground: token("--hero-coin", "#2a1650"),
-      rim: token("--hero-rim", "#b9a3ff"),
+      metal: token("--hero-metal", "#4a3d6e"),
       neon: token("--hero-neon", "#ff4fd8"),
       flag: token("--hero-flag", "#ffd27a"),
       pale: token("--hero-particle", "#d8c8ff"),
@@ -300,16 +374,23 @@ export default function VaultScene({ still = false }: { still?: boolean }) {
       dpr={[1, 2]}
       frameloop={still ? "demand" : "always"}
       gl={{ antialias: true, alpha: true }}
+      onCreated={({ gl, scene }) => {
+        // studio reflections generated in code (no HDR download), so the metal reads as metal
+        scene.environment = new THREE.PMREMGenerator(gl).fromScene(
+          new RoomEnvironment(),
+          0.04,
+        ).texture;
+      }}
     >
       <ambientLight intensity={0.3} />
       <pointLight position={[4, 3, 4]} intensity={60} color={colors.key} />
       <pointLight position={[-4, -2, 3]} intensity={45} color={colors.fill} />
       <spotLight position={[0, 6, 2]} intensity={40} angle={0.5} penumbra={1} />
       <Stars radius={60} depth={40} count={2200} factor={3} saturation={0} fade speed={0.4} />
-      <Medallion line={colors.line} ground={colors.ground} rim={colors.rim} />
+      <Medallion line={colors.line} ground={colors.ground} metal={colors.metal} />
       <Orbit neon={colors.neon} flag={colors.flag} pale={colors.pale} />
       <EffectComposer>
-        <Bloom intensity={1.9} luminanceThreshold={0.12} luminanceSmoothing={0.35} mipmapBlur />
+        <Bloom intensity={1.5} luminanceThreshold={0.32} luminanceSmoothing={0.3} mipmapBlur />
         <Noise opacity={0.06} />
         <Vignette offset={0.2} darkness={0.75} />
       </EffectComposer>
