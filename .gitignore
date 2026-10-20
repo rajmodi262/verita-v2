@@ -41,3 +41,8 @@ Thumbs.db
 
 # local agent/editor config
 .claude/
+
+# end-to-end test stack (backend/scripts/e2e_prepare.py) and Playwright output
+backend/.e2e/
+frontend/playwright-report/
+frontend/test-results/

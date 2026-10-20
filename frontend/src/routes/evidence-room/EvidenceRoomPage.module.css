@@ -69,8 +69,12 @@
   font-size: var(--fs-sm);
 }
 
+/* Wide tables scroll inside their own box at phone width instead of widening the page. */
 .table {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   margin-bottom: var(--space-3);
   border-collapse: collapse;
   font-size: var(--fs-sm);

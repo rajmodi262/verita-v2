@@ -11,12 +11,12 @@
 | M0 | Reset: repo, tooling, CI, auth skeleton | 26 / 30 | 4 left: need Docker (U3) and GitHub (U4) |
 | M1 | Data foundation | 17 / 18 | M1.15 needs license (U7) |
 | M2 | Detect — models and evaluation | 21 / 22 | M2.07 dropped (needs a label-delay model) |
-| M3 | Detect — Queue and Investigation UX | 16 / 18 | e2e + axe (Playwright) left |
+| M3 | Detect — Queue and Investigation UX | 18 / 18 | Done |
 | M4 | Decide — calibration, conformal, forecast, optimizer, drift | 20 / 20 | Done |
-| M5 | Decide — Capacity Planner UX | 9 / 10 | e2e + axe left |
+| M5 | Decide — Capacity Planner UX | 10 / 10 | Done |
 | M6 | Defend — narratives, verifier, signing, ledger | 20 / 22 | M6.15 needs a key (U5); M6.02 DB role at deploy |
-| M7 | Defend — Case File UX and maker-checker | 11 / 12 | Playwright e2e left |
-| M8 | Evidence Room, honesty pipeline, robustness | 0 / 14 | Not started |
+| M7 | Defend — Case File UX and maker-checker | 12 / 12 | Done |
+| M8 | Evidence Room, honesty pipeline, robustness | 12 / 14 | LI-Small training running; SAML-D optional, needs the dataset |
 | M9 | Harden and ship | 0 / 16 | Not started |
 
 ## Blocked on you
@@ -154,8 +154,8 @@ Exit: screens pass axe and keyboard e2e; subgraph < 500ms.
 - [x] M3.13 Graph table alternative (accessible)
 - [x] M3.14 Investigation screen (summary, reasons with evidence IDs, graph/table, dominant path)
 - [x] M3.15 Loading / empty / error states for both screens
-- [ ] M3.16 Playwright e2e: triage flow, keyboard-only
-- [ ] M3.17 axe zero violations on both routes
+- [x] M3.16 Playwright on the real stack (fixture dataset prepared by `backend/scripts/e2e_prepare.py`, 18 tests, CI job `e2e`): keyboard-only triage (J/K/Enter/D, `?` map)
+- [x] M3.17 axe (WCAG 2.2 A/AA) zero violations on every route, paper and night themes; skip link; phone width without sideways scroll (found and fixed: wide tables overflowed 148–192 px on /cases and /evidence-room)
 - [x] M3.18 Perf (`verita bench`, 200 random real alerts): subgraph p50 180 ms, **p95 257 ms** (target 500). First version measured p95 4.1 s — hubs with 10⁵ weekly payments were materialised row by row; neighbourhood ranking now runs inside DuckDB
 
 ## M4 — Decide: models and analysis
@@ -199,7 +199,7 @@ Exit: slider < 150ms; every Stat has provenance.
 - [x] M5.07 Assumptions drawer with AssumptionStamp and what-if edits (never saved)
 - [x] M5.08 Save plan (MLRO only; disabled with an explanation otherwise)
 - [x] M5.09 Queue header shows the filtered day's saved plan
-- [~] M5.10 Chart table alternatives done for all 4 charts; e2e + axe pending with M3.16/M3.17. Slider answers instantly from the precomputed frontier (no request); the exact plan follows after a 300 ms debounce. **Charts:** hand-written SVG instead of ECharts — token theming, no canvas, testable; Capacity route 10 KB gzip
+- [x] M5.10 Chart table alternatives done for all 4 charts; e2e: slider updates the headline in < 150 ms (measured in the browser), every Stat's provenance opens, plan save shows in the queue; axe clean. Slider answers instantly from the precomputed frontier (no request); the exact plan follows after a 300 ms debounce. **Charts:** hand-written SVG instead of ECharts — token theming, no canvas, testable; Capacity route 10 KB gzip
 
 ## M6 — Defend: narratives, verifier, signing
 
@@ -255,26 +255,26 @@ say VALID for the export and INVALID naming `EV-TXN-1892582` for the tampered co
 - [x] M7.09 Export buttons (JSON, PDF) + tampered-copy download
 - [x] M7.10 In-browser verification (WebCrypto Ed25519, native JCS) — agrees with Python on the root, every leaf and the signature (fixtures signed by `backend/scripts/make_case_export_fixture.py`). No WASM fallback: Ed25519 WebCrypto ships in current Chrome, Firefox and Safari
 - [x] M7.11 Authorization matrix: every OpenAPI route × 4 roles + anonymous, CSRF on every mutation; a route without a policy fails the test
-- [ ] M7.12 e2e: full demo path (Playwright, with M3.16)
+- [x] M7.12 e2e full demo path: alert → case → fault caught and submission blocked → submit → MLRO signs → signed export valid / tampered copy invalid in the browser; maker-checker block
 
 ## M8 — Evidence Room, honesty, robustness
 
 Exit: no hand-typed metric anywhere; Evidence Room complete.
 
-- [ ] M8.01 `metrics.json` schema + writer
-- [ ] M8.02 `poe eval` orchestrates all evaluations
-- [ ] M8.03 Generated MODEL_CARD, DATA_CARD, EVAL_REPORT
-- [ ] M8.04 README generated metrics block + CI diff check
-- [ ] M8.05 CI scan for hand-typed metrics in docs and frontend
-- [ ] M8.06 Evidence Room: Data tab
-- [ ] M8.07 Evidence Room: Detect tab
-- [ ] M8.08 Evidence Room: Decide tab
-- [ ] M8.09 Evidence Room: Defend tab
-- [ ] M8.10 Evidence Room: Lineage tab
+- [x] M8.01 `reports/metrics.json` (schema 1): every headline figure with interval, n, split and source artifact; per-dataset data/detect/decide/defend/lineage sections
+- [x] M8.02 `uv run poe eval [--dataset …]`: features → train → alerts → decide → verifier eval → bench → reports
+- [x] M8.03 MODEL_CARD.md and reports/EVAL_REPORT.md rendered from metrics.json (DATA_CARD from M1)
+- [x] M8.04 README block between markers; `verita report check` in CI fails on drift
+- [x] M8.05 `verita report scan` in CI (metric word + result-like number outside generated regions; confidence levels and targets allowed; TRACKER/PIVOT exempt by name)
+- [x] M8.06 Evidence Room: Data tab (contract, splits, typology coverage, file hashes, limitations)
+- [x] M8.07 Detect tab (models vs published baselines, per-typology recall bars with CIs, ablations, sanity checks)
+- [x] M8.08 Decide tab (reliability diagram, coverage by day and by α, forecast backtest, drift, latency)
+- [x] M8.09 Defend tab (detection by fault type, false alarms, misses verbatim, LLM status)
+- [x] M8.10 Lineage tab (stage manifests: git revision, config hash, durations, output hashes); every figure has a caption, a table and a JSON download; metrics.json SHA-256 in the footer
 - [ ] M8.11 LI-Small robustness results
 - [ ] M8.12 SAML-D mapping + transfer results (optional)
-- [ ] M8.13 GNN challenger (optional extra)
-- [ ] M8.14 Landing page reading live metrics + guided tour
+- [-] M8.13 GNN challenger — dropped: the published GIN/PNA results on the same split are reported as baselines instead; a GNN would add compute without changing a decision in the product
+- [x] M8.14 Landing page reads the public `/evidence-room/headline` (figure, CI, dataset, source, commit, file hash); 8-step skippable reviewer tour
 
 ## M9 — Harden and ship
 
@@ -303,6 +303,7 @@ Exit: every PIVOT §23 rubric check passes.
 
 | Date | Change |
 |------|--------|
+| 2026-10-20 | M8 honesty pipeline, Evidence Room, live landing page, reviewer tour; Playwright suite (18 tests: demo path, keyboard triage, axe on every route in both themes, slider < 150 ms, phone width) green on a fresh fixture stack and wired into CI. Found and fixed: tables overflowing phone screens; report docs rendered from unsorted data (check/build mismatch). |
 | 2026-10-20 | M6–M7 built and run on HI-Small. Verifier: 0/300 false alarms, 2,437/2,438 faults caught. Full demo path live: draft → fault caught → submit → maker-checker sign → browser and CLI verification agree. Found and fixed: Bitcoin amounts rounded to 0.00 in evidence; date-range starts not checked; a no-op fault injector; ESLint autofix inverted a null check. **Security note (U1):** a `GROQ_API_KEY` is present in the machine environment; 30 eval calls to Groq failed — LLM use is now opt-in. Backend 307+ tests, 93% coverage; frontend 151 tests. |
 | 2026-10-20 | M2–M5 built and run on HI-Small. Detect F1 0.503 (CI 0.440–0.591) vs paper GFP+LightGBM 62.86. Decide: static and ACI guarantees hold at every α; ACI reviews 10% less. The 95% guarantee is unstaffable on bulk days (401–3,139 analysts) — the planner says so. **Bugs found by running on real data:** CLI writes were never committed (`return` inside `for db in session_scope()` skips the commit — fixed with `transaction()` + regression test); CP-SAT lost to greedy because minutes were rounded up; subgraph p95 4.1 s on hub accounts (now 257 ms); drift alarm driven by account-age features (now excluded); dollar objective caught 2% of cases with 97% of value (cases objective added, now default). Backend 215 tests, 93% coverage; frontend 133 tests. |
 | 2026-10-19 | Tracker created; decisions recorded in PIVOT §26 |

@@ -8,8 +8,12 @@
   color: var(--color-ink-muted);
 }
 
+/* Wide tables scroll inside their own box at phone width instead of widening the page. */
 .table {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
