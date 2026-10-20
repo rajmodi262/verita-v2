@@ -1,0 +1,185 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.crumbs {
+  font-size: var(--fs-sm);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.title {
+  font-size: var(--fs-lg);
+}
+
+.plainState {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--space-3);
+}
+
+.why {
+  font-size: var(--fs-sm);
+  color: var(--color-alert-text);
+}
+
+.status {
+  font-size: var(--fs-sm);
+}
+
+.bad {
+  color: var(--color-alert-text);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr) minmax(260px, 1.2fr);
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.dialogForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.sealRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-5);
+  margin-bottom: var(--space-4);
+}
+
+/* The seal stamps in when a real signature exists (DESIGN.md: certainty as ritual). */
+.seal {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border: 3px double var(--color-alert);
+  border-radius: 50%;
+  color: var(--color-alert-text);
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  font-weight: 900;
+  transform: rotate(-8deg);
+  animation: stamp var(--duration-base) ease-out both;
+}
+
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: scale(1.6) rotate(-8deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(-8deg);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seal {
+    animation-name: fade-in;
+  }
+}
+
+.sigList {
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+}
+
+.sigList dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  text-transform: uppercase;
+  color: var(--color-ink-muted);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.download,
+.downloadGhost {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-width) solid var(--color-border);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.download {
+  background: var(--color-ink);
+  color: var(--color-on-ink);
+}
+
+.downloadGhost {
+  color: var(--color-ink);
+}
+
+.subTitle {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: var(--fs-body);
+}
+
+.note {
+  font-size: var(--fs-sm);
+  color: var(--color-ink-muted);
+}
+
+@media (width <= 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

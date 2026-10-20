@@ -2,6 +2,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { alertDetail, META, subgraph } from "../../test/alertFixtures";
+import { CASE_META, caseDetail } from "../../test/caseFixtures";
 import { ANALYST, json, mockApi, problem, renderAt } from "../../test/utils";
 
 const cy = {
@@ -128,4 +129,20 @@ it("handles unknown and invalid alerts", async () => {
   unmount();
   renderAt("/alerts/abc");
   expect(await screen.findByRole("alert")).toHaveTextContent("Something went wrong");
+});
+
+it("opens a case file from the alert and lands on it", async () => {
+  const user = userEvent.setup();
+  const { calls } = api({
+    "POST /cases": () => json(caseDetail({ id: 12 }), 201),
+    "GET /cases/12": () => json(caseDetail({ id: 12 })),
+    "GET /cases/meta": () => json(CASE_META),
+  });
+  const { router } = renderAt("/alerts/7");
+  await user.click(await screen.findByRole("button", { name: "Open a case file" }));
+  await waitFor(() => {
+    expect(router.state.location.pathname).toBe("/cases/12");
+  });
+  const post = calls.find((c) => c.key === "POST /cases");
+  expect(JSON.parse(post?.init.body as string)).toEqual({ alert_ids: [7] });
 });

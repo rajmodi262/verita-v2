@@ -29,20 +29,20 @@ describe("routing and the auth gate", () => {
 
   it("renders the workspace shell for a signed-in user", async () => {
     mockApi({ "GET /me": () => json(ANALYST) });
-    renderAt("/cases");
+    renderAt("/evidence-room");
     const nav = await screen.findByRole("navigation", { name: "Primary" });
-    expect(within(nav).getByRole("link", { name: "Case files" })).toHaveAttribute(
+    expect(within(nav).getByRole("link", { name: "Evidence room" })).toHaveAttribute(
       "aria-current",
       "page",
     );
     expect(screen.getByText("priya")).toBeInTheDocument();
     expect(screen.getByText("Analyst")).toBeInTheDocument();
-    expect(await screen.findByText("Arrives in M7")).toBeInTheDocument();
+    expect(await screen.findByText("Arrives in M8")).toBeInTheDocument();
   });
 
   it("shows an error with the request ID when the session check fails", async () => {
     mockApi({ "GET /me": () => problem(500, "internal-error", "Internal server error") });
-    renderAt("/cases");
+    renderAt("/evidence-room");
     const alert = await screen.findByRole("alert");
     expect(alert).toHaveTextContent("Internal server error");
     expect(alert).toHaveTextContent("req-1");
@@ -54,7 +54,7 @@ describe("routing and the auth gate", () => {
     expect(await screen.findByText("No such page")).toBeInTheDocument();
   });
 
-  it.each(["/cases", "/evidence-room"])("renders the %s placeholder", async (path) => {
+  it.each(["/evidence-room"])("renders the %s placeholder", async (path) => {
     mockApi({ "GET /me": () => json(ANALYST) });
     renderAt(path);
     expect(await screen.findByText(/Arrives in M\d/)).toBeInTheDocument();
@@ -146,7 +146,7 @@ describe("shell actions", () => {
         return new Response(null, { status: 204 });
       },
     });
-    const { router } = renderAt("/cases");
+    const { router } = renderAt("/evidence-room");
     await user.click(await screen.findByRole("button", { name: "Sign out" }));
     await waitFor(() => {
       expect(router.state.location.pathname).toBe("/login");
@@ -161,7 +161,7 @@ describe("shell actions", () => {
   it("toggles the theme and remembers it", async () => {
     const user = userEvent.setup();
     mockApi({ "GET /me": () => json(ANALYST) });
-    renderAt("/cases");
+    renderAt("/evidence-room");
     const toggle = await screen.findByRole("button", { name: "Switch to night theme" });
     await user.click(toggle);
     expect(document.documentElement.dataset.theme).toBe("night");

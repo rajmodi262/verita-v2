@@ -1,0 +1,742 @@
+{
+  "case_id": 42,
+  "format": "verita-case-file/1",
+  "items": {
+    "EV-ALERT-7": {
+      "id": "EV-ALERT-7",
+      "kind": "alert",
+      "payload": {
+        "account": "8000AAAA1",
+        "alert_id": 7,
+        "bank": "70",
+        "date": "2022-09-08",
+        "n_flagged": 3,
+        "n_transactions": 14,
+        "score": 0.9123,
+        "typology_conf": 0.6234,
+        "typology_pred": "FAN-OUT"
+      }
+    },
+    "EV-CASE-42": {
+      "id": "EV-CASE-42",
+      "kind": "case",
+      "payload": {
+        "accounts": 5,
+        "alerts": 1,
+        "banks": ["11", "70", "123"],
+        "case_id": 42,
+        "days": ["2022-09-07", "2022-09-08"],
+        "dominant_paths": ["EV-PATH-7"],
+        "first_day": "2022-09-07",
+        "last_day": "2022-09-08",
+        "payments": 4,
+        "subjects": [{ "account": "8000AAAA1", "bank": "70" }],
+        "total_usd": 30546.75,
+        "typology": "FAN-OUT"
+      }
+    },
+    "EV-MOTIF-7": {
+      "id": "EV-MOTIF-7",
+      "kind": "motif",
+      "payload": {
+        "alert_id": 7,
+        "signals": ["sender fanned out to 9 payees in 24 h"],
+        "typology": "FAN-OUT"
+      }
+    },
+    "EV-PATH-7": {
+      "id": "EV-PATH-7",
+      "kind": "path",
+      "payload": {
+        "accounts": ["8000AAAA1", "8000BBBB2", "8000CCCC3", "8000DDDD4"],
+        "alert_id": 7,
+        "amounts": [
+          { "amount": 9800, "currency": "US Dollar" },
+          { "amount": 9750.5, "currency": "US Dollar" },
+          { "amount": 9700.25, "currency": "US Dollar" }
+        ],
+        "banks": ["11", "123", "70"],
+        "duration_minutes": 65,
+        "first_ts": "2022-09-08T10:00:00",
+        "last_ts": "2022-09-08T11:05:00",
+        "txn_ids": [101, 102, 103]
+      }
+    },
+    "EV-REASON-7-1": {
+      "id": "EV-REASON-7-1",
+      "kind": "reason",
+      "payload": {
+        "alert_id": 7,
+        "feature": "s_payees_24h",
+        "rank": 1,
+        "text": "Sender paid 9 different accounts in the previous 24 hours — raises the risk score",
+        "value": 9
+      }
+    },
+    "EV-REASON-7-2": {
+      "id": "EV-REASON-7-2",
+      "kind": "reason",
+      "payload": {
+        "alert_id": 7,
+        "feature": "s_since_last_in_min",
+        "rank": 2,
+        "text": "Sender last received money 20 min earlier — raises the risk score",
+        "value": 20
+      }
+    },
+    "EV-REASON-7-3": {
+      "id": "EV-REASON-7-3",
+      "kind": "reason",
+      "payload": {
+        "alert_id": 7,
+        "feature": "payment_format_code",
+        "rank": 3,
+        "text": "Sent by ACH — raises the risk score",
+        "value": 0
+      }
+    },
+    "EV-TXN-101": {
+      "id": "EV-TXN-101",
+      "kind": "txn",
+      "payload": {
+        "amount_paid": 9800,
+        "amount_received": 9800,
+        "currency_paid": "US Dollar",
+        "currency_received": "US Dollar",
+        "from_account": "8000AAAA1",
+        "from_bank": "70",
+        "payment_format": "ACH",
+        "score": 0.91,
+        "to_account": "8000BBBB2",
+        "to_bank": "11",
+        "ts": "2022-09-08T10:00:00",
+        "txn_id": 101
+      }
+    },
+    "EV-TXN-102": {
+      "id": "EV-TXN-102",
+      "kind": "txn",
+      "payload": {
+        "amount_paid": 9751.5,
+        "amount_received": 9750.5,
+        "currency_paid": "US Dollar",
+        "currency_received": "US Dollar",
+        "from_account": "8000BBBB2",
+        "from_bank": "11",
+        "payment_format": "ACH",
+        "score": 0.85,
+        "to_account": "8000CCCC3",
+        "to_bank": "123",
+        "ts": "2022-09-08T10:20:00",
+        "txn_id": 102
+      }
+    },
+    "EV-TXN-103": {
+      "id": "EV-TXN-103",
+      "kind": "txn",
+      "payload": {
+        "amount_paid": 9700.25,
+        "amount_received": 9700.25,
+        "currency_paid": "US Dollar",
+        "currency_received": "US Dollar",
+        "from_account": "8000CCCC3",
+        "from_bank": "123",
+        "payment_format": "ACH",
+        "score": 0.77,
+        "to_account": "8000DDDD4",
+        "to_bank": "11",
+        "ts": "2022-09-08T11:05:00",
+        "txn_id": 103
+      }
+    },
+    "EV-TXN-104": {
+      "id": "EV-TXN-104",
+      "kind": "txn",
+      "payload": {
+        "amount_paid": 1200,
+        "amount_received": 1200,
+        "currency_paid": "Euro",
+        "currency_received": "Euro",
+        "from_account": "8000AAAA1",
+        "from_bank": "70",
+        "payment_format": "ACH",
+        "score": 0.4,
+        "to_account": "8000EEEE5",
+        "to_bank": "11",
+        "ts": "2022-09-07T09:00:00",
+        "txn_id": 104
+      }
+    },
+    "approval": {
+      "approved_at": "2022-09-12T10:00:00+00:00",
+      "approved_by": "marcus",
+      "big": 1e21,
+      "case_id": 42,
+      "ratio": 0.1,
+      "small": 1e-7,
+      "unicode": "€ — 😀 דּ"
+    },
+    "narrative": {
+      "mode": "offline",
+      "sentences": [
+        {
+          "evidence_ids": ["EV-CASE-42"],
+          "section": "what",
+          "text": "Between 2022-09-07 and 2022-09-08 the case file records 4 payments across 5 accounts, totalling 30,546.75 US Dollar at fixed conversion rates."
+        },
+        {
+          "evidence_ids": ["EV-CASE-42"],
+          "section": "where",
+          "text": "The money moved through 3 banks (banks 11, 70 and 123)."
+        },
+        {
+          "evidence_ids": ["EV-CASE-42"],
+          "section": "why",
+          "text": "The majority predicted typology across the case is FAN-OUT."
+        },
+        {
+          "evidence_ids": ["EV-ALERT-7"],
+          "section": "who",
+          "text": "The subject is account 8000AAAA1 at bank 70, alerted on 2022-09-08 with a risk score of 91.2%."
+        },
+        {
+          "evidence_ids": ["EV-PATH-7"],
+          "section": "how",
+          "text": "The dominant path moves 9,800.00 US Dollar from account 8000AAAA1 through 3 payments in 65.0 minutes, ending at account 8000DDDD4 on 2022-09-08."
+        },
+        {
+          "evidence_ids": ["EV-TXN-101"],
+          "section": "how",
+          "text": "On 2022-09-08, account 8000AAAA1 at bank 70 paid 9,800.00 US Dollar to account 8000BBBB2 at bank 11 by ACH."
+        },
+        {
+          "evidence_ids": ["EV-TXN-102"],
+          "section": "how",
+          "text": "On 2022-09-08, account 8000BBBB2 at bank 11 paid 9,750.50 US Dollar to account 8000CCCC3 at bank 123 by ACH."
+        },
+        {
+          "evidence_ids": ["EV-TXN-103"],
+          "section": "how",
+          "text": "On 2022-09-08, account 8000CCCC3 at bank 123 paid 9,700.25 US Dollar to account 8000DDDD4 at bank 11 by ACH."
+        },
+        {
+          "evidence_ids": ["EV-REASON-7-1"],
+          "section": "why",
+          "text": "Model reason 1: Sender paid 9 different accounts in the previous 24 hours; raises the risk score."
+        },
+        {
+          "evidence_ids": ["EV-REASON-7-2"],
+          "section": "why",
+          "text": "Model reason 2: Sender last received money 20 min earlier; raises the risk score."
+        },
+        {
+          "evidence_ids": ["EV-REASON-7-3"],
+          "section": "why",
+          "text": "Model reason 3: Sent by ACH; raises the risk score."
+        },
+        {
+          "evidence_ids": ["EV-ALERT-7", "EV-MOTIF-7"],
+          "section": "why",
+          "text": "The pattern is consistent with the FAN-OUT typology (typology model confidence 62.3%)."
+        },
+        {
+          "evidence_ids": ["EV-MOTIF-7"],
+          "section": "why",
+          "text": "Structural signal: the sender fanned out to 9 payees in 24 h."
+        }
+      ],
+      "version": 1
+    },
+    "verification": {
+      "coverage": {
+        "case total": true,
+        "date range": true,
+        "dominant path": true,
+        "typology": true
+      },
+      "errors": [],
+      "failed_sentences": [],
+      "passed": true,
+      "sentences": [
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "date 2022-09-07",
+              "kind": "date",
+              "passed": true,
+              "text": "2022-09-07"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "date_range 2022-09-07..2022-09-08",
+              "kind": "date_range",
+              "passed": true,
+              "text": "2022-09-07 and 2022-09-08"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "date 2022-09-08",
+              "kind": "date",
+              "passed": true,
+              "text": "2022-09-08"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "count 4.0 payment",
+              "kind": "count",
+              "passed": true,
+              "text": "4 payments"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "count 5.0 account",
+              "kind": "count",
+              "passed": true,
+              "text": "5 accounts"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "amount 30546.75 US Dollar",
+              "kind": "amount",
+              "passed": true,
+              "text": "30,546.75 US Dollar"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-CASE-42"],
+          "index": 0,
+          "passed": true,
+          "section": "what",
+          "text": "Between 2022-09-07 and 2022-09-08 the case file records 4 payments across 5 accounts, totalling 30,546.75 US Dollar at fixed conversion rates."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "count 3.0 bank",
+              "kind": "count",
+              "passed": true,
+              "text": "3 banks"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 11",
+              "kind": "bank",
+              "passed": true,
+              "text": "11"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 70",
+              "kind": "bank",
+              "passed": true,
+              "text": "70"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 123",
+              "kind": "bank",
+              "passed": true,
+              "text": "123"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-CASE-42"],
+          "index": 1,
+          "passed": true,
+          "section": "where",
+          "text": "The money moved through 3 banks (banks 11, 70 and 123)."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "typology FAN-OUT",
+              "kind": "typology",
+              "passed": true,
+              "text": "FAN-OUT"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-CASE-42"],
+          "index": 2,
+          "passed": true,
+          "section": "why",
+          "text": "The majority predicted typology across the case is FAN-OUT."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000AAAA1",
+              "kind": "account",
+              "passed": true,
+              "text": "8000AAAA1"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 70",
+              "kind": "bank",
+              "passed": true,
+              "text": "70"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "date 2022-09-08",
+              "kind": "date",
+              "passed": true,
+              "text": "2022-09-08"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "percent 91.23",
+              "kind": "percent",
+              "passed": true,
+              "text": "91.2%"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-ALERT-7"],
+          "index": 3,
+          "passed": true,
+          "section": "who",
+          "text": "The subject is account 8000AAAA1 at bank 70, alerted on 2022-09-08 with a risk score of 91.2%."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "amount 9800.0 US Dollar",
+              "kind": "amount",
+              "passed": true,
+              "text": "9,800.00 US Dollar"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000AAAA1",
+              "kind": "account",
+              "passed": true,
+              "text": "8000AAAA1"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "count 3.0 payment",
+              "kind": "count",
+              "passed": true,
+              "text": "3 payments"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "duration 65.0 minutes",
+              "kind": "duration",
+              "passed": true,
+              "text": "65.0 minutes"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000DDDD4",
+              "kind": "account",
+              "passed": true,
+              "text": "8000DDDD4"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "date 2022-09-08",
+              "kind": "date",
+              "passed": true,
+              "text": "2022-09-08"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-PATH-7"],
+          "index": 4,
+          "passed": true,
+          "section": "how",
+          "text": "The dominant path moves 9,800.00 US Dollar from account 8000AAAA1 through 3 payments in 65.0 minutes, ending at account 8000DDDD4 on 2022-09-08."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "date 2022-09-08",
+              "kind": "date",
+              "passed": true,
+              "text": "2022-09-08"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000AAAA1",
+              "kind": "account",
+              "passed": true,
+              "text": "8000AAAA1"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 70",
+              "kind": "bank",
+              "passed": true,
+              "text": "70"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "amount 9800.0 US Dollar",
+              "kind": "amount",
+              "passed": true,
+              "text": "9,800.00 US Dollar"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000BBBB2",
+              "kind": "account",
+              "passed": true,
+              "text": "8000BBBB2"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 11",
+              "kind": "bank",
+              "passed": true,
+              "text": "11"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-TXN-101"],
+          "index": 5,
+          "passed": true,
+          "section": "how",
+          "text": "On 2022-09-08, account 8000AAAA1 at bank 70 paid 9,800.00 US Dollar to account 8000BBBB2 at bank 11 by ACH."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "date 2022-09-08",
+              "kind": "date",
+              "passed": true,
+              "text": "2022-09-08"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000BBBB2",
+              "kind": "account",
+              "passed": true,
+              "text": "8000BBBB2"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 11",
+              "kind": "bank",
+              "passed": true,
+              "text": "11"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "amount 9750.5 US Dollar",
+              "kind": "amount",
+              "passed": true,
+              "text": "9,750.50 US Dollar"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000CCCC3",
+              "kind": "account",
+              "passed": true,
+              "text": "8000CCCC3"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 123",
+              "kind": "bank",
+              "passed": true,
+              "text": "123"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-TXN-102"],
+          "index": 6,
+          "passed": true,
+          "section": "how",
+          "text": "On 2022-09-08, account 8000BBBB2 at bank 11 paid 9,750.50 US Dollar to account 8000CCCC3 at bank 123 by ACH."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "date 2022-09-08",
+              "kind": "date",
+              "passed": true,
+              "text": "2022-09-08"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000CCCC3",
+              "kind": "account",
+              "passed": true,
+              "text": "8000CCCC3"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 123",
+              "kind": "bank",
+              "passed": true,
+              "text": "123"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "amount 9700.25 US Dollar",
+              "kind": "amount",
+              "passed": true,
+              "text": "9,700.25 US Dollar"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "account 8000DDDD4",
+              "kind": "account",
+              "passed": true,
+              "text": "8000DDDD4"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "bank 11",
+              "kind": "bank",
+              "passed": true,
+              "text": "11"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-TXN-103"],
+          "index": 7,
+          "passed": true,
+          "section": "how",
+          "text": "On 2022-09-08, account 8000CCCC3 at bank 123 paid 9,700.25 US Dollar to account 8000DDDD4 at bank 11 by ACH."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "count 9.0 account",
+              "kind": "count",
+              "passed": true,
+              "text": "9 different accounts"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "duration 1440.0 minutes",
+              "kind": "duration",
+              "passed": true,
+              "text": "24 hours"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-REASON-7-1"],
+          "index": 8,
+          "passed": true,
+          "section": "why",
+          "text": "Model reason 1: Sender paid 9 different accounts in the previous 24 hours; raises the risk score."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "duration 20.0 minutes",
+              "kind": "duration",
+              "passed": true,
+              "text": "20 min"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-REASON-7-2"],
+          "index": 9,
+          "passed": true,
+          "section": "why",
+          "text": "Model reason 2: Sender last received money 20 min earlier; raises the risk score."
+        },
+        {
+          "claims": [],
+          "errors": [],
+          "evidence_ids": ["EV-REASON-7-3"],
+          "index": 10,
+          "passed": true,
+          "section": "why",
+          "text": "Model reason 3: Sent by ACH; raises the risk score."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "typology FAN-OUT",
+              "kind": "typology",
+              "passed": true,
+              "text": "FAN-OUT"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "percent 62.34",
+              "kind": "percent",
+              "passed": true,
+              "text": "62.3%"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-ALERT-7", "EV-MOTIF-7"],
+          "index": 11,
+          "passed": true,
+          "section": "why",
+          "text": "The pattern is consistent with the FAN-OUT typology (typology model confidence 62.3%)."
+        },
+        {
+          "claims": [
+            {
+              "detail": "matches cited evidence",
+              "expected": "count 9.0 payee",
+              "kind": "count",
+              "passed": true,
+              "text": "9 payees"
+            },
+            {
+              "detail": "matches cited evidence",
+              "expected": "duration 1440.0 minutes",
+              "kind": "duration",
+              "passed": true,
+              "text": "24 h"
+            }
+          ],
+          "errors": [],
+          "evidence_ids": ["EV-MOTIF-7"],
+          "index": 12,
+          "passed": true,
+          "section": "why",
+          "text": "Structural signal: the sender fanned out to 9 payees in 24 h."
+        }
+      ],
+      "verifier_version": "1.0.0"
+    }
+  },
+  "leaves": {
+    "EV-ALERT-7": "fc51e7b5452511201c49024f66082d6087dcb84e05577fe8348c26e420b07a01",
+    "EV-CASE-42": "b74bf3bdcb59edf679838b9a4a3508d1adebe2498e8f58bd65c11710be114b1d",
+    "EV-MOTIF-7": "7db28601283ad3f91caebde34d7507f0995e5de56444dfc0f9ef27fc98ed054d",
+    "EV-PATH-7": "e7e666cc1e4385ecacbd2c90c3b41bf8aee2e88f469ad8a739e5159a1b3577be",
+    "EV-REASON-7-1": "fb041b81e9160c7442cc3c8df070396cdc7a09e066d08a54a488bf73bb079f6e",
+    "EV-REASON-7-2": "ba6edd0f25cd26bd027f66a6fad31216e6c5cc155df9b5cdd5ce8613a291e69b",
+    "EV-REASON-7-3": "f6aab21fa1e809e4e5b3361e0ccd33b4616b1046545bcc3b81a763adab9f3b2a",
+    "EV-TXN-101": "b0f21955446b28840ed3c92c48f4a2ee0727a0f16e91b18fc5b1411be61dfbb1",
+    "EV-TXN-102": "5096a46a3d0e618c62655eafc14fd8901db92081381ded0de773c96c992d91db",
+    "EV-TXN-103": "05fa38f9e043e42041fce0fb81f64231b1a8851086e23fe2b220ffcbaea0ca42",
+    "EV-TXN-104": "c10c941dd3645755eb574fb9c12d90a52bbae1cd00750b5db938474a123a1b1a",
+    "approval": "6a89613a8ab869ef33db92e293bd1092a7e980f8a76a0c5838272054f6a7d47b",
+    "narrative": "4f0a1534f9464ad55d382809e8216aa43a7067597c6310124980b05c53f822e8",
+    "verification": "d8b1bad8e625fe438cebdf2803ba9fd4af2b984f5f63b27ce30e036524a72334"
+  },
+  "merkle_root": "52eb67949f42efee659eceaf7aa71110bc78a5b961365cc480518c1e4270ff4c",
+  "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMCowBQYDK2VwAyEAwodXJzNJyzzmyxcvYz8YmZpbIR69CbDWRHLYav64ChE=\n-----END PUBLIC KEY-----\n",
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "7c7f11122704130c",
+    "message": "verita-case-v1:42:52eb67949f42efee659eceaf7aa71110bc78a5b961365cc480518c1e4270ff4c",
+    "signed_at": "2022-09-12T10:00:00+00:00",
+    "value": "pVc5Gf67JWiTs9q14PVDsJKdEikYz+/ipxNbK2Vw8W8jHGms6aW7HdApKB/IR4R+joVzb+L8hfyC4eokTRvvBg=="
+  },
+  "title": "fixture"
+}

@@ -10,3 +10,4 @@ export { TextArea } from "./TextArea";
 export { Stat } from "./Stat";
 export type { Provenance, StatProps } from "./Stat";
 export { Slider } from "./Slider";
+export { HashText } from "./HashText";

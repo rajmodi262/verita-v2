@@ -1,0 +1,494 @@
+{
+  "amount_large/1": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount"
+    ],
+    "failed_sentences": [
+      12
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "amount_large/10": {
+    "coverage": {
+      "case total": false,
+      "date range": false,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount"
+    ],
+    "failed_sentences": [
+      1
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "amount_large/19": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": false,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount"
+    ],
+    "failed_sentences": [
+      9
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "amount_small/0": {
+    "coverage": {
+      "case total": false,
+      "date range": false,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount"
+    ],
+    "failed_sentences": [
+      1
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "amount_small/18": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount"
+    ],
+    "failed_sentences": [
+      11
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "amount_small/27": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": false,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount"
+    ],
+    "failed_sentences": [
+      9
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "amount_small/9": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": false,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount"
+    ],
+    "failed_sentences": [
+      9
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "clean/known": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [],
+    "failed_sentences": [],
+    "passed": true,
+    "sentence_errors": []
+  },
+  "clean/unattributed": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [],
+    "failed_sentences": [],
+    "passed": true,
+    "sentence_errors": []
+  },
+  "invented_counterparty/13": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account"
+    ],
+    "failed_sentences": [
+      11
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "invented_counterparty/22": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account"
+    ],
+    "failed_sentences": [
+      12
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "invented_counterparty/4": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account"
+    ],
+    "failed_sentences": [
+      12
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "irrelevant_citation/17": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account",
+      "bank",
+      "date",
+      "percent"
+    ],
+    "failed_sentences": [
+      0
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "irrelevant_citation/26": {
+    "coverage": {
+      "case total": false,
+      "date range": false,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "amount",
+      "count",
+      "date",
+      "date_range"
+    ],
+    "failed_sentences": [
+      1
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "irrelevant_citation/8": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account",
+      "amount",
+      "bank",
+      "date"
+    ],
+    "failed_sentences": [
+      10
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "swapped_account/12": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account"
+    ],
+    "failed_sentences": [
+      11
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "swapped_account/21": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account"
+    ],
+    "failed_sentences": [
+      10
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "swapped_account/3": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "account"
+    ],
+    "failed_sentences": [
+      12
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "uncited_sentence/16": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": false,
+      "typology": true
+    },
+    "failed_claims": [
+      "account",
+      "amount",
+      "count",
+      "date",
+      "duration"
+    ],
+    "failed_sentences": [
+      9
+    ],
+    "passed": false,
+    "sentence_errors": [
+      "uncited"
+    ]
+  },
+  "uncited_sentence/25": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "bank",
+      "count"
+    ],
+    "failed_sentences": [
+      2
+    ],
+    "passed": false,
+    "sentence_errors": [
+      "uncited"
+    ]
+  },
+  "uncited_sentence/7": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "typology"
+    ],
+    "failed_sentences": [
+      3
+    ],
+    "passed": false,
+    "sentence_errors": [
+      "uncited"
+    ]
+  },
+  "wrong_count/15": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "count"
+    ],
+    "failed_sentences": [
+      4
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_count/24": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": false,
+      "typology": true
+    },
+    "failed_claims": [
+      "count"
+    ],
+    "failed_sentences": [
+      9
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_count/6": {
+    "coverage": {
+      "case total": false,
+      "date range": false,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "count"
+    ],
+    "failed_sentences": [
+      1
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_date/11": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": false,
+      "typology": true
+    },
+    "failed_claims": [
+      "date"
+    ],
+    "failed_sentences": [
+      9
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_date/2": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "date"
+    ],
+    "failed_sentences": [
+      12
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_date/20": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "date"
+    ],
+    "failed_sentences": [
+      10
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_typology/14": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "typology"
+    ],
+    "failed_sentences": [
+      3
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_typology/23": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "typology"
+    ],
+    "failed_sentences": [
+      3
+    ],
+    "passed": false,
+    "sentence_errors": []
+  },
+  "wrong_typology/5": {
+    "coverage": {
+      "case total": true,
+      "date range": true,
+      "dominant path": true,
+      "typology": true
+    },
+    "failed_claims": [
+      "typology"
+    ],
+    "failed_sentences": [
+      7
+    ],
+    "passed": false,
+    "sentence_errors": []
+  }
+}

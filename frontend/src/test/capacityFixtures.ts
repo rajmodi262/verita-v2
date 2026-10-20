@@ -189,7 +189,8 @@ export const CALIBRATION = {
 
 export const DRIFT = {
   baseline: "calib split",
-  features_checked: ["r_age_min", "score"],
+  features_checked: ["s_payees_7d", "score"],
+  excluded_time_anchored: ["r_age_min"],
   by_day: [
     {
       day: DAY,

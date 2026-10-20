@@ -260,3 +260,57 @@ def bench(dataset: DatasetOpt, root: RootOpt = REPO_ROOT) -> None:
             return run_bench(ds, db)
 
     _run_stage(run, dataset, root)
+
+
+defend_app = typer.Typer(help="Defend: case files, verifier evaluation, job worker.")
+app.add_typer(defend_app, name="defend")
+
+
+@defend_app.command("eval")
+def defend_eval(
+    dataset: DatasetOpt,
+    root: RootOpt = REPO_ROOT,
+    cases: int = 300,
+    seed: int = 0,
+    llm_cases: int = 30,
+    llm: Annotated[
+        bool, typer.Option(help="Also send evidence to the configured LLM providers")
+    ] = False,
+) -> None:
+    """Fault-injection evaluation of the verifier; writes artifacts/<dataset>/defend/."""
+    from verita.defend.evaluation import run_eval  # noqa: PLC0415
+    from verita.defend.narrative import providers_from_settings  # noqa: PLC0415
+
+    settings = get_settings()
+    factory = make_session_factory(make_engine(settings.database_url))
+
+    def run(ds: Any) -> Any:
+        with transaction(factory) as db:
+            providers = providers_from_settings(settings) if llm else []
+            result = run_eval(ds, db, cases, seed, providers, llm_cases)
+        for f in result["faults"].values():
+            f.pop("misses")
+        result.pop("clean_failures")
+        return result
+
+    _run_stage(run, dataset, root)
+
+
+@app.command("worker")
+def worker(once: bool = False, poll_seconds: float = 1.0) -> None:
+    """Run queued jobs (narrative drafts) until stopped; --once runs at most one."""
+    import time  # noqa: PLC0415
+
+    from verita.services import cases, jobs  # noqa: PLC0415
+
+    settings = get_settings()
+    cases.configure(settings)
+    factory = make_session_factory(make_engine(settings.database_url))
+    while True:
+        job = jobs.run(factory)
+        if job is not None:
+            typer.echo(f"job {job.id} {job.kind}: {job.status}")
+        if once:
+            return
+        if job is None:
+            time.sleep(poll_seconds)
