@@ -116,7 +116,7 @@ jobs:
           npm run build
           (cd ../backend && uv run --no-sync uvicorn verita.api.app:create_app --factory --port 8011 &)
           npx vite preview --port 4173 --strictPort &
-          npx -y wait-on@8.0.3 -t 60000 http://localhost:8011/api/v1/health/live http://localhost:4173
+          npx -y wait-on@8.0.3 -t 60000 http-get://localhost:8011/api/v1/health/live http-get://localhost:4173
           npm run lighthouse
       - uses: actions/upload-artifact@v4
         if: always()
