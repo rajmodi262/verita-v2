@@ -8,10 +8,10 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import AliasChoices, Field, SecretStr, model_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import AliasChoices, Field, SecretStr, field_validator, model_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 from verita.pipeline.config import REPO_ROOT
 
@@ -39,14 +39,21 @@ class Settings(BaseSettings):
     # Defend: narrative drafting. Providers are tried in order; "offline" (the deterministic
     # template) always works and is the fallback when no key is set.
     llm_providers: list[str] = Field(default_factory=lambda: ["gemini", "groq"])
-    gemini_model: str = "gemini-2.5-flash"
-    groq_model: str = "llama-3.3-70b-versatile"
+    # Checked against every configured key on 2026-10-20 (`verita llm keys`): gemini-2.5-flash
+    # is closed to new projects and Groq retired llama-3.3-70b-versatile.
+    gemini_model: str = "gemini-3.5-flash"
+    groq_model: str = "openai/gpt-oss-120b"
     gemini_api_key: SecretStr | None = Field(
         default=None, validation_alias=AliasChoices("VERITA_GEMINI_API_KEY", "GEMINI_API_KEY")
     )
     groq_api_key: SecretStr | None = Field(
         default=None, validation_alias=AliasChoices("VERITA_GROQ_API_KEY", "GROQ_API_KEY")
     )
+    # Key pools, comma-separated in priority order: the first key with quota left is used, and a
+    # key whose quota runs out is skipped at once until its retry time (verita.defend.keypool).
+    # The single-key variables above are used only when the pool for that provider is empty.
+    gemini_api_keys: Annotated[list[SecretStr], NoDecode] = Field(default_factory=list)
+    groq_api_keys: Annotated[list[SecretStr], NoDecode] = Field(default_factory=list)
     llm_timeout_seconds: float = Field(default=45.0, gt=0, le=300)
     # Ed25519 signing key (PEM). Created on first use in dev; a mounted secret in production.
     signing_key_path: Path = REPO_ROOT / "keys" / "verita-signing.pem"
@@ -84,6 +91,22 @@ class Settings(BaseSettings):
     def cookie_secure(self) -> bool:
         """Cookies are Secure everywhere except local dev/test over plain HTTP."""
         return self.is_prod
+
+    @field_validator("gemini_api_keys", "groq_api_keys", mode="before")
+    @classmethod
+    def _split_keys(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            return [k.strip() for k in value.split(",") if k.strip()]
+        return value
+
+    def llm_keys(self, provider: str) -> list[str]:
+        """The keys for PROVIDER in priority order (de-duplicated); empty when none is set."""
+        pool = {"gemini": self.gemini_api_keys, "groq": self.groq_api_keys}.get(provider, [])
+        single = {"gemini": self.gemini_api_key, "groq": self.groq_api_key}.get(provider)
+        keys = [k.get_secret_value() for k in pool] or (
+            [single.get_secret_value()] if single else []
+        )
+        return list(dict.fromkeys(keys))
 
     @model_validator(mode="after")
     def _prod_requires_postgres(self) -> Settings:

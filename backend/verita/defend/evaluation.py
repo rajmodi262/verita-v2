@@ -172,6 +172,7 @@ def _llm_eval(
         }
     drafts = claims = unsupported = uncited = sentences_total = passed = fallbacks = 0
     by_kind: Counter[str] = Counter()
+    drafted_by: Counter[str] = Counter()  # keys and providers fail over, so record who wrote it
     for _, ev in built:
         try:
             d = narr.draft(ev, providers, mode="llm")
@@ -179,6 +180,7 @@ def _llm_eval(
             fallbacks += 1
             continue
         drafts += 1
+        drafted_by[f"{d.provider}/{d.model}"] += 1
         report = verify(d.sentences, ev)
         passed += report.passed
         for s in report.sentences:
@@ -195,6 +197,7 @@ def _llm_eval(
         "models": [p.model for p in providers],
         "drafts": drafts,
         "provider_failures": fallbacks,
+        "drafted_by": dict(drafted_by),
         "unsupported_claim_rate": _rate(unsupported, claims),
         "unsupported_by_kind": dict(by_kind),
         "citation_error_rate": _rate(uncited, sentences_total),

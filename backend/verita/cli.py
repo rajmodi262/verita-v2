@@ -314,15 +314,56 @@ def defend_eval(
     _run_stage(run, dataset, root)
 
 
+llm_app = typer.Typer(help="LLM providers: key pools and their quota.")
+app.add_typer(llm_app, name="llm")
+
+
+def _print_key_report(settings: Any) -> int:
+    """Probe every configured key; print one fingerprinted line each. Returns usable keys."""
+    from verita.defend.narrative import providers_from_settings  # noqa: PLC0415
+
+    providers = providers_from_settings(settings)
+    if not providers:
+        typer.echo("No LLM keys configured: narratives use the offline template.")
+        return 0
+    usable = 0
+    for provider in providers:
+        for row in provider.probe():
+            usable += row["status"] == "ok"
+            retry = f" retry in {row['retry_in_s']:.0f} s" if row["retry_in_s"] is not None else ""
+            detail = f"  {row['detail']}" if row["detail"] else ""
+            typer.echo(
+                f"{row['provider']:<7} #{row['priority']}  {row['key']}  "
+                f"{row['status']:<9}{retry}{detail}"
+            )
+    return usable
+
+
+@llm_app.command("keys")
+def llm_keys() -> None:
+    """Check every LLM key's quota with a one-token request (keys shown as fingerprints).
+
+    Exits 1 when no key of any provider is usable right now.
+    """
+    if _print_key_report(get_settings()) == 0:
+        raise typer.Exit(1)
+
+
 @app.command("worker")
-def worker(once: bool = False, poll_seconds: float = 1.0) -> None:
-    """Run queued jobs (narrative drafts) until stopped; --once runs at most one."""
+def worker(once: bool = False, poll_seconds: float = 1.0, check_keys: bool = True) -> None:
+    """Run queued jobs (narrative drafts) until stopped; --once runs at most one.
+
+    On start the worker checks every LLM key's quota, so exhausted keys are skipped from the
+    first draft (--no-check-keys to skip the check).
+    """
     import time  # noqa: PLC0415
 
     from verita.services import cases, jobs  # noqa: PLC0415
 
     settings = get_settings()
     cases.configure(settings)
+    if check_keys:
+        _print_key_report(settings)
     factory = make_session_factory(make_engine(settings.database_url))
     while True:
         job = jobs.run(factory)

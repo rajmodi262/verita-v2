@@ -37,11 +37,7 @@ def _audit(
 @router.get("/cases/meta", dependencies=[READERS], response_model=cs.CaseMeta)
 def meta(request: Request) -> dict[str, Any]:
     settings = request.app.state.settings
-    keyed = [
-        p
-        for p in settings.llm_providers
-        if (p == "gemini" and settings.gemini_api_key) or (p == "groq" and settings.groq_api_key)
-    ]
+    keyed = [p for p in settings.llm_providers if settings.llm_keys(p)]
     return {
         "return_reasons": RETURN_REASONS,
         "close_reasons": CLOSE_REASONS,
