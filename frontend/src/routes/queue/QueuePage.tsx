@@ -10,6 +10,8 @@ import { ErrorState } from "../../components/ErrorState";
 import { KeyboardHelp } from "../../components/KeyboardHelp";
 import { Button, EmptyState, Select, Stamp } from "../../components/ui";
 import { cx } from "../../lib/cx";
+import { RiskTape } from "../../components/charts/RiskTape";
+import { TypologyGlyph } from "../../components/TypologyGlyph";
 import { money, percent, score, splitAccount, typologyLabel } from "../../lib/format";
 
 import styles from "./QueuePage.module.css";
@@ -150,6 +152,13 @@ export default function QueuePage() {
           Shortcuts (?)
         </Button>
       </header>
+      <RiskTape
+        days={meta.data?.days ?? []}
+        selected={filters.date}
+        onSelect={(date) => {
+          setFilter("date", date ?? "");
+        }}
+      />
       {filters.date ? <DayPlan date={filters.date} /> : null}
 
       <div className={styles.filters}>
@@ -264,6 +273,7 @@ export default function QueuePage() {
                       </td>
                       <td className={styles.mono}>{a.alert_date}</td>
                       <td>
+                        <TypologyGlyph typology={a.typology_pred} />
                         {typologyLabel(a.typology_pred)}{" "}
                         <span className={styles.muted}>{percent(a.typology_conf, 0)}</span>
                       </td>

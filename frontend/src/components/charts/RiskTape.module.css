@@ -1,0 +1,83 @@
+.tape {
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4) var(--space-5) var(--space-3);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  box-shadow:
+    inset 0 0 0 3px var(--color-surface),
+    inset 0 0 0 4px var(--color-rule);
+}
+
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: baseline;
+  margin-bottom: var(--space-3);
+  font-size: var(--fs-sm);
+  color: var(--color-ink-muted);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--fs-md);
+  color: var(--color-ink);
+}
+
+.days {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin: 0;
+  padding: 0 0 var(--space-1);
+  list-style: none;
+  border-bottom: 1px solid var(--color-border);
+  background: repeating-linear-gradient(0deg, transparent 0 23px, var(--color-surface-2) 23px 24px);
+}
+
+.day {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 10px;
+}
+
+.bar,
+.barOn {
+  width: 100%;
+  height: 96px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.bar svg,
+.barOn svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bar rect {
+  fill: var(--color-guilloche);
+  transition: fill var(--duration-fast);
+}
+
+.barOn rect {
+  fill: var(--color-alert);
+}
+
+.bar:hover rect {
+  fill: var(--color-ink);
+}
+
+.label {
+  margin-top: var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-stretch: 75%;
+  color: var(--color-ink-muted);
+}
