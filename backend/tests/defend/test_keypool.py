@@ -250,3 +250,85 @@ def test_pools_are_shared_per_process_so_cooldowns_persist():
     other = Settings(_env_file=None, llm_providers=["gemini"], gemini_api_keys="c")
     assert narr.providers_from_settings(other)[0].pool is not first.pool
     keypool.reset_pools()
+
+
+# ── the batch LLM evaluation waits out short limits; interactive drafts never do ─────────
+
+
+class CoolingProvider:
+    """Fails like a pool whose only key is briefly rate-limited, then succeeds."""
+
+    name, model = "gemini", "gemini-x"
+
+    def __init__(self, failures: int, retry_s: float) -> None:
+        self.pool = KeyPool("gemini", ["k"])
+        self.failures, self.retry_s, self.calls = failures, retry_s, 0
+
+    def complete(self, system, user):
+        self.calls += 1
+        if self.calls <= self.failures:
+            self.pool.mark_exhausted(self.pool._keys[0], self.retry_s, "HTTP 429: rate limit")
+            raise narr.ProviderError("gemini: no key with quota left of 1")
+        return GOOD
+
+
+def test_llm_eval_waits_for_a_short_reset_then_scores_the_draft(monkeypatch, evidence):
+    from verita.defend import evaluation
+
+    slept: list[float] = []
+    monkeypatch.setattr(evaluation.time, "sleep", slept.append)
+    provider = CoolingProvider(failures=narr.MAX_ATTEMPTS, retry_s=20.0)
+    out = evaluation._llm_eval([(None, evidence)], [provider])
+    assert (out["drafts"], out["provider_failures"]) == (1, 0)
+    assert len(slept) == 1 and 19 < slept[0] <= 21
+    assert out["drafted_by"] == {"gemini/gemini-x": 1}
+
+
+def test_llm_eval_does_not_wait_out_a_daily_quota_and_says_why(monkeypatch, evidence):
+    from verita.defend import evaluation
+
+    monkeypatch.setattr(evaluation.time, "sleep", lambda _s: pytest.fail("must not wait"))
+    long_reset = CoolingProvider(failures=99, retry_s=evaluation.LLM_MAX_WAIT_S + 1)
+    out = evaluation._llm_eval([(None, evidence)], [long_reset])
+    assert out["provider_failures"] == 1 and out["failure_reasons"] == {"gemini: quota": 1}
+    assert out["seconds_waiting_for_quota"] == 0
+
+
+def test_failure_reasons_are_categorised_per_provider():
+    from verita.defend.evaluation import _category, _failure_reason
+
+    assert _category("gemini: no key with quota left of 3") == "quota"
+    assert _category("The read operation timed out") == "timeout"
+    assert _category("groq HTTP 413 (key sha256:1)") == "request too large"
+    assert _category("gemini HTTP 503 (key sha256:1)") == "provider unavailable"
+    assert _category("output is not the narrative JSON shape: 2 errors") == (
+        "output not the required JSON"
+    )
+    assert _category("weird") == "other"
+    attempts = [
+        {"provider": "gemini", "attempt": "1", "error": "gemini: no key with quota left of 4"},
+        {"provider": "groq", "attempt": "1", "error": "The read operation timed out"},
+        {"provider": "groq", "attempt": "2", "error": "groq HTTP 413 (key sha256:1)"},
+    ]
+    assert _failure_reason(attempts) == "gemini: quota; groq: request too large"
+
+
+def test_groq_caps_reserved_output_so_requests_fit_the_minute_limit(monkeypatch):
+    sent: list[dict] = []
+
+    def capture(url, headers, json, timeout):
+        sent.append(json)
+        return httpx.Response(200, json={"choices": [{"message": {"content": GOOD}}]})
+
+    monkeypatch.setattr(narr.httpx, "post", capture)
+    narr.GroqProvider(KeyPool("groq", ["g"], Clock()), "gpt-oss").complete("s", "u")
+    narr.GroqProvider(KeyPool("groq", ["g"], Clock()), "qwen", reasoning_effort=None).complete(
+        "s", "u"
+    )
+    assert sent[0]["max_completion_tokens"] == 2000 and sent[0]["reasoning_effort"] == "low"
+    assert "reasoning_effort" not in sent[1]
+
+
+def test_evidence_block_is_compact_json():
+    block = narr.evidence_block({"E1": {"id": "E1", "kind": "case", "payload": {"a": 1}}})
+    assert block == '<EVIDENCE>\n[{"id":"E1","kind":"case","payload":{"a":1}}]\n</EVIDENCE>'

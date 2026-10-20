@@ -43,6 +43,8 @@ class Settings(BaseSettings):
     # is closed to new projects and Groq retired llama-3.3-70b-versatile.
     gemini_model: str = "gemini-3.5-flash"
     groq_model: str = "openai/gpt-oss-120b"
+    groq_max_output_tokens: int = Field(default=2000, ge=256, le=32_000)
+    groq_reasoning_effort: Literal["low", "medium", "high"] | None = "low"
     gemini_api_key: SecretStr | None = Field(
         default=None, validation_alias=AliasChoices("VERITA_GEMINI_API_KEY", "GEMINI_API_KEY")
     )
