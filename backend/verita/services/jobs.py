@@ -83,8 +83,7 @@ def run(factory: sessionmaker[Session], job_id: int | None = None) -> Job | None
         claimed_id = job.id
     try:
         with transaction(factory) as db:
-            job = db.get(Job, claimed_id)
-            assert job is not None  # noqa: S101 - claimed in the previous transaction
+            job = db.get_one(Job, claimed_id)  # claimed in the previous transaction
             fn = HANDLERS.get(job.kind)
             if fn is None:
                 msg = f"no handler for job kind {job.kind!r}"
@@ -98,8 +97,7 @@ def run(factory: sessionmaker[Session], job_id: int | None = None) -> Job | None
             return job
     except Exception as exc:  # noqa: BLE001 - a job failure is data, not a crash
         with transaction(factory) as db:
-            job = db.get(Job, claimed_id)
-            assert job is not None  # noqa: S101
+            job = db.get_one(Job, claimed_id)
             retry = job.attempts < MAX_ATTEMPTS and not isinstance(exc, AppError)
             job.status = JobStatus.QUEUED.value if retry else JobStatus.FAILED.value
             job.error = f"{type(exc).__name__}: {exc}"

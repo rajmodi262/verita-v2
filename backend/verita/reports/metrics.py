@@ -33,7 +33,7 @@ def _read(path: Path) -> Any:
 
 def git_sha() -> str:
     try:
-        out = subprocess.run(
+        out = subprocess.run(  # nosec B603 B607 - fixed argv, git from PATH, build machine only
             ["git", "rev-parse", "--short=12", "HEAD"],  # noqa: S607
             cwd=REPO_ROOT,
             capture_output=True,
