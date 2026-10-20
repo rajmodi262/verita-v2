@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unknown-property -- react-three-fiber elements take Three.js props */
 import { Stars } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer } from "@react-three/postprocessing";
 import { useMemo, useRef } from "react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
@@ -205,7 +205,8 @@ function Medallion({
     const g = group.current;
     if (!g) return;
     g.rotation.y += delta * 0.5; // a full, unhurried turn
-    const tilt = -state.pointer.y * 0.15 + Math.sin(state.clock.elapsedTime * 0.3) * 0.06;
+    // face tilted slightly up, so VERITA reads high on the coin
+    const tilt = -0.16 - state.pointer.y * 0.12 + Math.sin(state.clock.elapsedTime * 0.3) * 0.04;
     g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, tilt, 0.06);
     onFace(Math.abs(Math.cos(g.rotation.y)));
     // the coin glints when a pattern is caught (same script clock as the money stream)
@@ -229,7 +230,7 @@ function Medallion({
     clearcoat: 0.4,
   };
   return (
-    <group ref={group}>
+    <group ref={group} position={[0, 0.22, 0]}>
       {/* the milled edge */}
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <cylinderGeometry args={[COIN_R, COIN_R, COIN_T, 192, 1, true]} />
@@ -276,7 +277,7 @@ function glyph(ch: string, color: string): THREE.CanvasTexture {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.shadowColor = color;
-    ctx.shadowBlur = 22;
+    ctx.shadowBlur = 6;
     ctx.lineWidth = 8;
     ctx.strokeStyle = "#0a0618";
     ctx.strokeText(ch, 80, 88);
@@ -451,7 +452,7 @@ function Stream({
         const head = golden ? 0.44 : 0.34;
         const size = j === 0 ? head : 0.14 * fade;
         sprite.scale.set(size, size, 1);
-        material.opacity = j === 0 ? 1 : 0.6 * fade;
+        material.opacity = j === 0 ? 1 : 0.32 * fade;
       }
     });
   });
@@ -484,8 +485,8 @@ export default function VaultScene({
       line: token("--hero-engrave", "#e9dcff"),
       ground: token("--hero-coin", "#1a0f33"),
       metal: token("--hero-metal", "#4a3d6e"),
-      gold: token("--hero-flag", "#f3d08a"),
-      silver: token("--hero-particle", "#eef0ff"),
+      gold: token("--hero-flag", "#d9b56a"),
+      silver: token("--hero-particle", "#b9bdd8"),
       key: token("--hero-key", "#ff8be9"),
       fill: token("--hero-fill", "#6b7bff"),
     }),
@@ -528,9 +529,7 @@ export default function VaultScene({
         }}
       />
       <EffectComposer>
-        <Bloom intensity={1.4} luminanceThreshold={0.35} luminanceSmoothing={0.3} mipmapBlur />
-        <Noise opacity={0.05} />
-        <Vignette offset={0.25} darkness={0.85} />
+        <Bloom intensity={0.7} luminanceThreshold={0.6} luminanceSmoothing={0.2} />
       </EffectComposer>
     </Canvas>
   );

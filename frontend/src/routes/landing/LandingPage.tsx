@@ -12,6 +12,17 @@ import styles from "./LandingPage.module.css";
 
 const VaultScene = lazy(() => import("../../components/hero/VaultScene"));
 
+/** The ticker's loop: the promise, then the patterns the money performs on the stage. */
+const TICKER = [
+  "Every alert explained",
+  "Every miss quantified",
+  "Every report provable",
+  "Fan-in: many accounts pay into one",
+  "Cycle: the money comes back changed",
+  "Scatter-gather: split apart, gathered again",
+  "Signed case files you can verify offline",
+];
+
 /** A fixed root for the decorative landing seal (any hex string seeds a valid rosette). */
 const SEAL_ROOT = "5e7a11fe9e3779b97f4a7c15f39cc0605cedc834";
 
@@ -99,12 +110,34 @@ export default function LandingPage() {
   return (
     <main id="main" className={styles.page} data-landing>
       <header className={styles.stage} ref={stage}>
-        <nav className={styles.nav} aria-label="Site">
-          <span className={styles.navLinks}>
-            <a href="#measured">Detect</a>
-            <a href="#measured">Decide</a>
-            <a href="#measured">Defend</a>
+        <h1 className="srOnly">
+          Every alert explained · Every miss quantified · Every report provable
+        </h1>
+        {/* News-style ticker: the promise on a loop, and a LIVE badge naming the pattern the
+            money is performing right now. */}
+        <div className={styles.ticker} aria-hidden="true">
+          <span className={styles.live}>
+            <span className={styles.liveDot} />
+            Live
           </span>
+          <span className={styles.liveCaption} ref={caption}>
+            Monitoring the money
+          </span>
+          <div className={styles.tape}>
+            <div className={styles.track}>
+              {[0, 1].map((copy) => (
+                <span key={copy} className={styles.run}>
+                  {TICKER.map((item) => (
+                    <span key={item} className={styles.item}>
+                      {item}
+                    </span>
+                  ))}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+        <nav className={styles.nav} aria-label="Site">
           <Link to="/login" className={styles.navCta}>
             Sign in
           </Link>
@@ -128,19 +161,17 @@ export default function LandingPage() {
             </div>
           )}
         </div>
-        <p className={styles.caption} ref={caption} aria-hidden="true" />
-        <div className={styles.band}>
-          <h1 className={styles.headline}>
-            Every alert explained · Every miss quantified · Every report provable
-          </h1>
-        </div>
         <div className={styles.cta}>
           <Link to="/login" className={styles.enter}>
             Enter the case room <span className={styles.arrow}>→</span>
           </Link>
-          <a href="#measured" className={styles.evidence}>
-            See the evidence ↓
-          </a>
+          <nav className={styles.doing} aria-label="What Verita does">
+            <a href="#measured">Detect</a>
+            <span aria-hidden="true">·</span>
+            <a href="#measured">Decide</a>
+            <span aria-hidden="true">·</span>
+            <a href="#measured">Defend</a>
+          </nav>
         </div>
         <span className={styles.scrollCue} aria-hidden="true" />
       </header>

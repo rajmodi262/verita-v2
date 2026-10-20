@@ -109,65 +109,156 @@
   margin-top: var(--space-2);
 }
 
-/* ── The stage: near-black, the coin at the centre, the words flanking it ─────────────────── */
+/* ── The stage: black at the centre, blue spreading in from the edges, the coin in the middle ─ */
 .stage {
   --face: 1;
 
   position: relative;
   display: grid;
-  grid-template-rows: auto 1fr auto auto auto;
+  grid-template-columns: minmax(0, 1fr); /* the ticker's long track must not widen the stage */
+  grid-template-rows: auto auto 1fr auto;
   justify-items: center;
   width: 100vw; /* full-bleed; the landing hides scrollbars, so 100vw is the viewport */
   min-height: 100svh;
   margin: calc(-1 * var(--space-8)) 0 0 calc(50% - 50vw);
   overflow: hidden;
   color: var(--hero-type-1);
-  background:
-    radial-gradient(ellipse 34% 42% at 50% 47%, var(--hero-sky-3), transparent 72%),
-    radial-gradient(ellipse 90% 60% at 50% 115%, var(--hero-sky-2), transparent 70%),
-    var(--hero-sky-1);
+  background: radial-gradient(
+    ellipse 105% 95% at 50% 50%,
+    var(--hero-sky-1) 38%,
+    var(--hero-edge-mid) 64%,
+    var(--hero-edge) 100%
+  );
+}
+
+/* News ticker across the top */
+.ticker {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 40px;
+  border-bottom: 1px solid var(--hero-ticker-edge);
+  background: var(--hero-ticker);
+  font-family: var(--font-title);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.live {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  background: var(--hero-flag);
+  color: var(--hero-sky-1);
+  font-weight: 700;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hero-sky-1);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.liveCaption {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  border-right: 1px solid var(--hero-ticker-edge);
+  color: var(--hero-flag);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.liveCaption[data-on="false"] {
+  color: var(--hero-type-2);
+}
+
+.tape {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    var(--hero-sky-1) 4%,
+    var(--hero-sky-1) 96%,
+    transparent
+  );
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  animation: ticker 48s linear infinite;
+}
+
+.run {
+  display: flex;
+  align-items: center;
+}
+
+.item {
+  padding: 0 var(--space-6);
+  color: var(--hero-type-1);
+  white-space: nowrap;
+}
+
+.item::before {
+  content: "◆";
+  margin-right: var(--space-6);
+  color: var(--hero-flag);
+  font-size: var(--fs-label);
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .nav {
   position: relative;
   z-index: 4;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: min(1200px, 100%);
-  padding: var(--space-5);
-  font-family: var(--font-title);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.navLinks {
-  display: flex;
-  gap: var(--space-6);
-}
-
-.navLinks a,
-.navCta {
-  color: var(--hero-type-2);
-  text-decoration: none;
-  transition: color var(--duration-fast);
+  justify-content: flex-end;
+  width: min(1400px, 100%);
+  padding: var(--space-4) var(--space-5);
 }
 
 .navCta {
   padding: var(--space-2) var(--space-4);
   border: 1px solid var(--hero-type-2);
   border-radius: 999px;
+  color: var(--hero-type-2);
+  font-family: var(--font-title);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color var(--duration-fast);
 }
 
-.navLinks a:hover,
 .navCta:hover {
   color: var(--hero-type-1);
 }
 
-/* The words: they only appear while the coin's face is toward you, and a glint sweeps
-   across them as it turns (--face is written by the scene every frame). */
+/* The words: engraved serif capitals that appear only while the coin's face is toward you;
+   a glint sweeps across them as it turns (--face is written by the scene every frame). */
 .wordLeft,
 .wordRight {
   position: absolute;
@@ -175,10 +266,11 @@
   z-index: 3;
   max-width: none;
   margin: 0;
-  font-family: var(--font-poster);
+  font-family: var(--font-display);
   font-size: var(--fs-poster-side);
-  font-weight: 300;
-  line-height: 0.82;
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
   background: linear-gradient(
@@ -194,7 +286,6 @@
   background-clip: text;
   color: transparent;
   opacity: calc(var(--face) * var(--face) * var(--face));
-  filter: blur(calc((1 - var(--face)) * 5px));
   transform: translateY(-50%);
 }
 
@@ -210,7 +301,8 @@
 .wordSmall {
   display: block;
   font-size: var(--fs-poster-small);
-  letter-spacing: 0.08em;
+  font-style: italic;
+  letter-spacing: 0.12em;
 }
 
 .scene {
@@ -219,62 +311,15 @@
   z-index: 2;
 }
 
-/* The pattern caption under the coin: appears when the money performs a typology. */
-.caption {
-  position: relative;
-  z-index: 3;
-  grid-row: 3;
-  min-height: 1.6em;
-  max-width: none;
-  margin: 0 0 var(--space-3);
-  font-family: var(--font-title);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--hero-flag);
-  text-shadow: 0 0 18px var(--hero-flag);
-  opacity: 0;
-  transform: translateY(6px);
-  transition:
-    opacity 0.4s ease,
-    transform 0.4s ease;
-}
-
-.caption[data-on="true"] {
-  opacity: 1;
-  transform: none;
-}
-
-.band {
-  position: relative;
-  z-index: 3;
-  grid-row: 4;
-  width: 100%;
-  padding: var(--space-2) var(--space-5);
-  text-align: center;
-}
-
-.headline {
-  max-width: none;
-  margin: 0;
-  font-family: var(--font-title);
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--hero-type-2);
-}
-
-/* The call to action: one glowing pill, one quiet link. */
+/* The call to action: one glowing pill, then what Verita does. */
 .stage .cta {
   position: relative;
   z-index: 3;
-  grid-row: 5;
+  grid-row: 4;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-4);
   padding: var(--space-4) 0 var(--space-8);
 }
 
@@ -292,7 +337,7 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-decoration: none;
-  box-shadow: 0 0 34px -8px var(--hero-flag);
+  box-shadow: 0 0 28px -10px var(--hero-flag);
   backdrop-filter: blur(10px);
   transition:
     box-shadow var(--duration-base),
@@ -300,7 +345,7 @@
 }
 
 .enter:hover {
-  box-shadow: 0 0 46px -4px var(--hero-flag);
+  box-shadow: 0 0 40px -6px var(--hero-flag);
   transform: translateY(-1px);
 }
 
@@ -312,21 +357,24 @@
   transform: translateX(4px);
 }
 
-.evidence {
-  padding-bottom: 2px;
+.doing {
+  display: flex;
+  gap: var(--space-3);
   color: var(--hero-type-2);
+  font-family: var(--font-title);
   font-size: var(--fs-sm);
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  background: linear-gradient(var(--hero-type-1), var(--hero-type-1)) no-repeat 50% 100% / 0 1px;
-  transition:
-    background-size var(--duration-base),
-    color var(--duration-base);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 }
 
-.evidence:hover {
+.doing a {
+  color: var(--hero-type-2);
+  text-decoration: none;
+  transition: color var(--duration-fast);
+}
+
+.doing a:hover {
   color: var(--hero-type-1);
-  background-size: 100% 1px;
 }
 
 .scrollCue {
@@ -351,6 +399,12 @@
   50% {
     opacity: 0.9;
     transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
   }
 }
 

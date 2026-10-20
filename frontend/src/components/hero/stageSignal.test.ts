@@ -1,4 +1,4 @@
-import { applyStageSignal } from "./stageSignal";
+import { applyStageSignal, IDLE } from "./stageSignal";
 
 it("writes the coin's facing and shows, then hides, the pattern caption", () => {
   const stage = document.createElement("header");
@@ -14,7 +14,7 @@ it("writes the coin's facing and shows, then hides, the pattern caption", () => 
   expect(caption.dataset.on).toBe("untouched"); // same caption: no DOM write
 
   applyStageSignal(stage, caption, { face: 0, caption: null });
-  expect(caption.textContent).toBe("");
+  expect(caption.textContent).toBe(IDLE);
   expect(caption.dataset.on).toBe("false");
 });
 
