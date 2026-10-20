@@ -365,5 +365,58 @@ def report_scan(root: RootOpt = REPO_ROOT) -> None:
     typer.echo("No hand-typed metrics")
 
 
+demo_app = typer.Typer(help="Demo pack: the verified bundle a deployed demo serves.")
+app.add_typer(demo_app, name="demo")
+PackOpt = Annotated[Path, typer.Option("--pack", help="Demo pack directory")]
+
+
+@demo_app.command("pack")
+def demo_pack(
+    dataset: DatasetOpt,
+    out: PackOpt = REPO_ROOT / "demo-pack",
+    root: RootOpt = REPO_ROOT,
+    subgraphs_per_day: int = 150,
+) -> None:
+    """Build a demo pack from the loaded alerts and the run artifacts."""
+    from verita.demo.pack import build_pack  # noqa: PLC0415
+
+    factory = make_session_factory(make_engine(get_settings().database_url))
+
+    def run(ds: Any) -> Any:
+        with transaction(factory) as db:
+            manifest = build_pack(ds, db, out, subgraphs_per_day)
+        return {k: manifest[k] for k in ("format", "dataset", "model", "counts")}
+
+    _run_stage(run, dataset, root)
+
+
+@demo_app.command("verify")
+def demo_verify(pack: PackOpt = REPO_ROOT / "demo-pack") -> None:
+    """Check every file against the pack manifest."""
+    from verita.demo.pack import verify_pack  # noqa: PLC0415
+
+    problems = verify_pack(pack)
+    for p in problems:
+        typer.echo(p, err=True)
+    if problems:
+        raise typer.Exit(1)
+    typer.echo(f"{pack}: every file matches its manifest")
+
+
+@demo_app.command("load")
+def demo_load(pack: PackOpt = REPO_ROOT / "demo-pack") -> None:
+    """Verify a pack and load its alerts into the database (idempotent)."""
+    from verita.demo.pack import load_pack  # noqa: PLC0415
+
+    factory = make_session_factory(make_engine(get_settings().database_url))
+    try:
+        with transaction(factory) as db:
+            result = load_pack(db, pack)
+    except ValueError as exc:
+        typer.echo(f"Error: {exc}", err=True)
+        raise typer.Exit(1) from exc
+    typer.echo(json.dumps(result, indent=2))
+
+
 if __name__ == "__main__":  # pragma: no cover - `python -m verita.cli`
     app()

@@ -31,7 +31,10 @@ def get_db(request: Request) -> Iterator[Session]:
 
 
 SettingsDep = Annotated[Settings, Depends(get_settings_dep)]
-DbDep = Annotated[Session, Depends(get_db)]
+# scope="function": commit (or roll back) before the response is sent. With the default
+# request scope the commit ran after the client already had its 200, so an immediate next
+# request (sign in, then act) could miss the new session row on PostgreSQL.
+DbDep = Annotated[Session, Depends(get_db, scope="function")]
 
 
 def client_ip(request: Request) -> str | None:

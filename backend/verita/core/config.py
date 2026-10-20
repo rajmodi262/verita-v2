@@ -51,8 +51,23 @@ class Settings(BaseSettings):
     # Ed25519 signing key (PEM). Created on first use in dev; a mounted secret in production.
     signing_key_path: Path = REPO_ROOT / "keys" / "verita-signing.pem"
     public_key_path: Path = REPO_ROOT / "keys" / "verita-pub.pem"
+    # A verified demo pack (verita demo pack) to serve instead of the build machine's artifacts.
+    demo_pack: Path | None = None
     # Run queued jobs in-process right after enqueueing (dev/demo); production runs `verita worker`.
     inline_jobs: bool = True
+
+    # Rate limits per minute (M9.01). Off by default under VERITA_ENV=test so suites can log in
+    # freely; tests that check the limiter enable it explicitly.
+    rate_limit_enabled: bool | None = None
+    rate_limit_per_ip: int = Field(default=600, ge=1)
+    rate_limit_login_per_ip: int = Field(default=20, ge=1)
+    rate_limit_mutations_per_session: int = Field(default=120, ge=1)
+
+    @property
+    def rate_limits_on(self) -> bool:
+        return (
+            self.rate_limit_enabled if self.rate_limit_enabled is not None else self.env != "test"
+        )
 
     session_ttl_minutes: int = Field(default=480, ge=5, le=7 * 24 * 60)
     login_max_failures: int = Field(default=5, ge=1, le=50)

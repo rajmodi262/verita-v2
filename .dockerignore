@@ -1,0 +1,25 @@
+# Build context is the repository root; ship only what the images need.
+**/.venv
+**/node_modules
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+**/coverage
+**/htmlcov
+**/.coverage
+**/coverage.xml
+**/*.sqlite
+**/.env
+**/.env.*
+backend/.e2e
+backend/tests
+frontend/playwright-report
+frontend/test-results
+frontend/dist
+data
+artifacts
+demo-pack
+keys/*.pem
+!keys/verita-pub.pem
+.git

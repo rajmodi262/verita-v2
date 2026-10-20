@@ -49,7 +49,7 @@ from verita.defend.signing import Signer, load_public_pem, verify_signature
 from verita.defend.verifier import verify
 from verita.services import jobs, ledger
 from verita.services.alerts import champion, get_alert
-from verita.services.evidence import AlertRef, EvidenceStore
+from verita.services.evidence import AlertRef, SubgraphSource
 
 MAX_ALERTS_PER_CASE = 10
 EXPORT_FORMAT = "verita-case-file/1"
@@ -141,7 +141,7 @@ def _sha(data: Any) -> str:
 # ── create ───────────────────────────────────────────────────────────────────
 
 
-def _alert_input(db: Session, store: EvidenceStore, alert: Alert, threshold: float) -> AlertInput:
+def _alert_input(db: Session, store: SubgraphSource, alert: Alert, threshold: float) -> AlertInput:
     ref = AlertRef(alert.id, alert.account_id, alert.alert_date, alert.top_txn_id, threshold)
     return AlertInput(
         id=alert.id,
@@ -162,7 +162,7 @@ def _alert_input(db: Session, store: EvidenceStore, alert: Alert, threshold: flo
 
 
 def create_case(
-    db: Session, user: User, store: EvidenceStore, alert_ids: list[int], title: str | None = None
+    db: Session, user: User, store: SubgraphSource, alert_ids: list[int], title: str | None = None
 ) -> Case:
     ids = sorted(set(alert_ids))
     if not 1 <= len(ids) <= MAX_ALERTS_PER_CASE:

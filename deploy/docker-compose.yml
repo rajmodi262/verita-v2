@@ -1,13 +1,35 @@
-# Local full stack: Postgres, one-shot migrations, API, web.  Run from the repo root:
+# Full stack: Postgres, migrations, demo-pack load, API, job worker, web (nginx, same origin).
+# Run from the repository root after `verita demo pack` (writes ./demo-pack) and creating a key:
 #   docker compose -f deploy/docker-compose.yml up --build
-# Then open http://localhost:8080 and create users with:
 #   docker compose -f deploy/docker-compose.yml run --rm api verita users seed-demo
+# Then open http://localhost:8080. Observability (Prometheus + Grafana) is opt-in:
+#   docker compose -f deploy/docker-compose.yml --profile observability up
 name: verita
 
 x-api-env: &api-env
   VERITA_ENV: prod
   VERITA_DATABASE_URL: postgresql+psycopg://verita:${POSTGRES_PASSWORD:-verita-local-only}@db:5432/verita
   VERITA_CORS_ORIGINS: '["http://localhost:8080"]'
+  VERITA_DATASET: ${VERITA_DATASET:-hi_small}
+  VERITA_DEMO_PACK: /srv/verita/demo-pack
+  VERITA_SIGNING_KEY_PATH: /run/secrets/signing_key
+  VERITA_PUBLIC_KEY_PATH: /tmp/verita-pub.pem
+  VERITA_INLINE_JOBS: "false"
+  VERITA_LLM_PROVIDERS: ${VERITA_LLM_PROVIDERS:-[]}
+  GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+  GROQ_API_KEY: ${GROQ_API_KEY:-}
+
+x-api: &api
+  build:
+    context: ..
+    dockerfile: backend/Dockerfile
+  image: verita-api:local
+  environment: *api-env
+  volumes:
+    - ../demo-pack:/srv/verita/demo-pack:ro
+  secrets: [signing_key]
+  read_only: true
+  tmpfs: [/tmp]
 
 services:
   db:
@@ -25,29 +47,59 @@ services:
       retries: 10
 
   migrate:
-    build: ../backend
-    environment: *api-env
-    command: ["verita", "db", "upgrade"]
+    <<: *api
+    command: ["sh", "-c", "verita db upgrade && verita demo load --pack /srv/verita/demo-pack"]
     depends_on:
       db:
         condition: service_healthy
 
   api:
-    build: ../backend
-    environment: *api-env
+    <<: *api
     depends_on:
       migrate:
         condition: service_completed_successfully
-    read_only: true
-    tmpfs: [/tmp]
+
+  worker:
+    <<: *api
+    command: ["verita", "worker"]
+    healthcheck:
+      disable: true
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
 
   web:
     build: ../frontend
+    image: verita-web:local
     ports:
       - "8080:8080"
     depends_on:
       api:
         condition: service_healthy
+
+  prometheus:
+    profiles: [observability]
+    image: prom/prometheus:v3.5.0
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    profiles: [observability]
+    image: grafana/grafana:12.1.1
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+
+secrets:
+  signing_key:
+    file: ../keys/verita-signing.pem
 
 volumes:
   pgdata:
