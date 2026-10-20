@@ -78,11 +78,14 @@ def test_future_events_never_change_past_features(tmp_path_factory, events, cut,
     a = _features(tmp_path_factory.mktemp("a"), base)
     b = _features(tmp_path_factory.mktemp("b"), sorted(alt))
     cols = [c for c in ALL_FEATURES]
-    past_a = a[a.index < START + timedelta(minutes=cut)].sort_values(["seq"])[cols]
-    past_b = b[b.index < START + timedelta(minutes=cut)].sort_values(["seq"])[cols]
-    pd.testing.assert_frame_equal(
-        past_a.reset_index(drop=True), past_b.reset_index(drop=True), check_dtype=False
-    )
+
+    def past(frame: pd.DataFrame) -> pd.DataFrame:
+        # Match rows by content, not `seq`: seq breaks same-minute ties by file position, and
+        # the two inputs list tied rows in different orders (found by CI, 2026-10-20).
+        rows = frame[frame.index < START + timedelta(minutes=cut)][cols].reset_index()
+        return rows.sort_values(["ts", *cols]).reset_index(drop=True)
+
+    pd.testing.assert_frame_equal(past(a), past(b), check_dtype=False)
 
 
 def test_same_minute_activity_is_invisible(tmp_path):
