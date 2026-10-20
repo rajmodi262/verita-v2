@@ -7,6 +7,11 @@ versions follow [Semantic Versioning](https://semver.org/). Measured results liv
 ## [Unreleased]
 
 ### Added
+- **Credible rules incumbent:** seven typology rules (structuring under the USD 10k reporting
+  threshold, velocity, fan-out, fan-in, rapid pass-through, round-tripping, high value), every
+  threshold tuned on the train split only, lift-weighted alert score, tuned conditions and per-rule
+  test hits in the eval report; `verita detect rules` re-tunes it without retraining the champion.
+  Replaces the six-rule count that barely beat chance.
 - **`docs/DEFEND_IT.md`:** 40 interview questions a financial-crime panel would ask, each
   with a model answer and the file:line that implements it. Results are referenced, never typed.
 - **Model governance (model risk management):** model lifecycle (candidate → approved →

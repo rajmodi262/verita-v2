@@ -120,7 +120,7 @@ tail 0.718 (label shift: test rate 2.3× train).
 - [x] M2.06 Time-respecting cycle detection, numba CSR — ≤4 edges (not 5: the 5-edge search hit the expansion cap on hubs), 7 days. Fires on 6.8% of laundering vs 0.08% of legitimate; finds 34/54 labelled CYCLE closings
 - [-] M2.07 Counterparty prior-alert-rate — **dropped**: honest only with a label-delay model (labels arrive weeks late); without one it leaks future labels. Recorded as a known gap
 - [x] M2.08 Hypothesis property test: perturbing future rows never changes features
-- [x] M2.09 Rules-engine incumbent (6 rules)
+- [x] M2.09 Rules-engine incumbent (6 rules) — replaced 2026-10-20 by seven typology rules tuned on train only (`verita/ml/rules.py`)
 - [x] M2.10 LightGBM tabular baseline (transaction features only)
 - [x] M2.11 LightGBM champion, Optuna 40 trials on the hpo split only (hpo F1 0.494)
 - [x] M2.12 Imbalance ablation: 20% negative subsample (pre-registered default) 0.503, all data unweighted **0.543**, scale_pos_weight 0.039. Focal loss not run. The unweighted variant beat the default on test; we do **not** switch on a test result — a re-selection on hpo is queued (M8)
@@ -335,6 +335,7 @@ model reaches the queue without independent review.
 
 | Date | Change |
 |------|--------|
+| 2026-10-20 | Credible rules incumbent: structuring (USD, just under 10k), velocity, fan-out, fan-in, rapid pass-through, round-tripping, high value; every threshold and the alert threshold tuned on train only; lift-weighted score; per-rule test hits in the eval report; `verita detect rules` re-tunes it without retraining the champion. The old six-rule count barely beat chance; the champion still passes every gate, including beats-incumbent. **Found while tuning:** velocity and pass-through pick the edge of a wide grid — weak signals on this data, reported as tuned rather than chased. |
 | 2026-10-20 | `docs/DEFEND_IT.md`: 40 panel questions (leakage, temporal splits, conformal/ACI, CP-SAT, JCS/Merkle/Ed25519, verifier limits, governance, LightGBM, bank scale), each answered with the file:line where it lives; no hand-typed figures, results point to the Evidence Room. |
 | 2026-10-20 | M10.01 model governance (validate → approve → promote, separation of duties, DB-enforced). The real HI-Small champion passes all seven gates; three features show major drift on bulk days, one of them the model's own score. |
 | 2026-10-20 | LLM key pools (priority order, instant failover on exhausted quota, cooldowns from the provider's retry time, `verita llm keys`) and the raw LLM evaluation. **Found by running on the real keys:** both default models were unusable (gemini-2.5-flash closed to new projects, Groq retired llama-3.3-70b); one Gemini key's project is denied access; every Groq request exceeded its 8,000-tokens/minute limit (prompt + reserved output), fixed with compact evidence and an output cap; the eval mislabelled Groq failures as quota (now per provider). Raw drafts: few pass the verifier as written, which is the verifier's purpose. |

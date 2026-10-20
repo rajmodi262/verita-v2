@@ -36,6 +36,7 @@ from verita.ml.evaluation import (
     wilson,
 )
 from verita.ml.features import ALL_FEATURES, CATEGORICAL, FEATURE_GROUPS, TRANSACTION
+from verita.ml.rules import fit_rules, per_rule_hits
 from verita.pipeline.config import Dataset, PipelineError
 from verita.pipeline.manifest import sha256_file
 from verita.pipeline.patterns import UNATTRIBUTED
@@ -194,30 +195,6 @@ def tune(train: pd.DataFrame, hpo: pd.DataFrame, cfg: DetectConfig) -> dict[str,
     }
 
 
-# ── incumbent rules ──────────────────────────────────────────────────────────
-
-
-def rules_score(frame: pd.DataFrame, train: pd.DataFrame) -> tuple[FloatArray, dict[str, Any]]:
-    """Six classic transaction-monitoring rules; the score is the number that fire."""
-    large = float(train["log_amount_paid"].quantile(0.99))
-    rules = {
-        "large_amount (top 1% of training amounts)": frame["log_amount_paid"] >= large,
-        "rapid_pass_through (sender received money < 60 min ago)": frame[
-            "s_since_last_in_min"
-        ].between(0, 59),
-        "fan_out (sender paid >= 5 distinct payees in 24h)": frame["s_payees_24h"] >= 5,  # noqa: PLR2004
-        "fan_in (receiver paid by >= 5 distinct payers in 24h)": frame["r_payers_24h"] >= 5,  # noqa: PLR2004
-        "new_account (sender first seen < 24h ago)": frame["s_age_min"].between(-1, 1439),
-        "cash_or_crypto (Cash or Bitcoin format)": frame["payment_format_code"].isin(
-            [1, 2]
-        ),  # Bitcoin, Cash in sorted enum order
-    }
-    total = np.zeros(len(frame))
-    for fired in rules.values():
-        total += fired.to_numpy(dtype=np.float64)
-    return total, {"rules": list(rules), "large_amount_log_threshold": round(large, 4)}
-
-
 # ── evaluation helpers ───────────────────────────────────────────────────────
 
 
@@ -344,13 +321,18 @@ def run_detect(dataset: Dataset, cfg: DetectConfig | None = None) -> DetectResul
     )
 
     with timer("models"):
-        rules_test, rules_info = rules_score(test, train)
-        rules_hpo, _ = rules_score(hpo, train)
-        rule_threshold = max(1.0, best_f1_threshold(hpo["is_laundering"].to_numpy(), rules_hpo)[0])
+        ruleset = fit_rules(train)  # tuned on train only: hpo and test stay unseen
         incumbent = evaluate(
-            "rules_incumbent", y_test, rules_test, rule_threshold, blocks, tail_mask, cfg
+            "rules_incumbent",
+            y_test,
+            ruleset.score(test),
+            ruleset.threshold,
+            blocks,
+            tail_mask,
+            cfg,
         )
-        incumbent["rules"] = rules_info
+        incumbent["rules"] = ruleset.to_dict()
+        incumbent["rule_hits_test"] = per_rule_hits(ruleset, test)
         tabular, _, _, _ = fit_eval("lgbm_transaction_only", TRANSACTION, params)
         champion, booster, champ_scores, threshold = fit_eval("lgbm_champion", ALL_FEATURES, params)
         result.models = [incumbent, tabular, champion]
@@ -451,6 +433,34 @@ def run_detect(dataset: Dataset, cfg: DetectConfig | None = None) -> DetectResul
     out = dataset.artifacts_dir / "detect" / "metrics.json"
     out.write_text(json.dumps(result.to_dict(), indent=2, default=str) + "\n", encoding="utf-8")
     return result
+
+
+def refit_incumbent(dataset: Dataset) -> dict[str, Any]:
+    """Re-tune and re-score only the rules incumbent; the champion's artifacts are untouched.
+
+    Rewrites the ``rules_incumbent`` entry of ``artifacts/<dataset>/detect/metrics.json`` with
+    the evaluation settings that file was produced with, so the comparison stays like for like.
+    """
+    path = dataset.artifacts_dir / "detect" / "metrics.json"
+    metrics = json.loads(path.read_text(encoding="utf-8"))
+    known = DetectConfig.__dataclass_fields__
+    cfg = DetectConfig(**{k: v for k, v in metrics["config"].items() if k in known})
+    frame = load_frame(dataset)
+    train, test = frame[frame["split"] == "train"], frame[frame["split"] == "test"]
+    blocks = time_blocks(test["minute"].to_numpy(), cfg.block_minutes)
+    tail_mask = test["ts"].dt.strftime("%Y-%m-%d").isin(tail_days(dataset)).to_numpy()
+    ruleset = fit_rules(train)
+    y_test = test["is_laundering"].to_numpy()
+    incumbent = evaluate(
+        "rules_incumbent", y_test, ruleset.score(test), ruleset.threshold, blocks, tail_mask, cfg
+    )
+    incumbent["rules"] = ruleset.to_dict()
+    incumbent["rule_hits_test"] = per_rule_hits(ruleset, test)
+    metrics["models"] = [
+        incumbent if m["model"] == "rules_incumbent" else m for m in metrics["models"]
+    ]
+    path.write_text(json.dumps(metrics, indent=2, default=str) + "\n", encoding="utf-8")
+    return incumbent
 
 
 def _random_split_check(

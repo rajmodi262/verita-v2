@@ -27,7 +27,7 @@ typology.
 |---|---|---|---|---|
 | lgbm_champion | 50.3% (44.0%–59.1%) | 49.4% (40.9%–60.2%) | 63.8% | 41.5% |
 | lgbm_transaction_only | 25.5% (18.0%–36.5%) | 17.8% (11.6%–35.7%) | 29.5% | 22.5% |
-| rules_incumbent | 0.3% (0.2%–0.3%) | 0.2% (0.1%–0.3%) | 0.1% | 7.2% |
+| rules_incumbent | 7.3% (6.3%–8.9%) | 1.5% (1.1%–2.3%) | 7.8% | 6.9% |
 
 Seeds 0, 1, 2, 3, 4: F1 0.509 ± 0.005.
 
@@ -52,7 +52,7 @@ rate 0.0018. Random (leaky) split F1
 
 ## Model risk validation
 Policy version 1 (`configs/model_policy.yaml`), report SHA-256
-`65836099dcbb2706…`: **passed**.
+`dfcc0c65e15f4b43…`: **passed**.
 Model state: champion, **put into
 service without independent review** (development pipeline or demo pack; in production a model
 reaches the queue only through a validator's approval and a different MLRO's promotion).
