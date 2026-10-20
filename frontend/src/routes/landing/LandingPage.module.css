@@ -109,104 +109,200 @@
   margin-top: var(--space-2);
 }
 
-/* ── The stage: a night of transactions, the seal in front of the words ───────────────────── */
+/* ── The stage: black at the centre, blue spreading in from the edges, the coin in the middle ─ */
 .stage {
+  --face: 1;
+
   position: relative;
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr); /* the ticker's long track must not widen the stage */
+  grid-template-rows: auto auto 1fr auto;
   justify-items: center;
-  width: 100vw;
+  width: 100vw; /* full-bleed; the landing hides scrollbars, so 100vw is the viewport */
   min-height: 100svh;
   margin: calc(-1 * var(--space-8)) 0 0 calc(50% - 50vw);
   overflow: hidden;
   color: var(--hero-type-1);
-  background:
-    radial-gradient(ellipse 70% 55% at 50% 58%, var(--hero-sky-3), transparent 70%),
-    radial-gradient(ellipse 120% 80% at 50% 110%, var(--hero-sky-2), transparent 70%),
-    var(--hero-sky-1);
+  background: radial-gradient(
+    ellipse 105% 95% at 50% 50%,
+    var(--hero-sky-1) 38%,
+    var(--hero-edge-mid) 64%,
+    var(--hero-edge) 100%
+  );
+}
+
+/* News ticker across the top */
+.ticker {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 40px;
+  border-bottom: 1px solid var(--hero-ticker-edge);
+  background: var(--hero-ticker);
+  font-family: var(--font-title);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.live {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+  background: var(--hero-flag);
+  color: var(--hero-sky-1);
+  font-weight: 700;
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--hero-sky-1);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.liveCaption {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-4);
+  border-right: 1px solid var(--hero-ticker-edge);
+  color: var(--hero-flag);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: color 0.3s;
+}
+
+.liveCaption[data-on="false"] {
+  color: var(--hero-type-2);
+}
+
+.tape {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    90deg,
+    transparent,
+    var(--hero-sky-1) 4%,
+    var(--hero-sky-1) 96%,
+    transparent
+  );
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  height: 100%;
+  animation: ticker 48s linear infinite;
+}
+
+.run {
+  display: flex;
+  align-items: center;
+}
+
+.item {
+  padding: 0 var(--space-6);
+  color: var(--hero-type-1);
+  white-space: nowrap;
+}
+
+.item::before {
+  content: "◆";
+  margin-right: var(--space-6);
+  color: var(--hero-flag);
+  font-size: var(--fs-label);
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .nav {
   position: relative;
   z-index: 4;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: min(1200px, 100%);
-  padding: var(--space-5);
-  font-family: var(--font-title);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.brand {
-  font-family: var(--font-display);
-  font-size: var(--fs-md);
-  letter-spacing: 0.04em;
-  text-transform: none;
-}
-
-.navLinks {
-  display: flex;
-  gap: var(--space-6);
-}
-
-.navLinks a,
-.navCta {
-  color: var(--hero-type-2);
-  text-decoration: none;
+  justify-content: flex-end;
+  width: min(1400px, 100%);
+  padding: var(--space-4) var(--space-5);
 }
 
 .navCta {
   padding: var(--space-2) var(--space-4);
   border: 1px solid var(--hero-type-2);
   border-radius: 999px;
+  color: var(--hero-type-2);
+  font-family: var(--font-title);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color var(--duration-fast);
 }
 
-.navLinks a:hover,
 .navCta:hover {
   color: var(--hero-type-1);
 }
 
-.wordTop,
-.wordBottom {
+/* The words: engraved serif capitals that appear only while the coin's face is toward you;
+   a glint sweeps across them as it turns (--face is written by the scene every frame). */
+.wordLeft,
+.wordRight {
   position: absolute;
-  z-index: 1;
-  left: 50%;
+  top: 50%;
+  z-index: 3;
   max-width: none;
   margin: 0;
-  font-family: var(--font-poster);
-  font-size: var(--fs-poster);
-  font-weight: 300;
-  line-height: 0.82;
-  letter-spacing: 0.02em;
+  font-family: var(--font-display);
+  font-size: var(--fs-poster-side);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
-  background: linear-gradient(180deg, var(--hero-type-1) 15%, var(--hero-type-2) 85%);
+  background: linear-gradient(
+    100deg,
+    var(--hero-type-2) 0%,
+    var(--hero-type-1) 42%,
+    var(--hero-glint) 50%,
+    var(--hero-type-1) 58%,
+    var(--hero-type-2) 100%
+  );
+  background-size: 320% 100%;
+  background-position: calc((1 - var(--face)) * 100%) 0;
   background-clip: text;
   color: transparent;
-  transform: translateX(-50%);
-  animation: rise 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  opacity: calc(var(--face) * var(--face) * var(--face));
+  transform: translateY(-50%);
 }
 
-.wordTop {
-  top: 11%;
+.wordLeft {
+  left: 3vw;
 }
 
-.wordBottom {
-  top: 52%;
-  opacity: 0.55;
-  animation-delay: 0.15s;
+.wordRight {
+  right: 3vw;
+  text-align: right;
 }
 
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 8%);
-    filter: blur(8px);
-  }
+.wordSmall {
+  display: block;
+  font-size: var(--fs-poster-small);
+  font-style: italic;
+  letter-spacing: 0.12em;
 }
 
 .scene {
@@ -215,49 +311,101 @@
   z-index: 2;
 }
 
-.band {
-  position: relative;
-  z-index: 3;
-  grid-row: 3;
-  width: 100%;
-  padding: var(--space-3) var(--space-5);
-  background: linear-gradient(90deg, transparent, var(--hero-band), transparent);
-  text-align: center;
-  animation: rise-band 1s ease-out 0.6s both;
-}
-
-@keyframes rise-band {
-  from {
-    opacity: 0;
-  }
-}
-
-.headline {
-  max-width: none;
-  margin: 0;
-  font-family: var(--font-title);
-  font-size: var(--fs-md);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  color: var(--hero-type-1);
-}
-
+/* The call to action: one glowing pill, then what Verita does. */
 .stage .cta {
   position: relative;
   z-index: 3;
   grid-row: 4;
-  padding: var(--space-6) 0 var(--space-7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) 0 var(--space-8);
 }
 
-.stage .primary {
-  border-color: var(--hero-type-1);
-  background: var(--hero-type-1);
-  color: var(--hero-sky-1);
-}
-
-.stage .secondary {
-  border-color: var(--hero-type-2);
+.enter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  border: 1px solid var(--hero-flag);
+  border-radius: 999px;
+  background: var(--hero-gold-glass);
   color: var(--hero-type-1);
+  font-family: var(--font-title);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  box-shadow: 0 0 28px -10px var(--hero-flag);
+  backdrop-filter: blur(10px);
+  transition:
+    box-shadow var(--duration-base),
+    transform var(--duration-base);
+}
+
+.enter:hover {
+  box-shadow: 0 0 40px -6px var(--hero-flag);
+  transform: translateY(-1px);
+}
+
+.arrow {
+  transition: transform var(--duration-base);
+}
+
+.enter:hover .arrow {
+  transform: translateX(4px);
+}
+
+.doing {
+  display: flex;
+  gap: var(--space-3);
+  color: var(--hero-type-2);
+  font-family: var(--font-title);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.doing a {
+  color: var(--hero-type-2);
+  text-decoration: none;
+  transition: color var(--duration-fast);
+}
+
+.doing a:hover {
+  color: var(--hero-type-1);
+}
+
+.scrollCue {
+  position: absolute;
+  bottom: var(--space-4);
+  left: 50%;
+  z-index: 3;
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(var(--hero-type-2), transparent);
+  transform: translateX(-50%);
+  animation: cue 2.2s ease-in-out infinite;
+}
+
+@keyframes cue {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translate(-50%, -6px);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
 }
 
 .flatSeal {
