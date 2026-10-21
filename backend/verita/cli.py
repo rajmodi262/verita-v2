@@ -101,7 +101,11 @@ def users_create(
 
 
 @users_app.command("seed-demo")
-def users_seed_demo() -> None:
+def users_seed_demo(
+    reset: Annotated[
+        bool, typer.Option("--reset", help="Also set existing demo users to this password")
+    ] = False,
+) -> None:
     """Create the demo users. Password: VERITA_DEMO_PASSWORD, or a random one printed once."""
     settings = get_settings()
     password = os.environ.get("VERITA_DEMO_PASSWORD") or secrets.token_urlsafe(12)
@@ -116,6 +120,8 @@ def users_seed_demo() -> None:
             except AppError as exc:
                 if exc.slug != "username-taken":
                     raise
+                if reset and service.reset_password(username, password):
+                    created.append(username)
     if not created:
         typer.echo("Demo users already exist; nothing changed.")
         return

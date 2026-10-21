@@ -4,3 +4,6 @@
 *.pdf binary
 *.parquet binary
 backend/verita/defend/schemas/*.xsd -text
+# Windows scripts keep CRLF so cmd.exe and Windows PowerShell read them as written
+*.bat text eol=crlf
+*.ps1 text eol=crlf
