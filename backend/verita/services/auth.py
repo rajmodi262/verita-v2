@@ -58,6 +58,18 @@ class AuthService:
         )
         return user
 
+    def reset_password(self, username: str, password: str) -> bool:
+        """Set a new password, clear any lockout and end the user's sessions. False if unknown."""
+        user = self._users.get_by_username(username)
+        if user is None:
+            return False
+        user.password_hash = hash_password(password)
+        user.failed_logins = 0
+        user.locked_until = None
+        user.sessions.clear()
+        self._audit.record("user.password_reset", actor_id=None, target=f"user:{user.id}")
+        return True
+
     def login(
         self, username: str, password: str, ip: str | None, now: datetime | None = None
     ) -> LoginResult:

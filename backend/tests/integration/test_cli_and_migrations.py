@@ -7,6 +7,8 @@ from typer.testing import CliRunner
 
 from verita.cli import alembic_config, app
 from verita.core.config import get_settings
+from verita.db.session import make_engine, make_session_factory, transaction
+from verita.services.auth import AuthService
 
 runner = CliRunner()
 
@@ -59,6 +61,19 @@ def test_seed_demo_is_idempotent(db_url):
     assert first.exit_code == 0 and "Generated password" in first.output
     second = runner.invoke(app, ["users", "seed-demo"])
     assert "nothing changed" in second.output
+
+
+def test_seed_demo_reset_sets_a_known_password(db_url, monkeypatch):
+    runner.invoke(app, ["db", "upgrade"])
+    runner.invoke(app, ["users", "seed-demo"])  # random password, now unknown
+    monkeypatch.setenv("VERITA_DEMO_PASSWORD", "known-password-1234")
+    assert "nothing changed" in runner.invoke(app, ["users", "seed-demo"]).output
+    out = runner.invoke(app, ["users", "seed-demo", "--reset"])
+    assert out.exit_code == 0 and "analyst" in out.output
+    settings = get_settings()
+    factory = make_session_factory(make_engine(settings.database_url))
+    with transaction(factory) as db:
+        assert AuthService(db, settings).login("analyst", "known-password-1234", ip=None).user
 
 
 def test_seed_demo_uses_configured_password(db_url, monkeypatch):
