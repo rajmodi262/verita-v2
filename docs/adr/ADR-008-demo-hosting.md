@@ -29,3 +29,6 @@ public URL.
 * Scaling beyond one VM needs a shared rate-limit store (Redis) and a managed Postgres; the
   code does not change.
 * Someone holds the VM credentials and the signing key; RUNBOOK.md documents rotation.
+* Hosts without a released image for their architecture (e.g. an Oracle Cloud Ampere A1
+  VM) build the images on the VM with `deploy/prod/docker-compose.selfbuild.yml`; CI builds both
+  images on aarch64 to keep that path working. Walkthrough: [DEPLOY_ORACLE.md](../DEPLOY_ORACLE.md).

@@ -1,0 +1,29 @@
+# Self-build production override (ADR-008, docs/DEPLOY_ORACLE.md): same as
+# docker-compose.prod.yml, but the images are built on the VM from the base compose instead of
+# pulled from a registry — for hosts whose architecture has no released image (e.g. an
+# Oracle Cloud Ampere A1 / aarch64 VM). HTTPS via Caddy; only Caddy is public.
+#   cp deploy/prod/.env.example deploy/prod/.env   # fill VERITA_DOMAIN and the two DB passwords
+#   docker compose --env-file deploy/prod/.env -f deploy/docker-compose.yml \
+#     -f deploy/prod/docker-compose.selfbuild.yml up -d --build
+#   VERITA_DEMO_PASSWORD=... uv run python backend/scripts/smoke.py https://$VERITA_DOMAIN
+services:
+  api:
+    environment:
+      VERITA_CORS_ORIGINS: '["https://${VERITA_DOMAIN:?}"]'
+  web:
+    ports: !reset []  # only Caddy is public
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      VERITA_DOMAIN: ${VERITA_DOMAIN:?}
+    volumes:
+      - ./prod/Caddyfile:/etc/caddy/Caddyfile:ro  # relative to deploy/, the base file's folder
+      - caddy_data:/data
+    depends_on:
+      web:
+        condition: service_healthy
+
+volumes:
+  caddy_data:
