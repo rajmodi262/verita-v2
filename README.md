@@ -59,6 +59,27 @@ npm ci
 npm run dev
 ```
 
+### One click on Windows
+
+Double-click **`Start Verita.bat`**, or the "Verita" desktop shortcut that points at it. It:
+
+1. checks for uv, Python 3.11 and Node.js LTS (installing any that are missing with `winget`)
+   and installs the backend and web packages when they are missing or out of date;
+2. migrates the database and creates the demo users, with the password from `VERITA_DEMO_PASSWORD`
+   in `backend/.env` or a generated one saved to `.verita-demo-password`. If the HI-Small model
+   isn't built, it builds the small fixture dataset instead (about 2 minutes) so the app still
+   works;
+3. starts the API (port 8000) and the web app (port 5173), each in its own minimised window,
+   and waits until both answer;
+4. opens <http://localhost:5173> in your most recently used browser, and shows the sign-in.
+
+`stop-verita.ps1` stops both. A desktop shortcut with the Verita icon:
+
+```powershell
+$s = (New-Object -ComObject WScript.Shell).CreateShortcut("$env:USERPROFILE\Desktop\Verita.lnk")
+$s.TargetPath = "$PWD\Start Verita.bat"; $s.WorkingDirectory = "$PWD"; $s.IconLocation = "$PWD\assets\verita.ico"; $s.Save()
+```
+
 The full stack (PostgreSQL, API, job worker, nginx on one origin) after building a demo pack:
 
 ```bash
