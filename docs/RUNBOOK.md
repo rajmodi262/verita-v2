@@ -3,6 +3,9 @@
 Operating the demo stack (`deploy/docker-compose.yml`). Commands run from the repository root
 unless they say `cd backend`.
 
+Deploying to a VM: [DEPLOY_ORACLE.md](DEPLOY_ORACLE.md) (Oracle Cloud Always Free, ARM, self-built
+images).
+
 ## Build the data (build machine)
 
 ```bash

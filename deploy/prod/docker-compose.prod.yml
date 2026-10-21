@@ -25,7 +25,7 @@ services:
     environment:
       VERITA_DOMAIN: ${VERITA_DOMAIN:?}
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./prod/Caddyfile:/etc/caddy/Caddyfile:ro  # relative to deploy/, the base file's folder
       - caddy_data:/data
     depends_on:
       web:
