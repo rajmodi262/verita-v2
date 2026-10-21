@@ -57,3 +57,4 @@ frontend/.lighthouseci/
 # One-click starter (start-verita.ps1)
 .verita-demo-password
 .verita-pids
+.verita-start.log

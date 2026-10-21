@@ -13,6 +13,7 @@ $ApiPort = 8000
 $WebPort = 5173
 $AppUrl = "http://localhost:$WebPort"
 $Host.UI.RawUI.WindowTitle = "Verita starter"
+try { Start-Transcript -Path (Join-Path $Root ".verita-start.log") -Force | Out-Null } catch { }
 
 function Step($text) { Write-Host ""; Write-Host "==> $text" -ForegroundColor Yellow }
 function Ok($text) { Write-Host "    OK  $text" -ForegroundColor Green }
