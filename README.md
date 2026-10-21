@@ -173,25 +173,20 @@ One real row from the data, followed all the way through — the same story the
 ## 🏗️ How it works
 
 ```mermaid
-flowchart LR
-    subgraph DETECT["🔍 DETECT"]
-        A[(IBM AML<br/>5M payments<br/>hash-pinned)] --> B[Point-in-time<br/>features · DuckDB]
-        B --> C[LightGBM<br/>+ TreeSHAP reasons]
-        C --> D[Typology<br/>model]
+flowchart TB
+    subgraph DETECT["🔍 DETECT — find it"]
+        direction LR
+        A[(IBM AML · 5M payments<br/>hash-pinned)] --> B[Point-in-time features<br/>DuckDB windows] --> C[LightGBM<br/>+ TreeSHAP reasons] --> D[Typology model<br/>fan-in · cycle · scatter-gather]
     end
-    subgraph DECIDE["⚖️ DECIDE"]
-        E[Isotonic<br/>calibration] --> F[Conformal<br/>recall guarantee<br/>Mondrian + ACI]
-        F --> G[CP-SAT<br/>capacity planner]
+    subgraph DECIDE["⚖️ DECIDE — promise and plan"]
+        direction LR
+        E[Isotonic calibration] --> F[Conformal recall guarantee<br/>per typology + adaptive] --> G[CP-SAT capacity planner<br/>who works what today]
     end
-    subgraph DEFEND["🛡️ DEFEND"]
-        H[Case file] --> I[LLM draft<br/>cites evidence]
-        I --> J{Deterministic<br/>verifier}
-        J -->|passes| K[Maker–checker<br/>approval]
-        K --> L[JCS → Merkle →<br/>Ed25519 signature]
-        L --> M[goAML report]
+    subgraph DEFEND["🛡️ DEFEND — prove it"]
+        direction LR
+        H[Case file] --> I[LLM draft<br/>cites evidence] --> J{Deterministic<br/>fact-checker} -->|passes| K[Maker–checker<br/>approval] --> L[JCS → Merkle → Ed25519<br/>signed file] --> M[goAML report]
     end
-    D --> E
-    G --> H
+    DETECT --> DECIDE --> DEFEND
 ```
 
 <details>
