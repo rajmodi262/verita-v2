@@ -166,3 +166,20 @@ jobs:
         with:
           name: sboms
           path: sbom-*.cdx.json
+
+  # docs/DEPLOY_ORACLE.md: the self-build deploy target is an aarch64 VM, so prove both images
+  # build natively on ARM (every locked wheel resolves for aarch64) and the API starts.
+  images-arm64:
+    runs-on: ubuntu-24.04-arm
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build API image (aarch64)
+        run: docker build -t verita-api:arm -f backend/Dockerfile .
+      - name: Build web image (aarch64)
+        run: docker build -t verita-web:arm frontend
+      - name: Smoke-test the API image
+        run: |
+          docker run -d --name api -e VERITA_ENV=dev -e VERITA_DATABASE_URL=sqlite+pysqlite:////tmp/ci.sqlite -p 8000:8000 verita-api:arm
+          for i in $(seq 1 30); do curl -fsS http://localhost:8000/api/v1/health/live && exit 0; sleep 1; done
+          docker logs api; exit 1
