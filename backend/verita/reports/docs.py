@@ -53,6 +53,17 @@ def _env() -> Environment:
 README_BLOCK = """\
 {{ banner }}
 
+{% if d.detect and d.decide and d.defend and m.perf.analysts %}
+<table>
+<tr>
+<td align="center" width="25%"><h1>{{ champ.f1.value | pct }}</h1><b>laundering F1</b><br><sub>vs {{ rules.f1.value | pct }} for a tuned bank-style rules engine</sub></td>
+<td align="center" width="25%"><h1>{{ static.recall.value | pct }}</h1><b>recall delivered</b><br><sub>against a promised 95% guarantee</sub></td>
+<td align="center" width="25%"><h1>{{ d.defend.overall_detection.value | pct(2) }}</h1><b>planted LLM errors caught</b><br><sub>{{ d.defend.clean_false_alarm.value | pct }} of clean narratives rejected</sub></td>
+<td align="center" width="25%"><h1>{{ m.perf.analysts.p95_ms }} ms</h1><b>p95 latency</b><br><sub>50 analysts working at once</sub></td>
+</tr>
+</table>
+
+{% endif %}
 Synthetic data only: {{ m.synthetic_data_notice }}
 
 | Result | Value (95% CI) | Data |
